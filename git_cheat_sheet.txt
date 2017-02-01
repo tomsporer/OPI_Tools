@@ -1,0 +1,27 @@
+
+
+Letzte Aenderungen runterladen:
+
+git pull
+
+Status abfragen
+
+git status
+
+Veraenderungen anzeigen lassen
+
+git diff
+
+Neue angelegte Dateien hinzufuegen
+
+git add [filename]
+
+Aenderungen "speichern"
+
+git commit -a -m "Message"
+
+Aenderungen zum server (github.com) schieben
+Das Ziel ist origin (in diesem fall git.com)
+Der Branch ist master (der Zweig der Aenderungen)
+
+git push origin master
