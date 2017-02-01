@@ -32,6 +32,8 @@ value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 mayaExe = os.path.join(value, 'bin', 'maya.exe')
 
 os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(mayaExe)
+os.environ['MAYA_LOCATION'] = str(value)
+os.environ['MAYA_VERSION'] = "2017"
 
 # import the opi launcher modules
 from opi.launchers.environment import Environment
