@@ -107,4 +107,5 @@ workspace -fr "teClipExports" "Time Editor/Clip Exports";
     with open(os.path.join(projectPath, 'workspace.mel'), 'wb') as f:
       f.write(workspaceContent)
 
-    self.host.apis['pymel'].core.mel.eval('setProject "%s"' % projectPath.replace("\\", '/'))
+    if self.host.apis.has_key("pymel"):
+      self.host.apis['pymel'].core.mel.eval('setProject "%s"' % projectPath.replace("\\", '/'))

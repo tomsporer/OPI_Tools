@@ -1,6 +1,5 @@
 import os
 import sys
-import glob
 
 path = os.path.abspath(__file__)
 
@@ -28,31 +27,13 @@ cfgPath = os.path.join(launchersPath, 'configs', 'xsi.cfg')
 from _winreg import ConnectRegistry, OpenKey, EnumKey, QueryValueEx, HKEY_LOCAL_MACHINE
 registry = ConnectRegistry(None, HKEY_LOCAL_MACHINE)
 key = OpenKey(registry, "SOFTWARE\\Autodesk\\Softimage\\InstallPaths")
-value = QueryValueEx(key, "2015")[0]
+value = QueryValueEx(key, "2014")[0]
 
 xsiExe = os.path.join(value, 'Application', 'bin', 'xsi.exe')
 
-os.environ['OPI_LAUNCHER_DIR'] = launchersPath
 os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(xsiExe)
 os.environ['XSI_LOCATION'] = str(value).rstrip("\\")
-os.environ['XSI_VERSION'] = "2015"
-
-
-# figure out which projects are opi projects
-# switch this to a relative path based on the launchersPath
-os.environ['OPI_DATABASE_DIR'] = "\\\\192.168.1.10\\tomsporer\\PROJECTS"
-
-# find all subfolders with an opicfg file
-subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
-folderNames = []
-for subfolder in subfolders:
-  folderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
-
-if len(folderNames) == 0:
-  folderNames += ['']
-
-os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
-
+os.environ['XSI_VERSION'] = "2014"
 
 # import the opi launcher modules
 from opi.launchers.environment import Environment
