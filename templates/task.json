@@ -1,0 +1,17 @@
+{
+  "name": "Task",
+  "type": "Folder",
+  "args": [
+    {
+      "name": "project",
+      "type": "instance",
+      "template": "project"
+    },
+    {
+      "name": "name",
+      "type": "str",
+      "combo": ["3D", "Composite"]
+    }
+  ],
+  "location": "${project.location}/${name}"
+}

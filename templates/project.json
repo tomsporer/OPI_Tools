@@ -1,0 +1,25 @@
+{
+  "name": "Project",
+  "type": "Folder",
+  "args": [
+    {
+      "name": "shorthand",
+      "type": "str",
+      "primary": true
+    },
+    {
+      "name": "name",
+      "type": "str",
+      "unique": true
+    }
+  ],
+  "location": "${shorthand}_${name}",
+  "subfolders": [
+    "Cache",
+    "Client_From",
+    "Client_To",
+    "Images",
+    "Models",
+    "Render"
+  ]
+}
