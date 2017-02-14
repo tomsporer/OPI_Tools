@@ -40,10 +40,3 @@ from opi.launchers.environment import Environment
 
 env = Environment(cfgPath)
 env.launch()
-
-
-
-# import os
-
-# for key in sorted(os.environ.keys()):
-# 	Application.Logmessage(str(key) + ":" + str(os.environ[key])
