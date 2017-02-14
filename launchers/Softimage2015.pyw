@@ -31,6 +31,7 @@ value = QueryValueEx(key, "2015")[0]
 
 xsiExe = os.path.join(value, 'Application', 'bin', 'xsi.exe')
 
+os.environ['OPI_LAUNCHER_DIR'] = launchersPath
 os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(xsiExe)
 os.environ['XSI_LOCATION'] = str(value).rstrip("\\")
 os.environ['XSI_VERSION'] = "2015"

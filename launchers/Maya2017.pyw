@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 
 path = os.path.abspath(__file__)
 
@@ -31,9 +32,25 @@ value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 
 mayaExe = os.path.join(value, 'bin', 'maya.exe')
 
+os.environ['OPI_LAUNCHER_DIR'] = launchersPath
 os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(mayaExe)
 os.environ['MAYA_LOCATION'] = str(value)
 os.environ['MAYA_VERSION'] = "2017"
+
+# figure out which projects are opi projects
+# switch this to a relative path based on the launchersPath
+os.environ['OPI_DATABASE_DIR'] = "\\\\192.168.1.10\\tomsporer\\PROJECTS"
+
+# find all subfolders with an opicfg file
+subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
+folderNames = []
+for subfolder in subfolders:
+  folderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
+
+if len(folderNames) == 0:
+  folderNames += ['']
+
+os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
 # import the opi launcher modules
 from opi.launchers.environment import Environment
