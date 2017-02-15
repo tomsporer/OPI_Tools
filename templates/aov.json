@@ -1,0 +1,18 @@
+{
+  "name": "Aov",
+  "type": "Folder",
+  "args": [
+    {
+      "name": "render",
+      "type": "instance",
+      "template": "render",
+      "backreferencefield": "aovs"
+    },
+    {
+      "name": "name",
+      "type": "str",
+      "combo": ["beauty", "normal"]
+    }
+  ],
+  "location": "${render.location}/${name}"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Render",
+  "type": "Folder",
+  "args": [
+    {
+      "name": "project",
+      "type": "instance",
+      "template": "project",
+      "backreferencefield": "renders"
+    },
+    {
+      "name": "name",
+      "type": "str"
+    },
+    {
+      "name": "version",
+      "type": "int",
+      "padding": 3
+    }
+  ],
+  "location": "${project.location}/Render/${version}/${name}"
+}

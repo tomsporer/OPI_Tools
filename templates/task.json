@@ -5,7 +5,8 @@
     {
       "name": "project",
       "type": "instance",
-      "template": "project"
+      "template": "project",
+      "backreferencefield": "tasks"
     },
     {
       "name": "name",

@@ -24,6 +24,10 @@ def test_tom_create_project():
   project = db.createNew('Project', shorthand='PRO', name='ProjectX')
   task3D = db.createNew('Task', project=project, name='3D')
   taskComposite = db.createNew('Task', project=project, name='Composite')
+  render = db.createNew('Render', project=project, name='test', version=1)
+  beauty = db.createNew('Aov', render=render, name='beauty')
+
+  print root
 
 if __name__ == '__main__':
   test_tom_create_project()
