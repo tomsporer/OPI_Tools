@@ -4,6 +4,8 @@
 #
 
 import os, sys
+import shutil
+import ctypes
 
 from opi.tools.databasetool import DataBaseTool
 from opi.common.opiexception import OPIException
@@ -23,11 +25,13 @@ class CreateProjectTool(DataBaseTool):
 
     self.args.add(name='shorthand', type='str', expression="[A-Z][A-Z][A-Z]")
     self.args.add(name='name', type='str', expression="[A-Z]+[a-zA-Z0-9_]*")
+    self.args.add(name="active", type="bool", label="Set Active Project", value="true")
 
   def execute (self):
 
     shorthand = self.args.getValue('shorthand')
     name = self.args.getValue('name')
+    active = self.args.getValue("active")
 
     db = self.host.apis['db']
   
@@ -35,6 +39,9 @@ class CreateProjectTool(DataBaseTool):
     task3D = db.createNew('Task', project=project, name='3D')
     taskComposite = db.createNew('Task', project=project, name='Composite')    
 
+    #
+    # Maya specific project files:
+    
     workspaceContent = """
 // Tom Sporer Project Definition - Maya 2017
 
@@ -107,5 +114,24 @@ workspace -fr "teClipExports" "Time Editor/Clip Exports";
     with open(os.path.join(projectPath, 'workspace.mel'), 'wb') as f:
       f.write(workspaceContent)
 
-    if self.host.apis.has_key("pymel"):
-      self.host.apis['pymel'].core.mel.eval('setProject "%s"' % projectPath.replace("\\", '/'))
+    #
+    # XSI specific project files:
+
+    launchersPath = os.environ['OPI_LAUNCHER_DIR']
+    xsiSystemFolder = os.path.join(projectPath, "system")
+    os.mkdir(xsiSystemFolder)
+    shutil.copy(os.path.join(os.path.split(launchersPath)[0], "xsi", "dsprojectinfo"), xsiSystemFolder)
+    # make system folder hidden:
+    ctypes.windll.kernel32.SetFileAttributesW(unicode(xsiSystemFolder), 2)
+
+
+    #
+    # Set active project
+
+    if active:
+      if self.host.apis.has_key("pymel"):
+        self.host.apis['pymel'].core.mel.eval('setProject "%s"' % projectPath.replace("\\", '/'))
+      elif self.host.apis.has_key("xsi"):
+        xsi = self.host.apis['xsi']
+        xsi.ActiveProject = projectPath
+
