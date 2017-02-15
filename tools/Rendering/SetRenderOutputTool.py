@@ -91,9 +91,15 @@ class SetRenderOutputTool(DataBaseTool):
 
     db = self.host.apis['db']
 
+    # todo: inspect render setup
+    # set renderer to redshift (maybe in defaults?)
+    # set image format to exr
+    # set file prefix accordingly (so that we end up as Render/name/version/aovname)
+
     project = self.__getProject()
     render = db.createNew('Render', project=project, name=rendername, version=int(version))
 
-    # todo: setup aovs
+    # todo: for all render layers create the right aov
+    # we might also need a tool to generate the default AOVs for redshift
 
     pass
