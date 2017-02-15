@@ -1,7 +1,8 @@
 {
   "items":[
 
-    { "type": "menu", "folder": "Projects" }
+    { "type": "menu", "folder": "Projects" },
+    { "type": "menu", "folder": "Rendering" }
   
   ]
 }
