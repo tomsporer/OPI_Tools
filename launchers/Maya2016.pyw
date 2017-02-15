@@ -1,6 +1,7 @@
 import os
 import sys
 import glob
+import platform
 
 path = os.path.abspath(__file__)
 
@@ -27,7 +28,7 @@ cfgPath = os.path.join(launchersPath, 'configs', 'maya.cfg')
 # first connect to the registry and get a specific key
 from _winreg import ConnectRegistry, OpenKey, EnumKey, QueryValueEx, HKEY_LOCAL_MACHINE
 registry = ConnectRegistry(None, HKEY_LOCAL_MACHINE)
-key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2017\\Setup\\InstallPath")
+key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2016\\Setup\\InstallPath")
 value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 
 mayaExe = os.path.join(value, 'bin', 'maya.exe')
@@ -35,7 +36,7 @@ mayaExe = os.path.join(value, 'bin', 'maya.exe')
 os.environ['OPI_LAUNCHER_DIR'] = launchersPath
 os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(mayaExe)
 os.environ['MAYA_LOCATION'] = str(value)
-os.environ['MAYA_VERSION'] = "2017"
+os.environ['MAYA_VERSION'] = "2016"
 
 # figure out which projects are opi projects
 # switch this to a relative path based on the launchersPath
