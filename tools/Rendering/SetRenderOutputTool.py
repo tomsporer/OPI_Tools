@@ -23,38 +23,52 @@ class SetRenderOutputTool(DataBaseTool):
 
   def initialize(self, **args):
 
-    self.args.add(name='projectname', label='project', type='str')
-    self.args.add(name="rendername", type="str", label="render name", value=args.get('name', None))
-    self.args.add(name="version", type="str", value='001', enabled=False)
+    self.args.add(name='projectname', label='project', type='str', value=args.get('projectname', None))
+    self.args.add(name="rendername", type="str", label="render name", value=args.get('name', 'default'))
+    self.args.add(name="version", type="str", value=args.get('version', None), expression='[0-9]+[0-9]*')
+    self.args.beginRow('range')
+    self.args.add(name="in", type="int", value=args.get('in', None))
+    self.args.add(name="out", type="int", value=args.get('out', None))
+    self.args.endRow()
 
   def preexecute(self, **args):
 
     db = self.host.apis['db']
     maya = self.host.apis['maya']
-    
+
+
     # check the project name
     # if it is not specified, set it based on the project
     projectname = self.args.getValue('projectname')
     if projectname is None:
       filePath = maya.cmds.file(q=True, sn=True)
-      project = db.queryFromPath('Project', filePath)
-      if not project:
-        raise OPIException('The scene is not in a valid project!')
+      project = None
+      try:
+        project = db.queryFromPath('Project', filePath)
+        if not project:
+          raise OPIException('The scene is not in a valid project!')
+      except:
+        raise OPIException('The current scene is not part of a project.')
       arg = self.args.get('projectname')
+      projectname = project.name
       arg.value = project.name
       arg.enabled = False
 
-    # check the render name, and set it based on the scene if possible
-    rendername = self.args.getValue('rendername')
-    if rendername is None:
-      filePath = maya.cmds.file(q=True, sn=True)
-      rendername = os.path.split(filePath)[1]
-      rendername = rendername.rpartition('.')[0]
-      rendername = rendername.rpartition('_')[0]
+    # check the version
+    version = self.args.getValue('version')
+    if version is None:
+      version = self.metaData.get(projectname+'_version', '001')
+      self.args.setValue('version', version)
 
-      arg = self.args.get('rendername')
-      arg.value = rendername
-      self.onValueChanged(arg)
+    # check the input and output
+    for argName in ['in', 'out']:
+      arg = self.args.get(argName)
+      value = arg.value
+      if arg.value is None:
+        if argName == 'in':
+          arg.value = maya.cmds.playbackOptions(q=True, animationStartTime=True)
+        else:
+          arg.value = maya.cmds.playbackOptions(q=True, animationEndTime=True)
 
   def __getProject(self):
     db = self.host.apis['db']
@@ -64,42 +78,53 @@ class SetRenderOutputTool(DataBaseTool):
       raise OPIException('Project "%s" does not exist.' % projectname)
     return project
 
-  def onValueChanged(self, arg):
-
-    db = self.host.apis['db']
-
-    if arg.name == 'rendername':
-
-      version = '001'
-      
-      # find the highest version
-      project = self.__getProject()
-      model = db.getTemplate('Render').model
-      renders = project.renders.where(model.name == arg.value).order_by(-model.version)
-      if renders.count() > 0:
-        lastRender = renders.get()
-        version = str(lastRender.version + 1).rjust(3, '0')
-
-      arg = self.args.get('version')
-      arg._setValue(version, forceEnabled=True)
-
   def executeMaya (self):
 
     projectname = self.args.getValue('projectname')
     rendername = self.args.getValue('rendername')
     version = self.args.getValue('version')
+    version = version.rjust(3, '0')
+    startFrame = self.args.getValue('in')
+    endFrame = self.args.getValue('out')
 
     db = self.host.apis['db']
+    maya = self.host.apis['maya']
 
     # todo: inspect render setup
     # set renderer to redshift (maybe in defaults?)
     # set image format to exr
     # set file prefix accordingly (so that we end up as Render/name/version/aovname)
 
+
+
     project = self.__getProject()
-    render = db.createNew('Render', project=project, name=rendername, version=int(version))
+    render = db.getOrCreateNew('Render', project=project, name=rendername, version=int(version))
+    
+    rs = maya.app.renderSetup.model.renderSetup.instance()
+    layers = rs.getRenderLayers()
+    for layer in layers:
+      print str(layer.name())
+      aov = db.getOrCreateNew('Aov', render=render, name=str(layer.name()))
 
-    # todo: for all render layers create the right aov
-    # we might also need a tool to generate the default AOVs for redshift
+    path = db.getPath(render.location)
+    path = os.path.join(path, '<RenderLayer>', "%s_<RenderLayer>" % render.name)
 
-    pass
+    # todo: we should remap UNC paths as well.
+
+    maya.cmds.setAttr("defaultRenderGlobals.imageFilePrefix", path, type="string")
+    maya.cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
+    maya.cmds.setAttr("defaultRenderGlobals.animation", True)
+    maya.cmds.setAttr("defaultRenderGlobals.extensionPadding", 4)
+    maya.cmds.setAttr("defaultRenderGlobals.useMayaFileName", False)
+    maya.cmds.setAttr("defaultRenderGlobals.putFrameBeforeExt", True)
+    maya.cmds.setAttr("defaultRenderGlobals.periodInExt", True)
+    maya.cmds.setAttr("defaultRenderGlobals.startFrame", int(startFrame))
+    maya.cmds.setAttr("defaultRenderGlobals.endFrame", int(endFrame))
+
+    # store the metadata for the next run
+    setattr(self.metaData, projectname+'_version', version)
+    # layers = rs.getRenderLayers()
+    # print len(layers)
+
+    # for layer in layers:
+    #     print layer.name()

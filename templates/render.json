@@ -18,5 +18,5 @@
       "padding": 3
     }
   ],
-  "location": "${project.location}/Render/${version}/${name}"
+  "location": "${project.location}/Render/V${version}/${name}"
 }

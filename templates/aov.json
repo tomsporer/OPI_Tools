@@ -10,8 +10,7 @@
     },
     {
       "name": "name",
-      "type": "str",
-      "combo": ["beauty", "normal"]
+      "type": "str"
     }
   ],
   "location": "${render.location}/${name}"
