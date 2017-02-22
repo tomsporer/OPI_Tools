@@ -74,7 +74,6 @@ workspace -fr "sound" "Models";
 workspace -fr "audio" "Models";
 workspace -fr "templates" "Models";
 
-workspace -fr "images" "Images";
 workspace -fr "sourceImages" "Images";
 workspace -fr "clips" "Images";
 workspace -fr "3dPaintTextures" "Images/3dPaintTextures";
@@ -84,6 +83,7 @@ workspace -fr "fileCache" "Cache/nCache";
 workspace -fr "particles" "Cache/particles";
 workspace -fr "bifrostCache" "Cache/bifrost";
 
+workspace -fr "images" "Render";
 workspace -fr "movie" "Render";
 workspace -fr "renderData" "Render";
 workspace -fr "shaders" "Render/shaders";
