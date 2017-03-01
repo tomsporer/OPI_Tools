@@ -23,6 +23,8 @@ def setProjectPath():
     if os.path.exists(workspace):
       pymel.core.mel.eval('setProject "%s"' % folder.replace("\\", '/'))
       break
+    if folder == os.path.split(folder)[0]:
+      break
     folder = os.path.split(folder)[0]
 
 def onSceneLoad(userdata):
