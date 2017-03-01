@@ -45,32 +45,21 @@ class IncrementAndSaveTool(DataBaseTool):
     savePath = os.path.join(sceneFolder, constantFileName + newFileVersion)
     return savePath
 
+  def executeMaya(self):
 
-  def execute(self):
+    maya = self.host.apis['maya']
+    scenePath = maya.cmds.file(q = True, sceneName = True)
+    savePath = self.increment(scenePath)
 
-    if self.host.apis.has_key("maya"):
-      maya = self.host.apis['maya']
-      scenePath = maya.cmds.file(q = True, sceneName = True)
-      savePath = self.increment(scenePath)
+    if os.path.exists(savePath + ".ma") == True or os.path.exists(savePath + ".mb") == True:
+      QtWidgets = self.host.apis["QtWidgets"]
+      msgBox = QtWidgets.QMessageBox
+      q = msgBox.question(None, "Override...", "New Filename already exists.\nOverride?", msgBox.StandardButton.Yes | msgBox.StandardButton.Cancel)
+      if q == msgBox.Yes:
+        maya.cmds.file(rename = savePath)
+        maya.cmds.file(save = True)
+      else:
+        print "User Aborted. Scene NOT saved."
+    else:
       maya.cmds.file(rename = savePath)
       maya.cmds.file(save = True)
-    elif self.host.apis.has_key("xsi"):
-      xsi = self.host.apis['xsi']
-      scenePath = xsi.ActiveProject.ActiveScene.filename.value
-      savePath = self.increment(scenePath)
-      xsi.SaveSceneAs(savePath + ".scn", "")
-
-
-    #
-    # QtWidgets.QMessageBox
-    #
-    
-    # if os.path.exists(savePath) == True:
-    #   askForOverride = XSIUIToolkit.MsgBox( "New Filename already exists. Override?" , 32 | 1, "Override...")
-    #   if askForOverride == 1:
-    #     saveAs()
-    #   else:
-    #     log("User Aborted. Scene NOT saved.", 4)
-    # else:
-    #   saveAs()
-
