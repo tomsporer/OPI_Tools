@@ -1,6 +1,8 @@
 import os
 import sys
 import glob
+import json
+import optparse
 
 path = os.path.abspath(__file__)
 
@@ -30,10 +32,30 @@ registry = ConnectRegistry(None, HKEY_LOCAL_MACHINE)
 key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2017\\Setup\\InstallPath")
 value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 
-mayaExe = os.path.join(value, 'bin', 'maya.exe')
+# setup options for running maya in batch mode
+prog = os.path.basename(__file__)
+usage = "usage: %prog [options]"
+parser = optparse.OptionParser(usage, version="%prog 1.0")
+parser.add_option("-b", "--batch", dest="batch", help="Set this to launch maya batch instead", action="store_true", default=False)
+parser.add_option("-c", "--command", dest="command", help="The mel command to run. Needs to be specified in conjunction with --batch.")
+description = optparse.OptionGroup(parser, "Description", "Launches Maya 2017.")
+parser.add_option_group(description)
+options, args = parser.parse_args()
+
+if options.batch:
+  if options.command is None:
+    parser.print_help()
+    sys.exit()
+
+  mayaExe = os.path.join(value, 'bin', 'mayabatch.exe')
+
+  os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(mayaExe)
+  os.environ['OPI_LAUNCHER_ARGS'] = json.dumps(['-command', options.command])
+else:
+  mayaExe = os.path.join(value, 'bin', 'maya.exe')
+  os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(mayaExe)
 
 os.environ['OPI_LAUNCHER_DIR'] = launchersPath
-os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(mayaExe)
 os.environ['MAYA_LOCATION'] = str(value)
 os.environ['MAYA_VERSION'] = "2017"
 
