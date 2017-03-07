@@ -9,6 +9,8 @@ import ctypes
 
 from opi.tools.databasetool import DataBaseTool
 from opi.common.opiexception import OPIException
+import opi.networking.unctools as unctools
+from opi.jobs.jobmanager import JobManager
 
 class SubmitRenderTool(DataBaseTool):
 
@@ -30,12 +32,30 @@ class SubmitRenderTool(DataBaseTool):
     self.args.add(name="in", type="int", value=args.get('in', None))
     self.args.add(name="out", type="int", value=args.get('out', None))
     self.args.endRow()
+    self.args.add(name="package", type="int", value=args.get('package', 10))
 
   def preexecute(self, **args):
 
     db = self.host.apis['db']
     maya = self.host.apis['maya']
 
+    # check all external paths
+    uncMap = unctools.getUNCMap()
+    nodes = maya.cmds.ls()
+    changedSomething = False
+    for node in nodes:
+        t = maya.cmds.nodeType(node)
+        param = None
+        if t == 'file':
+          param = 'fileTextureName'
+        else:
+          continue
+        path = maya.cmds.getAttr('%s.%s' % (node, param))
+        mappedPath = unctools.remapPath(path, uncMap)
+        if mappedPath != path:
+          changedSomething = True
+          maya.cmds.setAttr('%s.%s' % (node, param), mappedPath, type='string')
+          self.log("Remapped %s to %s" % (path, mappedPath))
 
     # check the project name
     # if it is not specified, set it based on the project
@@ -70,6 +90,9 @@ class SubmitRenderTool(DataBaseTool):
         else:
           arg.value = maya.cmds.playbackOptions(q=True, animationEndTime=True)
 
+    if changedSomething:
+      maya.cmds.file(save=True, f=True)
+
   def __getProject(self):
     db = self.host.apis['db']
     projectname = self.args.getValue('projectname')
@@ -95,9 +118,8 @@ class SubmitRenderTool(DataBaseTool):
     # set image format to exr
     # set file prefix accordingly (so that we end up as Render/name/version/aovname)
 
-
-
     project = self.__getProject()
+
     render = db.getOrCreateNew('Render', project=project, name=rendername, version=int(version))
     
     rs = maya.app.renderSetup.model.renderSetup.instance()
@@ -108,8 +130,6 @@ class SubmitRenderTool(DataBaseTool):
 
     path = db.getPath(render.location)
     path = os.path.join(path, '<RenderLayer>', "%s_<RenderLayer>" % render.name)
-
-    # todo: we should remap UNC paths as well.
 
     maya.cmds.setAttr("defaultRenderGlobals.imageFilePrefix", path, type="string")
     maya.cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
@@ -123,8 +143,10 @@ class SubmitRenderTool(DataBaseTool):
 
     # store the metadata for the next run
     setattr(self.metaData, projectname+'_version', version)
-    # layers = rs.getRenderLayers()
-    # print len(layers)
 
-    # for layer in layers:
-    #     print layer.name()
+    with JobManager((os.environ['OPI_JOB_SERVER'], 6666)) as manager:
+      group_id = manager.getOrCreateProjectGroup('Tom Sporer')
+      project_id = manager.getOrCreateProject(group_id=group_id, name='%s_%s' % (project.shorthand, project.name))
+
+      # todo.....
+
