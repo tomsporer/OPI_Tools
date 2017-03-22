@@ -23,18 +23,20 @@ class CreateProjectTool(DataBaseTool):
 
   def initialize(self, **args):
 
-    self.args.add(name='shorthand', type='str', expression="[A-Z][A-Z][A-Z]")
+    self.args.add(name='shorthand', type='str', label="shorthand", optional=True, expression="[A-Z][A-Z][A-Z]")
     self.args.add(name='name', type='str', expression="[A-Z]+[a-zA-Z0-9_]*")
     self.args.add(name="active", type="bool", label="Set Active Project", value="true")
 
   def execute (self):
 
-    shorthand = self.args.getValue('shorthand')
     name = self.args.getValue('name')
     active = self.args.getValue("active")
 
+    if self.args.getValue('shorthand') == None:
+      shorthand = str(name)[:3].upper()
+
     db = self.host.apis['db']
-  
+
     project = db.createNew('Project', shorthand=shorthand, name=name)
     task3D = db.createNew('Task', project=project, name='3D')
     taskComposite = db.createNew('Task', project=project, name='Composite')    
