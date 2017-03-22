@@ -32,7 +32,8 @@ class CreateProjectTool(DataBaseTool):
     name = self.args.getValue('name')
     active = self.args.getValue("active")
 
-    if self.args.getValue('shorthand') == None:
+    shorthand = self.args.getValue('shorthand')
+    if not shorthand:
       shorthand = str(name)[:3].upper()
 
     db = self.host.apis['db']
