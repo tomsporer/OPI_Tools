@@ -41,11 +41,8 @@ class TSRenderCommand(maya.OpenMayaMPx.MPxCommand):
       with OPISocket(os.environ['OPI_WORKER_ADDRESS']) as socket:
         data = socket.communicate({'method': 'getAnotherTaskForProcess'})
         if data:
-          inframe = data['args']['inframe']
-          outframe = data['args']['outframe']
-          layer = data['args']['layer']
-          camera = data['args']['camera']
-          maya.cmds.ts_render(scene='', inframe=inframe, outframe=outframe, layer=layer, camera=camera)
+          cmd = data['args']['command']
+          pymel.core.mel.eval(cmd)
 
     return True
 
