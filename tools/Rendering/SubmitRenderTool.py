@@ -3,7 +3,9 @@
 # Copyright (c) 2016, Tom Sporer. All rights reserved.
 #
 
-import os, sys
+import os
+import sys
+import math
 import shutil
 import ctypes
 
@@ -26,7 +28,7 @@ class SubmitRenderTool(DataBaseTool):
   def initialize(self, **args):
 
     self.args.add(name='projectname', label='project', type='str', value=args.get('projectname', None))
-    self.args.add(name="rendername", type="str", label="render name", value=args.get('name', 'default'))
+    self.args.add(name="rendername", type="str", label="render name", value=args.get('name', 'sh01'))
     self.args.add(name="version", type="str", value=args.get('version', None), expression='[0-9]+[0-9]*')
     self.args.beginRow('range')
     self.args.add(name="in", type="int", value=args.get('in', None))
@@ -109,9 +111,11 @@ class SubmitRenderTool(DataBaseTool):
     version = version.rjust(3, '0')
     startFrame = self.args.getValue('in')
     endFrame = self.args.getValue('out')
+    package = self.args.getValue('package')
 
     db = self.host.apis['db']
     maya = self.host.apis['maya']
+    pymel = self.host.apis['pymel']
 
     # todo: inspect render setup
     # set renderer to redshift (maybe in defaults?)
@@ -121,12 +125,15 @@ class SubmitRenderTool(DataBaseTool):
     project = self.__getProject()
 
     render = db.getOrCreateNew('Render', project=project, name=rendername, version=int(version))
-    
+
     rs = maya.app.renderSetup.model.renderSetup.instance()
-    layers = rs.getRenderLayers()
+    layers = [rs.getDefaultRenderLayer()] + rs.getRenderLayers()
     for layer in layers:
-      print str(layer.name())
-      aov = db.getOrCreateNew('Aov', render=render, name=str(layer.name()))
+      layerName = str(layer.name())
+      if layerName == 'defaultRenderLayer':
+        layerName = 'master'
+
+      aov = db.getOrCreateNew('Aov', render=render, name=layerName)
 
     path = db.getPath(render.location)
     path = os.path.join(path, '<RenderLayer>', "%s_<RenderLayer>" % render.name)
@@ -148,5 +155,34 @@ class SubmitRenderTool(DataBaseTool):
       group_id = manager.getOrCreateProjectGroup('Tom Sporer')
       project_id = manager.getOrCreateProject(group_id=group_id, name='%s_%s' % (project.shorthand, project.name))
 
-      # todo.....
+      launcher = None
+      if self.host.name == 'maya':
+        mayaVersion = str(pymel.core.mel.eval('getApplicationVersionAsFloat'))
+        if mayaVersion.endswith('.0'):
+          mayaVersion = mayaVersion.rpartition('.')[0]
+        software_id = manager.getOrCreateSoftware(name='Maya', version=mayaVersion, registrykey='HKEY_LOCAL_MACHINE/SOFTWARE\\Autodesk\\Maya\\{0}\\Setup\\InstallPath|MAYA_INSTALL_LOCATION'.format(mayaVersion))
+        launcher = '${OPI_LAUNCHER_DIR}/Maya%s.pyw' % mayaVersion.partition('.')[0]
+      else:
+        # other apps are not yet implemented
+        return
+
+      taskCount = int(math.floor((1 + endFrame - startFrame) / package))
+      print taskCount
+
+      for layer in layers:
+
+        layerName = str(layer.name())
+        if layerName == 'defaultRenderLayer':
+          layerName = 'master'
+
+        job_id = manager.createJob(
+          name="%s - %s - %s" % (render.name, layerName, version),
+          owner="user", # todo
+          type='LauncherTask',
+          project_id=project_id,
+          software_id=software_id,
+          launcher=launcher)
+
+        for i in range(taskCount):
+          manager.createTask(job_id=job_id, status='pending', taskargs={'batch': None, 'command': 'ts_render;'})
 
