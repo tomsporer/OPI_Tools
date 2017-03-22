@@ -7,6 +7,8 @@ import maya.OpenMayaMPx
 import pymel
 import pymel.core
 
+from opi.sockets.opisocket import OPISocket
+
 class TSRenderCommand(maya.OpenMayaMPx.MPxCommand):
 
   def __init__(self):
