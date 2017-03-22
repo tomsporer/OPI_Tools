@@ -14,6 +14,8 @@ from opi.common.opiexception import OPIException
 import opi.networking.unctools as unctools
 from opi.jobs.jobmanager import JobManager
 
+from opi.ui.args.listviewargwidget import ListViewArgWidget
+
 class SubmitRenderTool(DataBaseTool):
 
   ToolName = 'SubmitRender'
@@ -35,6 +37,7 @@ class SubmitRenderTool(DataBaseTool):
     self.args.add(name="out", type="int", value=args.get('out', None))
     self.args.endRow()
     self.args.add(name="package", type="int", value=args.get('package', 10))
+    self.args.add(name="layers", type="str", value=args.get('layers', None))
 
   def preexecute(self, **args):
 
@@ -93,6 +96,18 @@ class SubmitRenderTool(DataBaseTool):
         else:
           arg.value = maya.cmds.playbackOptions(q=True, animationEndTime=True)
 
+    layers = self.args.getValue('layers')
+    if layers is None:
+      rs = maya.app.renderSetup.model.renderSetup.instance()
+      layers = [rs.getDefaultRenderLayer()] + rs.getRenderLayers()
+      layerNames = []
+      for layer in layers:
+          if not layer.isRenderable():
+            continue
+          layerNames += [str(layer.name())]
+      arg = self.args.get('layers')
+      arg.value = ','.join(layerNames)
+
     if changedSomething:
       maya.cmds.file(save=True, f=True)
 
@@ -113,6 +128,7 @@ class SubmitRenderTool(DataBaseTool):
     startFrame = self.args.getValue('in')
     endFrame = self.args.getValue('out')
     packageSize = self.args.getValue('package')
+    enabledLayers = self.args.getValue('layers').split(',')
 
     db = self.host.apis['db']
     maya = self.host.apis['maya']
@@ -132,7 +148,7 @@ class SubmitRenderTool(DataBaseTool):
     for layer in layers:
       layerName = str(layer.name())
       if layerName == 'defaultRenderLayer':
-        layerName = 'master'
+        layerName = 'masterLayer'
 
       aov = db.getOrCreateNew('Aov', render=render, name=layerName)
 
@@ -167,21 +183,60 @@ class SubmitRenderTool(DataBaseTool):
         # other apps are not yet implemented
         return
 
+      taskCount = int((1 + endFrame - startFrame) / packageSize)
+
+      renderCamera = None
+      cameras = pymel.core.mel.eval("listTransforms -cameras;")
+      for camera in cameras:
+        if maya.cmds.getAttr(camera+'.renderable'):
+          renderCamera = camera
+
       for layer in layers:
 
         layerName = str(layer.name())
-        if layerName == 'defaultRenderLayer':
-          layerName = 'master'
+
+        if not layerName in enabledLayers:
+          continue
+
+        layerLabel = layerName
+        if layerLabel == 'defaultRenderLayer':
+          layerLabel = 'masterLayer'
 
         job_id = manager.createJob(
-          name="%s - %s - %s" % (render.name, layerName, version),
+          name="%s - %s" % (version, layerLabel),
           owner="user", # todo
           type='LauncherTask',
           project_id=project_id,
           software_id=software_id,
           launcher=launcher)
 
-        for frame in range(startFrame, endFrame+1):
-          package_id = int((frame - startFrame) / packageSize)
-          manager.createTask(job_id=job_id, package=package_id, status='pending', taskargs={'batch': None, 'command': 'ts_render(%d);' % frame, 'sourcefile': self.__filePath})
+        for task_id in range(taskCount):
+          i = task_id * packageSize + startFrame
+          o = i + packageSize - 1
+          if o > endFrame:
+            o = endFrame
 
+          cmd =  'loadPlugin "tom_sporer_commands"; loadPlugin "tom_sporer_events"; loadPlugin("opi_maya"); '
+          cmd += 'ts_render -s "%s" -i %d -o %d -l "%s" -c "%s";' % (self.__filePath, i, o, layerName, renderCamera)
+          manager.createTask(job_id=job_id, package=task_id, status='pending', taskargs={'batch': None, 'command': cmd, 'sourcefile': self.__filePath})
+
+    maya.cmds.file(f=True, s=True)
+
+  # implement this to provide a custom widget
+  def getWidgetForArg(self, parent, arg, **args):
+    maya = self.host.apis['maya']
+
+    if arg.name == 'layers':
+      previousValue = arg.value
+      rs = maya.app.renderSetup.model.renderSetup.instance()
+      layers = [rs.getDefaultRenderLayer()] + rs.getRenderLayers()
+      layerNames = []
+      for layer in layers:
+          layerNames += [str(layer.name())]
+      arg.value = ','.join(layerNames)
+
+      widget = ListViewArgWidget(parent, arg, **args)
+      arg.value = previousValue
+      return widget
+
+    return super(SubmitRenderTool, self).getWidgetForArg(parent, arg, **args)
