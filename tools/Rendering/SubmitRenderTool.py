@@ -63,10 +63,11 @@ class SubmitRenderTool(DataBaseTool):
     # if it is not specified, set it based on the project
     projectname = self.args.getValue('projectname')
     if projectname is None:
-      filePath = maya.cmds.file(q=True, sn=True)
+      self.__filePath = maya.cmds.file(q=True, sn=True)
+      self.__filePath = unctools.remapPath(self.__filePath, uncMap)
       project = None
       try:
-        project = db.queryFromPath('Project', filePath)
+        project = db.queryFromPath('Project', self.__filePath)
         if not project:
           raise OPIException('The scene is not in a valid project!')
       except:
@@ -111,7 +112,7 @@ class SubmitRenderTool(DataBaseTool):
     version = version.rjust(3, '0')
     startFrame = self.args.getValue('in')
     endFrame = self.args.getValue('out')
-    package = self.args.getValue('package')
+    packageSize = self.args.getValue('package')
 
     db = self.host.apis['db']
     maya = self.host.apis['maya']
@@ -161,13 +162,10 @@ class SubmitRenderTool(DataBaseTool):
         if mayaVersion.endswith('.0'):
           mayaVersion = mayaVersion.rpartition('.')[0]
         software_id = manager.getOrCreateSoftware(name='Maya', version=mayaVersion, registrykey='HKEY_LOCAL_MACHINE/SOFTWARE\\Autodesk\\Maya\\{0}\\Setup\\InstallPath|MAYA_INSTALL_LOCATION'.format(mayaVersion))
-        launcher = '${OPI_LAUNCHER_DIR}/Maya%s.pyw' % mayaVersion.partition('.')[0]
+        launcher = '%s/Maya%s.pyw' % (os.environ['OPI_LAUNCHER_DIR'], mayaVersion.partition('.')[0])
       else:
         # other apps are not yet implemented
         return
-
-      taskCount = int(math.floor((1 + endFrame - startFrame) / package))
-      print taskCount
 
       for layer in layers:
 
@@ -183,6 +181,7 @@ class SubmitRenderTool(DataBaseTool):
           software_id=software_id,
           launcher=launcher)
 
-        for i in range(taskCount):
-          manager.createTask(job_id=job_id, status='pending', taskargs={'batch': None, 'command': 'ts_render;'})
+        for frame in range(startFrame, endFrame+1):
+          package_id = int((frame - startFrame) / packageSize)
+          manager.createTask(job_id=job_id, package=package_id, status='pending', taskargs={'batch': None, 'command': 'ts_render(%d);' % frame, 'sourcefile': self.__filePath})
 
