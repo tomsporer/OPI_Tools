@@ -1,0 +1,22 @@
+{
+  "name": "Leveltwo_File",
+  "type": "File",
+  "args": [
+    {
+      "name": "leveltwo",
+      "type": "instance",
+      "template": "leveltwo",
+      "backreferencefield": "leveltwo_files"
+    },
+    {
+      "name": "version",
+      "type": "str"
+    },
+    {
+      "name": "fileext",
+      "type": "str"
+    }
+  ],
+  "filename": "${levelone.name}_${leveltwo.name}_v${version}.${fileext}",
+  "location": "${leveltwo.location}/${filename}"
+}

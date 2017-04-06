@@ -3,7 +3,9 @@
 
     { "type": "menu", "folder": "Projects" },
     { "type": "menu", "folder": "Rendering" },
-    { "type": "menu", "folder": "Save_and_Load" }
-  
+    { "type": "menu", "folder": "Save_and_Load" },
+    { "type": "separator" },
+    { "type": "menu", "folder": "Sekt" },
+  	{ "type": "tool", "module": "RefreshOpiDbTool.py"}
   ]
 }

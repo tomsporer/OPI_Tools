@@ -1,0 +1,171 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2016, Tom Sporer. All rights reserved.
+#
+
+import os
+import sys
+
+from opi.tools.databasetool import DataBaseTool
+from opi.common.opiexception import OPIException
+from opi.storage.jsonobject import JsonObject
+
+
+class OpenerTool(DataBaseTool):
+
+  ToolName = 'Opener'
+  ToolLabel = 'Open Scene...'
+  ToolCommand = 'openscene'
+  ToolDescription = 'Open Scene'
+  ToolTooltip = 'Open Scene'
+
+  def __init__(self, host):
+    super (OpenerTool, self).__init__(host)
+
+  def initialize(self, **args):
+
+    self.__ProjectsRoot = "E:\\PROJECTS"
+    self.args.add(name="project", label="Project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Rotkaeppchen'", enabled=False)
+    self.args.add(name="bottle", label="Bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone")
+    self.args.add(name="product", label="Product", type="instance", template="leveltwo", comboSqlQuery="SELECT * FROM leveltwo WHERE levelone_id == ${bottle} ORDER BY name")
+    self.args.add(name="versionlist", label="version", type="str", combo=[])
+
+
+  def preexecute(self):
+
+    db = self.host.apis['db']
+
+    # ----
+    # Get current scene instance and set default values for saving location
+    # ----
+    if self.host.apis.has_key('maya'):
+      maya = self.host.apis['maya']
+      cmds = maya.cmds
+      currentSceneFile = cmds.file(q=True, sn=True)
+      currentScenelocation = currentSceneFile.split("PROJECTS/")[-1]
+      queryScene = db.queryFromLocation("leveltwo_file", location=currentScenelocation)
+
+      if queryScene != None:
+        currentLevelone = queryScene.levelone.name
+        currentLeveltwo = queryScene.leveltwo.name
+        self.args.get("bottle").value = currentLevelone
+        self.args.get("product").value = currentLeveltwo
+    # ----
+
+    self.fillVersionList()
+
+
+  def execute(self):
+
+    version = self.args.getValue("versionlist")
+    pathToOpen = self.__versionlistCombo[str(version)]
+
+    print "Opening " + str(pathToOpen)
+
+
+  def executeMaya(self):
+
+    maya = self.host.apis['maya']
+    cmds = maya.cmds
+
+    # ----
+    # Check if current scene has been modified 
+    # ----
+    currentSceneFile = cmds.file(q=True, sn=True)
+    fileModified = cmds.file(q=True, modified=True)
+
+    if fileModified:
+      confirmDialog = cmds.confirmDialog( title='Save Changes', message='Save Changes to\n' + currentSceneFile, button=['Save', "Don't Save", 'Cancel'], defaultButton='Save', cancelButton='Cancel', dismissString='Cancel' )
+      if confirmDialog == 'Save':
+        cmds.SaveScene()
+      elif confirmDialog == "Don't Save":
+        cmds.file(modified=False)
+      else:
+        raise OPIException( 'Canceled. Scene was not loaded.' )
+    # ----
+
+    version = self.args.getValue("versionlist")
+    opiLocation = self.__versionlistCombo[str(version)].location
+    pathToOpen = os.path.join(self.__ProjectsRoot, opiLocation)
+    cmds.file(pathToOpen, open=True)
+
+
+  def onValueChanged(self, arg):
+    if arg.name == "project" or arg.name == "bottle" or arg.name == "product":
+      self.fillVersionList()
+
+
+  def fillVersionList(self):
+
+    fileextMaya = ["ma", "mb"]
+    db = self.host.apis['db']
+    project = self.args.getValue("project")
+    bottle = self.args.getValue("bottle")
+    product = self.args.getValue("product")
+    fileslist = db.query("leveltwo_file", sql="SELECT * FROM leveltwo_file")
+
+    # ---- Creating a dictionary with key=str(version + comment + user) and value=filepath
+    self.__versionlistCombo = {}
+    vlc = self.__versionlistCombo
+    for k in fileslist:
+      if k.levelone.name == bottle.name and k.leveltwo.name == product.name and k.fileext in fileextMaya:
+        opiLocation = k.location
+        pathToOpen = os.path.join(self.__ProjectsRoot, opiLocation)
+        jsonPath = pathToOpen + ".json"
+        if os.path.isfile(jsonPath):
+          readJson = JsonObject(jsonPath)
+          if readJson.comment.text == "":
+            fileComment = "  -  " + readJson.comment.user
+          else:
+            fileComment = "  -  " + readJson.comment.user + " - " + readJson.comment.text
+        else:
+          fileComment = ""
+        vlc["v" + str(k.version) + fileComment] = pathToOpen 
+    # ----
+
+    if len(vlc.keys()) > 0:
+      sortedVlcKeys = sorted(vlc.keys(), reverse=True)
+      self.args.get("versionlist")._setCombo(sortedVlcKeys, sortedVlcKeys[0])
+    else:
+      self.args.get("versionlist")._setCombo([], None)
+
+
+
+
+# ------------------------------------------
+##### Launch Tool directly in python 
+# ------------------------------------------
+
+
+if __name__ == '__main__':
+
+  import os
+  import opi
+  from opi.client.database import DataBase as OpiDB
+  from opi.tools.host import Host as OPIHost
+  from opi.tools.workshop import WorkShop as OPIWorkShop
+  from opi.ui.Qt import QtWidgets, QtCore
+
+  path = os.path.split(os.path.abspath(__file__))[0]
+  path = os.path.split(path)[0]
+  path = os.path.split(path)[0]
+  path = os.path.split(path)[0]
+
+  dbRoot = "e:\\PROJECTS"
+  
+  templateRoot =  os.path.join(path, 'OPI_Tools', 'templates')
+  toolRoot =  os.path.join(path, 'OPI_Tools', 'tools')
+
+  db = OpiDB(dbRoot, templateRoot=templateRoot, rootSubFolders=['ROT_Rotkaeppchen'])
+
+  host = OPIHost('python', {'db': db, 'QtWidgets': QtWidgets, 'QtCore': QtCore})
+  workshop = OPIWorkShop(host, toolRoot)
+
+  tool = workshop.instantiate(cmd='openscene')
+  tool.invokeWithUI()
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+{
+  "name": "Leveltwo",
+  "type": "Folder",
+  "args": [
+    {
+      "name": "levelone",
+      "type": "instance",
+      "template": "levelone",
+      "backreferencefield": "leveltwos"
+    },
+    {
+      "name": "name",
+      "type": "str"
+    }
+  ],
+  "location": "${levelone.location}/${name}"
+}

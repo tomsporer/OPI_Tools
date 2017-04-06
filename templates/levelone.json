@@ -1,0 +1,17 @@
+{
+  "name": "Levelone",
+  "type": "Folder",
+  "args": [
+    {
+      "name": "project",
+      "type": "instance",
+      "template": "project",
+      "backreferencefield": "levelones"
+    },
+    {
+      "name": "name",
+      "type": "str"
+    }
+  ],
+  "location": "${project.location}/3D/${name}"
+}
