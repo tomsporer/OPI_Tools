@@ -12,6 +12,9 @@ path = os.path.split(path)[0]
 # remember this launchers path
 launchersPath = path
 
+if launchersPath.lower().startswith('e:'):
+  launchersPath = r'\\domain\\tomsporer' + launchersPath[2:]
+
 # go two levels up
 path = os.path.split(path)[0]
 path = os.path.split(path)[0]
@@ -36,6 +39,7 @@ value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 prog = os.path.basename(__file__)
 usage = "usage: %prog [options]"
 parser = optparse.OptionParser(usage, version="%prog 1.0")
+parser.add_option("-s", "--sourcefile", dest="sourcefile", help="The source file")
 parser.add_option("-b", "--batch", dest="batch", help="Set this to launch maya batch instead", action="store_true", default=False)
 parser.add_option("-c", "--command", dest="command", help="The mel command to run. Needs to be specified in conjunction with --batch.")
 description = optparse.OptionGroup(parser, "Description", "Launches Maya 2017.")
