@@ -7,6 +7,7 @@ import maya.OpenMayaMPx
 import pymel
 import pymel.core
 
+import opi
 from opi.sockets.opisocket import OPISocket
 
 class TSRenderCommand(maya.OpenMayaMPx.MPxCommand):
@@ -65,6 +66,7 @@ class TSRenderCommand(maya.OpenMayaMPx.MPxCommand):
     result['outframe'] = argData.flagArgumentInt( 'o', 0 )
     result['layer'] = argData.flagArgumentString( 'l', 0 )
     result['camera'] = argData.flagArgumentString( 'c', 0 )
+
     return result
 
   @staticmethod

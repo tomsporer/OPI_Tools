@@ -68,6 +68,7 @@ class SubmitRenderTool(DataBaseTool):
     if projectname is None:
       self.__filePath = maya.cmds.file(q=True, sn=True)
       self.__filePath = unctools.remapPath(self.__filePath, uncMap)
+      self.__filePath = self.__filePath.replace('\\', '/')
       project = None
       try:
         project = db.queryFromPath('Project', self.__filePath)
@@ -120,6 +121,8 @@ class SubmitRenderTool(DataBaseTool):
     return project
 
   def executeMaya (self):
+
+    uncMap = unctools.getUNCMap()
 
     projectname = self.args.getValue('projectname')
     rendername = self.args.getValue('rendername')
@@ -179,6 +182,9 @@ class SubmitRenderTool(DataBaseTool):
           mayaVersion = mayaVersion.rpartition('.')[0]
         software_id = manager.getOrCreateSoftware(name='Maya', version=mayaVersion, registrykey='HKEY_LOCAL_MACHINE/SOFTWARE\\Autodesk\\Maya\\{0}\\Setup\\InstallPath|MAYA_INSTALL_LOCATION'.format(mayaVersion))
         launcher = '%s/Maya%s.pyw' % (os.environ['OPI_LAUNCHER_DIR'], mayaVersion.partition('.')[0])
+        launcher = unctools.remapPath(launcher, uncMap)
+        launcher = launcher.replace('\\', '/')
+
       else:
         # other apps are not yet implemented
         return

@@ -29,6 +29,9 @@ from opi.jobs.jobserver import JobServer
 from opi.jobs.jobworker import JobWorker
 from opi.jobs.jobmanager import JobManager
 
+import opi.networking.unctools as unctools
+unctools.connectUNCSharesFromConfigFile(configFile=os.path.join(launchersPath, 'configs', 'unc.cfg'))
+
 def job_worker():
 
   app = QtWidgets.QApplication(sys.argv)
