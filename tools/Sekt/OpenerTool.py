@@ -121,10 +121,13 @@ class OpenerTool(DataBaseTool):
         jsonPath = pathToOpen + ".json"
         if os.path.isfile(jsonPath):
           readJson = JsonObject(jsonPath)
-          if readJson.comment.text == "":
-            fileComment = "  -  " + readJson.comment.user
-          else:
-            fileComment = "  -  " + readJson.comment.user + " - " + readJson.comment.text
+          try:
+            if readJson.comment.text == "":
+              fileComment = "  -  " + readJson.comment.user
+            else:
+              fileComment = "  -  " + readJson.comment.user + " - " + readJson.comment.text
+          except:
+            fileComment = ""
         else:
           fileComment = ""
         vlc[fileName + "v" + str(k.version) + fileComment] = pathToOpen 

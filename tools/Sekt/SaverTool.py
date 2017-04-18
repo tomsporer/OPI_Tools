@@ -41,7 +41,7 @@ class SaverTool(DataBaseTool):
     self.args.addStaticText("_")
     self.args.add(name="fileEnding", label="", type="str", enabled=False, value="")
     self.args.endRow()
-    self.args.add(name="comment", label="Comment (optional)", type="str", value="")
+    self.args.add(name="comment", label="Comment (optional)", type="comment", value="")
 
 
   def preexecute(self):
@@ -100,6 +100,7 @@ class SaverTool(DataBaseTool):
         self.invokeWithUI()
 
     maya.cmds.file(rename = savePath)
+    maya.cmds.file(type = "mayaAscii")
     maya.cmds.file(save = True)
     db.getOrCreateNew("Leveltwo_File", leveltwo=product, name=fileName, version=newVersion, fileext="ma", createEmptyFile=False)
     self.saveJson(savePath)
