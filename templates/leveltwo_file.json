@@ -15,8 +15,12 @@
     {
       "name": "fileext",
       "type": "str"
+    },
+    {
+      "name": "name",
+      "type": "str"
     }
   ],
-  "filename": "${levelone.name}_${leveltwo.name}_v${version}.${fileext}",
+  "filename": "${name}_v${version}.${fileext}",
   "location": "${leveltwo.location}/${filename}"
 }

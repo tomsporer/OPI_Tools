@@ -25,6 +25,8 @@ class SaverTool(DataBaseTool):
   def initialize(self, **args):
 
     self.__ProjectsRoot = "E:\\PROJECTS"
+    self.args.addStaticText("\tSave Rotkaeppchen Scene \t \t \t")
+    self.args.addSpacer(13)
     self.args.add(name="project", label="Project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Rotkaeppchen'", enabled=False)
     self.args.add(name="bottle", label="Bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone")
     self.args.add(name="product", label="Product", type="instance", template="leveltwo", comboSqlQuery="SELECT * FROM leveltwo WHERE levelone_id == ${bottle} ORDER BY name")
@@ -33,8 +35,13 @@ class SaverTool(DataBaseTool):
     self.args.add(name="newVersion", label="", type="str", value="001", padding=3)
     self.args.addButton("plusOne", "+1")
     self.args.endRow()
-    self.args.add(name="fileToSave", label="Filename", type="str", private=True, enabled=False)
-    self.args.add(name="comment", label="Comment (optional)", type="comment", value="")
+    self.args.beginRow("Filename")
+    self.args.add(name="custom", label="", type="bool", value=False)
+    self.args.add(name="fileName", label="", type="str", enabled=False, expression="[a-zA-Z0-9_]*", value="")
+    self.args.addStaticText("_")
+    self.args.add(name="fileEnding", label="", type="str", enabled=False, value="")
+    self.args.endRow()
+    self.args.add(name="comment", label="Comment (optional)", type="str", value="")
 
 
   def preexecute(self):
@@ -67,7 +74,9 @@ class SaverTool(DataBaseTool):
 
     product = self.args.getValue("product")
     newVersion = self.args.getValue("newVersion")
-    fileToSave = self.args.getValue("fileToSave")
+    fileName = self.args.getValue("fileName")
+    fileEnding = self.args.getValue("fileEnding")
+    fileToSave = fileName + "_" + fileEnding
     savePath = os.path.join(self.__ProjectsRoot, product.location, fileToSave)
 
     print "Saving as " + str(savePath)
@@ -80,7 +89,9 @@ class SaverTool(DataBaseTool):
 
     product = self.args.getValue("product")
     newVersion = self.args.getValue("newVersion")
-    fileToSave = self.args.getValue("fileToSave")
+    fileName = self.args.getValue("fileName")
+    fileEnding = self.args.getValue("fileEnding")
+    fileToSave = fileName + "_" + fileEnding
     savePath = os.path.join(self.__ProjectsRoot, product.location, fileToSave)
 
     if os.path.isfile(savePath):
@@ -90,16 +101,21 @@ class SaverTool(DataBaseTool):
 
     maya.cmds.file(rename = savePath)
     maya.cmds.file(save = True)
-    db.getOrCreateNew("Leveltwo_File", leveltwo=product, version=newVersion, fileext="ma", createEmptyFile=False)
+    db.getOrCreateNew("Leveltwo_File", leveltwo=product, name=fileName, version=newVersion, fileext="ma", createEmptyFile=False)
     self.saveJson(savePath)
 
   def onValueChanged(self, arg):
 
+    custom = self.args.getValue("custom")
     if type(arg) != type("str"):
       if arg.name == "project" or arg.name == "bottle" or arg.name == "product":
-        self.getLatestVersion()
-        self.updateFilename()
-      elif arg.name == "newVersion":
+        if not custom:
+          self.getLatestVersion()
+          self.updateFilename()
+      elif arg.name == "custom":
+        self.args.get("fileName").enabled = arg.value
+        self.updateFilename(firstTime=True)
+      else:
         self.updateFilename()
     else:
       if arg == "buttonPressedPlusone":
@@ -125,12 +141,23 @@ class SaverTool(DataBaseTool):
     self.args.get("latestVersion").value = str(latestVersion)
     self.args.get("newVersion").value = str(int(latestVersion) + 1).rjust(3, "0")
 
-  def updateFilename(self):
+  def updateFilename(self, firstTime=False):
 
+    newVersion = self.args.getValue("newVersion")
     bottle = self.args.getValue("bottle")
     product = self.args.getValue("product")
-    newVersion = self.args.getValue("newVersion")
-    self.args.get("fileToSave").value = str(bottle.name) + "_" + str(product.name) + "_v" + str(newVersion) + ".ma"
+    fileName = self.args.get("fileName")
+    fileEnding = self.args.get("fileEnding")
+
+    if not self.args.getValue("custom"):
+      fileName.value = str(bottle.name) + "_" + str(product.name)
+      fileEnding.value = "v" + str(newVersion) + ".ma"
+    elif firstTime:
+      fileName.value = str(bottle.name) + "_" + str(product.name)
+      fileEnding.value = "v" + str(newVersion) + ".ma"
+    else:
+      fileEnding.value = "v" + str(newVersion) + ".ma"
+
 
   def saveJson(self, savePath):
 

@@ -25,6 +25,8 @@ class OpenerTool(DataBaseTool):
   def initialize(self, **args):
 
     self.__ProjectsRoot = "E:\\PROJECTS"
+    self.args.addStaticText("\tOpen Rotkaeppchen Scene \t \t \t")
+    self.args.addSpacer(13)
     self.args.add(name="project", label="Project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Rotkaeppchen'", enabled=False)
     self.args.add(name="bottle", label="Bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone")
     self.args.add(name="product", label="Product", type="instance", template="leveltwo", comboSqlQuery="SELECT * FROM leveltwo WHERE levelone_id == ${bottle} ORDER BY name")
@@ -36,7 +38,7 @@ class OpenerTool(DataBaseTool):
     db = self.host.apis['db']
 
     # ----
-    # Get current scene instance and set default values for saving location
+    # Get current scene instance and set default values for opening location
     # ----
     if self.host.apis.has_key('maya'):
       maya = self.host.apis['maya']
@@ -85,8 +87,7 @@ class OpenerTool(DataBaseTool):
     # ----
 
     version = self.args.getValue("versionlist")
-    opiLocation = self.__versionlistCombo[str(version)].location
-    pathToOpen = os.path.join(self.__ProjectsRoot, opiLocation)
+    pathToOpen = self.__versionlistCombo[str(version)]
     cmds.file(pathToOpen, open=True)
 
 
@@ -104,11 +105,17 @@ class OpenerTool(DataBaseTool):
     product = self.args.getValue("product")
     fileslist = db.query("leveltwo_file", sql="SELECT * FROM leveltwo_file")
 
-    # ---- Creating a dictionary with key=str(version + comment + user) and value=filepath
+    # ----
+    # Creating a dictionary with key=str(version + comment + user) and value=filepath
+    # ----
     self.__versionlistCombo = {}
     vlc = self.__versionlistCombo
     for k in fileslist:
       if k.levelone.name == bottle.name and k.leveltwo.name == product.name and k.fileext in fileextMaya:
+        if k.name != k.levelone.name + "_" + k.leveltwo.name:
+          fileName = k.name + "  -  "
+        else:
+          fileName = ""
         opiLocation = k.location
         pathToOpen = os.path.join(self.__ProjectsRoot, opiLocation)
         jsonPath = pathToOpen + ".json"
@@ -120,7 +127,7 @@ class OpenerTool(DataBaseTool):
             fileComment = "  -  " + readJson.comment.user + " - " + readJson.comment.text
         else:
           fileComment = ""
-        vlc["v" + str(k.version) + fileComment] = pathToOpen 
+        vlc[fileName + "v" + str(k.version) + fileComment] = pathToOpen 
     # ----
 
     if len(vlc.keys()) > 0:
