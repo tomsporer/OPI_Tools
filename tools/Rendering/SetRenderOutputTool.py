@@ -13,8 +13,8 @@ from opi.common.opiexception import OPIException
 
 class SetRenderOutputTool(DataBaseTool):
 
-  ToolName = 'SetRenderOutputTest'
-  ToolLabel = 'Set Output Paths Test'
+  ToolName = 'SetRenderOutput'
+  ToolLabel = 'Set Output Paths'
   ToolCommand = 'setrenderoutput'
   ToolDescription = 'set the paths for the renders'
   ToolTooltip = 'sets the paths for the renders'
