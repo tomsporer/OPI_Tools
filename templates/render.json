@@ -15,8 +15,8 @@
     {
       "name": "version",
       "type": "int",
-      "padding": 3
+      "padding": 2
     }
   ],
-  "location": "${project.location}/Render/V${version}/${name}"
+  "location": "${project.location}/Render/${name}/V${version}"
 }
