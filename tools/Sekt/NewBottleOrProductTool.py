@@ -24,7 +24,7 @@ class NewBottleOrProductTool(DataBaseTool):
 
     self.args.add(name="bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone", optional=True, enabled=True)
     self.args.add(name="bottleNew", type="bool", value=False, label="new bottle")
-    self.args.add(name="brand", type="str", combo=["Rk", "Gm"], value="Rk", optional=True, enabled=False)
+    self.args.add(name="brand", type="str", combo=["Rk", "Gm", "Mu"], value="Rk", optional=True, enabled=False)
     self.args.add(name="bottletype", type="str", expression="[A-Z]+[a-zA-Z0-9_]*", optional=True, enabled=False)
     self.__row = self.args.beginRow("size")
     self.args.add(name="size", type="str", expression="[0-9]*", label="", optional=True, enabled=False)
