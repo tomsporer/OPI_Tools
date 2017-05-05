@@ -32,7 +32,7 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.addSpacer(7)
     self.args.add(name='projectname', label='project', type='str', enabled=False)
     self.args.add(name="renderpath", type="folder", label="render path", value="", enabled=True, expression="[a-zA-Z0-9_/]*")
-    self.args.add(name="renderfolder", type="str", label="renderfolder(hidden)", value="", hidden=False)
+    self.args.add(name="renderfolder", type="str", label="renderfolder(hidden)", value="", hidden=True)
     self.args.add(name="rendername", type="str", label="render name", value="")
     self.args.beginRow("version")
     self.args.add(name="version", label="", type="str", expression='[0-9]+[0-9]*')
