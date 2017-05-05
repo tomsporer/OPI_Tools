@@ -5,82 +5,207 @@
 
 import os
 import sys
+import re
 
 from opi.tools.databasetool import DataBaseTool
 from opi.common.opiexception import OPIException
+from opi.storage.jsonobject import JsonObject
 
 
 
 class SetRenderOutputTool(DataBaseTool):
 
   ToolName = 'SetRenderOutput'
-  ToolLabel = 'Set Output Paths'
+  ToolLabel = 'Set Output Paths...'
   ToolCommand = 'setrenderoutput'
   ToolDescription = 'set the paths for the renders'
-  ToolTooltip = 'sets the paths for the renders'
+  ToolTooltip = 'Render Output Settings'
 
   def __init__(self, host):
     super (SetRenderOutputTool, self).__init__(host)
 
   def initialize(self, **args):
 
-    self.args.add(name='projectname', label='project', type='str', value=args.get('projectname', None), enabled=False)
-    self.args.add(name="renderfolder", type="str", label="render folder", value="", enabled=True, expression="[a-zA-Z0-9_/]*")
-    self.args.add(name="rendername", type="str", label="render name", value=args.get('rendername', ""))
+    self.args.beginRow("Renderer")
+    self.args.addStaticText("Redshift")
+    self.args.endRow()
+    self.args.addSpacer(7)
+    self.args.add(name='projectname', label='project', type='str', enabled=False)
+    self.args.add(name="renderpath", type="folder", label="render path", value="", enabled=True, expression="[a-zA-Z0-9_/]*")
+    self.args.add(name="renderfolder", type="str", label="renderfolder(hidden)", value="", hidden=False)
+    self.args.add(name="rendername", type="str", label="render name", value="")
     self.args.beginRow("version")
-    self.args.add(name="version", label="", type="str", value=args.get('version', None), expression='[0-9]+[0-9]*')
+    self.args.add(name="version", label="", type="str", expression='[0-9]+[0-9]*')
     self.args.addButton("plusOne", "+1")
+    self.args.endRow()
+    self.args.addSpacer(5,1)
+    self.args.beginRow("camera")
+    self.args.add(name="changeCamera", label="", type="bool", value=False)
+    self.args.add(name="camera", label="", type="str", combo=[], enabled=False)
     self.args.endRow()
     self.args.beginRow('range')
     self.args.add(name="changeRange", label="", type="bool", value=False)
-    self.args.add(name="in", type="int", value=args.get('in', None), optional=True, enabled=False)
-    self.args.add(name="out", type="int", value=args.get('out', None), optional=True, enabled=False)
+    self.args.add(name="in", type="int", enabled=False)
+    self.args.add(name="out", type="int", enabled=False)
+    self.args.endRow()
+    self.args.beginRow("padding")
+    self.args.add(name="changePadding", label="", type="bool", value=False)
+    self.args.add(name="padding", label="", type="int", range=[1, 5], enabled=False)
+    self.args.endRow()
+    self.args.add(name="skipExisting", label="skip existing", type="bool", value=False)
+    self.args.beginRow("resolution")
+    self.args.add(name="changeResolution", label="", type="bool", value=False)
+    self.args.add(name="resX", label="X", type="int", enabled=False)
+    self.args.add(name="resY", label="Y", type="int", enabled=False)
     self.args.endRow()
 
   def preexecute(self, **args):
 
     db = self.host.apis['db']
+    maya = self.host.apis['maya']
+    cmds = maya.cmds
+    mel = maya.mel
 
-
-    if self.host.apis.has_key('maya'):
-      maya = self.host.apis['maya']
-      filePath = maya.cmds.file(q=True, sn=True)
+    
+    # ----
+    # get current scene data and set default values
+    # ----
+    self.__filepath = cmds.file(q=True, sn=True)
+    rangeIn = cmds.getAttr("defaultRenderGlobals.startFrame")
+    rangeOut = cmds.getAttr("defaultRenderGlobals.endFrame")
+    self.args.setValue("in", rangeIn)
+    self.args.setValue("out", rangeOut)
+    padding = cmds.getAttr("defaultRenderGlobals.extensionPadding")
+    if 1 <= padding <= 5:
+      self.args.setValue("padding", padding)
     else:
-      filePath = "E:/PROJECTS/BEI_Spiel/3D/asdf.ma"
-    filename = os.path.split(filePath)[1]
+      self.args.setValue("padding", 5)
+      self.args.setValue("changePadding", True)
+      self.args.get("padding").enabled = True
+    resolutionX = cmds.getAttr("defaultResolution.width")
+    resolutionY = cmds.getAttr("defaultResolution.height")
+    self.args.setValue("resX", resolutionX)
+    self.args.setValue("resY", resolutionY)
+    renderEngine = cmds.getAttr('defaultRenderGlobals.ren')
+    # ----
+
+
+    # check current render engine
+    if renderEngine == "redshift":
+      self.__isRedshift = True
+      try:
+        skipExisting = cmds.getAttr("redshiftOptions.skipExistingFrames")
+      except:
+        mel.eval('unifiedRenderGlobalsWindow;')
+        mel.eval('fillSelectedTabForCurrentRenderer;')
+        cmds.deleteUI("unifiedRenderGlobalsWindow")
+        skipExisting = cmds.getAttr("redshiftOptions.skipExistingFrames")
+      self.args.setValue("skipExisting", skipExisting)
+    else:
+      self.__isRedshift = False
 
 
     # check the project name
     # if it is not specified, set it based on the project
-    projectname = self.args.getValue('projectname')
-    if projectname is None:
-      project = None
-      try:
-        project = db.queryFromPath('Project', filePath)
-        if not project:
-          raise OPIException('The scene is not in a valid project!')
-      except:
-        raise OPIException('The current scene is not part of a project.')
-      projectname = project.name
-      self.args.setValue('projectname', projectname)
+    try:
+      project = db.queryFromPath('Project', self.__filepath)
+      if not project:
+        raise OPIException('The scene is not in a valid project!')
+    except:
+      raise OPIException('The current scene is not part of a project.')
+    projectname = project.name
+    self.args.setValue('projectname', projectname)
 
 
-    # check saved metaData
-    version = self.args.getValue('version')
-    renderfolder = self.args.getValue("renderfolder")
-    rendername = self.args.getValue("rendername")
-    if version is None:
-      version = self.metaData.get(projectname+'_version', '01')
-      self.args.setValue('version', version)
-    if renderfolder == "":
-      renderfolder = self.metaData.get(projectname+"_renderfolder", "")
-      self.args.setValue("renderfolder", renderfolder)
-    if rendername == "":
-      scenename = filename.rsplit("_", 1)[0]
-      rendername = self.metaData.get(projectname+"_rendername", scenename)
-      self.args.setValue("rendername", rendername)
+    # ----
+    # check and read saved renderOutputInfo
+    # ----
+    renderPrefix = str(cmds.getAttr("defaultRenderGlobals.imageFilePrefix"))
+    renderPrefix = renderPrefix.replace("/", "\\")
+    project = self.__getProject()
+    projectPath = db.getPath(project.location)
+    if len(renderPrefix) == 0:
+      renderpath = os.path.join(projectPath, "Render")
+      renderfolder = ""
+    else:
+      renderpath = os.path.split(renderPrefix)[0] # rip off filename
+      # check if folder at end is a versioning folder
+      renderpathTail = os.path.split(renderpath)[1]
+      if re.match("[vV]+[0-9][0-9]", renderpathTail):
+        self.__versionFromPrefix = renderpathTail[1:]
+        renderpath = os.path.split(renderpath)[0] # rip off versioning folder
+      else:
+        self.__versionFromPrefix = "01" # default
+      if renderPrefix[1] == ":":
+        renderfolder = renderpath.split("Render\\")[-1]
+        if renderpath == renderfolder:
+          renderfolder = ""
+      else:
+        renderfolder = renderpath
+        if len(renderpath) == 0:
+          renderpath = os.path.join(projectPath, "Render")
+        else:
+          renderpath = os.path.join(projectPath, "Render", renderpath)
 
 
+    self.args.setValue("renderpath", renderpath)
+    self.args.setValue("renderfolder", renderfolder)
+
+    self.__readJson()
+    # ----
+
+
+    # ----
+    # Get Scene Cameras and fill UI Combo box
+    # ----
+    cameraList = cmds.ls(cameras=True)
+    if "frontShape" in cameraList:
+      cameraList.remove("frontShape")
+    if "sideShape" in cameraList:
+      cameraList.remove("sideShape")
+    if "topShape" in cameraList:
+      cameraList.remove("topShape")
+    if "leftShape" in cameraList:
+      cameraList.remove("leftShape")
+    if len(cameraList) < 1:
+      raise OPIException("No renderable Camera found")
+
+    self.__cameraComboDict = {}
+    cameraDict = self.__cameraComboDict
+    renderableCams = 0
+    for cam in cameraList:
+      camName = cam.replace("Shape", "")
+      cameraDict[camName] = cam
+      if cmds.getAttr(cam + ".renderable") == 1:
+        renderableCam = camName
+        renderableCams += 1
+
+    sortedCameraKeys = sorted(cameraDict.keys())
+
+    if renderableCams == 1:
+      self.args.get("camera")._setCombo(sortedCameraKeys, renderableCam)
+    else:
+      self.args.setValue("changeCamera", True)
+      self.args.get("changeCamera").enabled = False
+      self.args.get("camera").enabled = True
+      self.args.get("camera")._setCombo(sortedCameraKeys, sortedCameraKeys[0])
+    # ----
+
+
+  def __getJsonPath(self):
+    db = self.host.apis['db']
+    
+    # # get from project:
+    # project = self.__getProject()
+    # projectPath = db.getPath(project.location)
+    # renderfolder = self.args.getValue("renderfolder")
+    # jsonPath = os.path.join(projectPath, "Render", renderfolder, "renderOutputInfo.json")
+
+    # get from renderpath:
+    renderpath = self.args.getValue("renderpath")
+    jsonPath = os.path.join(renderpath, "renderOutputInfo.json")
+
+    return jsonPath
 
   def __getProject(self):
     db = self.host.apis['db']
@@ -90,63 +215,111 @@ class SetRenderOutputTool(DataBaseTool):
       raise OPIException('Project "%s" does not exist.' % projectname)
     return project
 
+  def __readJson(self):
+    filename = os.path.split(self.__filepath)[1]
+    scenename = filename.rsplit(".", 1)[0]
+    scenename = scenename.rsplit("_v", 1)[0]
+    defaultVersion = self.__versionFromPrefix
+    jsonPath = self.__getJsonPath()
+    readJson = JsonObject(jsonPath)
+    version = readJson.get("version", defaultVersion)
+    rendername = readJson.get("rendername", scenename)
+    self.args.setValue('version', version)
+    self.args.setValue("rendername", rendername)
+
   def execute(self):
     print "heeeeellooooooo"
-    # self.executeMaya()
 
   def executeMaya (self):
 
+    db = self.host.apis['db']
+    maya = self.host.apis['maya']
+    cmds = maya.cmds
+    mel = maya.mel
+
+    # ----
+    # Get data from UI
+    # ----
     projectname = self.args.getValue('projectname')
+    renderpath = self.args.getValue('renderpath')
     renderfolder = self.args.getValue('renderfolder')
     rendername = self.args.getValue('rendername')
     version = self.args.getValue('version')
     version = version.rjust(2, '0')
+    changeCamera = self.args.getValue("changeCamera")
+    camera = self.args.getValue("camera")
+    changeRange = self.args.getValue("changeRange")
     startFrame = self.args.getValue('in')
     endFrame = self.args.getValue('out')
+    changePadding = self.args.getValue("changePadding")
+    padding = self.args.getValue('padding')
+    changeResolution = self.args.getValue("changeResolution")
+    resX = self.args.getValue("resX")
+    resY = self.args.getValue("resY")
+    skipExisting = self.args.getValue("skipExisting")
+    # ----
 
-    db = self.host.apis['db']
-    maya = self.host.apis['maya']
 
-  #   # todo: inspect render setup
-  #   # set renderer to redshift (maybe in defaults?)
-  #   # set image format to exr
-  #   # set file prefix accordingly (so that we end up as Render/name/version/aovname)
-
-
+    # Create Render Folder
     project = self.__getProject()
     render = db.getOrCreateNew('Render', project=project, name=renderfolder, version=int(version))
     
-    # try:
-    #   rs = maya.app.renderSetup.model.renderSetup.instance()
-    # except:
-    #   raise OPIException('Legacy Render Layers are currently NOT supported')
 
+    # ----
+    # Set Render Output Settings
+    # ----
+    if not self.__isRedshift:
+      cmds.setAttr('defaultRenderGlobals.ren', 'redshift', type='string')
+      mel.eval('unifiedRenderGlobalsWindow;')
+      mel.eval('fillSelectedTabForCurrentRenderer;')
+      # cmds.deleteUI("unifiedRenderGlobalsWindow")
+        
     renderfile = rendername + "_<renderlayer>_V" + str(version)
-    renderPrefix = os.path.join(renderfolder, "V" + version, renderfile)
-    print "renderPrefix: " + renderPrefix
+    renderPrefix = os.path.join(renderpath, "V" + version, renderfile)
+    # mel.eval('fillSelectedTabForCurrentRenderer;')
+    cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
+    cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
+    cmds.setAttr("redshiftOptions.imageFormat", 1) # 1 = exr
+    cmds.setAttr("defaultRenderGlobals.animation", True)
+    cmds.setAttr("defaultRenderGlobals.useMayaFileName", False)
+    cmds.setAttr("defaultRenderGlobals.putFrameBeforeExt", True)
+    cmds.setAttr("defaultRenderGlobals.periodInExt", True)
+    cmds.setAttr("redshiftOptions.skipExistingFrames", skipExisting)
 
-    maya.cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
-    maya.cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
-    maya.cmds.setAttr("redshiftOptions.imageFormat", 1) # 1 = exr
-    maya.cmds.setAttr("defaultRenderGlobals.animation", True)
-    maya.cmds.setAttr("defaultRenderGlobals.extensionPadding", 5)
-    maya.cmds.setAttr("defaultRenderGlobals.useMayaFileName", False)
-    maya.cmds.setAttr("defaultRenderGlobals.putFrameBeforeExt", True)
-    maya.cmds.setAttr("defaultRenderGlobals.periodInExt", True)
+    if changeRange:
+      cmds.setAttr("defaultRenderGlobals.startFrame", int(startFrame))
+      cmds.setAttr("defaultRenderGlobals.endFrame", int(endFrame))
 
-    if self.args.getValue("changeRange") == True:
-      maya.cmds.setAttr("defaultRenderGlobals.startFrame", int(startFrame))
-      maya.cmds.setAttr("defaultRenderGlobals.endFrame", int(endFrame))
+    if changePadding:
+      cmds.setAttr("defaultRenderGlobals.extensionPadding", int(padding))
 
-    # store the metadata for the next run
-    setattr(self.metaData, projectname+'_version', version)
-    setattr(self.metaData, projectname+"_renderfolder", renderfolder)
-    setattr(self.metaData, projectname+"_rendername", rendername)
-  #   # layers = rs.getRenderLayers()
-  #   # print len(layers)
+    if changeResolution:
+      cmds.setAttr("defaultResolution.width", int(resX))
+      cmds.setAttr("defaultResolution.height", int(resY))
 
-  #   # for layer in layers:
-  #   #     print layer.name()
+    # Set renderable Camera
+    if changeCamera:
+      cmds.setAttr("frontShape.renderable", 0)
+      cmds.setAttr("sideShape.renderable", 0)
+      cmds.setAttr("topShape.renderable", 0)
+
+      cameraDict = self.__cameraComboDict
+      cameraShape = cameraDict[camera]
+      for cam in cameraDict.keys():
+        shape = cameraDict[cam]
+        if shape != cameraShape:
+          cmds.setAttr(shape + ".renderable", 0)
+        else:
+          cmds.setAttr(shape + ".renderable", 1)
+    # ----
+
+
+    # save render output info to json
+    jsonPath = self.__getJsonPath()
+    saveJson = JsonObject(jsonPath)
+    saveJson.version = version
+    saveJson.rendername = rendername
+    saveJson.write()
 
 
 
@@ -168,41 +341,20 @@ class SetRenderOutputTool(DataBaseTool):
     elif arg.name == "out":
       if arg.value < self.args.getValue("in"):
         self.args.setValue("in", arg.value)
+    elif arg.name == "changeResolution":
+      self.args.get("resX").enabled = arg.value
+      self.args.get("resY").enabled = arg.value
+    elif arg.name == "changeCamera":
+      self.args.get("camera").enabled = arg.value
+    elif arg.name == "changePadding":
+      self.args.get("padding").enabled = arg.value
+    elif arg.name == "renderpath":
+      renderpath = arg.value.replace("/", "\\")
+      renderfolder = renderpath.split("Render\\")[-1]
+      if renderpath == renderfolder:
+        renderfolder = ""
+      self.args.setValue("renderfolder", renderfolder)
+      self.__readJson()
 
 
-
-
-
-
-
-# ------------------------------------------
-##### Launch Tool directly in python 
-# ------------------------------------------
-
-
-if __name__ == '__main__':
-
-  import os
-  import opi
-  from opi.client.database import DataBase as OpiDB 
-  from opi.tools.host import Host as OPIHost
-  from opi.tools.workshop import WorkShop as OPIWorkShop
-  from opi.ui.Qt import QtWidgets, QtCore
-
-  path = os.path.split(os.path.abspath(__file__))[0]
-  path = os.path.split(path)[0]
-  path = os.path.split(path)[0]
-  path = os.path.split(path)[0]
-  dbRoot = "e:\\PROJECTS"
-  
-  templateRoot =  os.path.join(path, 'OPI_Tools', 'templates')
-  toolRoot =  os.path.join(path, 'OPI_Tools', 'tools')
-
-  db = OpiDB(dbRoot, templateRoot=templateRoot, rootSubFolders=['BEI_Spiel'])
-
-  host = OPIHost('python', {'db': db, 'QtWidgets': QtWidgets, 'QtCore': QtCore})
-  workshop = OPIWorkShop(host, toolRoot)
-
-  tool = workshop.instantiate(cmd='setrenderoutput')
-  tool.invokeWithUI()
 
