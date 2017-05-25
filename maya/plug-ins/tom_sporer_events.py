@@ -41,19 +41,38 @@ def checkForRenderSetupMismatch():
   except:
     renderSetupLayers = []
 
+  cleanUp = False
   if prefRenderSetup == 1:
     if len(renderLayers) > len(renderSetupLayers):
-      renderSetupWarning(1)
+      if renderSetupWarning(1) == "Clean up":
+        dialogMsg = "Delete the following legacy render layer(s)?\n"
+        for renderSetupLayer in renderSetupLayers:
+          renderLayers.remove("rs_" + renderSetupLayer) 
+        for renderLayer in renderLayers:
+          dialogMsg += "\n" + renderLayer
+        cleanUp = True
   else:
     if len(renderSetupLayers) > 0:
       renderSetupWarning(0)
+      # Todo: Implement clean up dialog to delete obsolete render setup layers.
+      #       Currently (in Maya 2017 Update 3) there's a bug that crashes the render setup window
+      #       when trying to delete layers with a script
+      
+  if cleanUp:
+    dialog = cmds.confirmDialog(title="Delete Layers", message=dialogMsg, button=["Delete", "Cancel"], cancelButton="Cancel", dismissString="Cancel", icon="question")
+    if dialog == "Delete":
+      for renderlayer in renderLayers:
+        cmds.delete(renderLayer)
+
 
 def renderSetupWarning(prefRenderSetup):
   if prefRenderSetup == 1:
     dialogMsg = "Warning: This file contains legacy render layers and Maya is currently in Render Setup mode."
+    dialog = cmds.confirmDialog(title="Render Setup Mismatch", message=dialogMsg, button=["Clean up", "Ok"], cancelButton="Ok", dismissString="Ok", icon="warning")
   else:
     dialogMsg = "Warning: This file contains render setup nodes and Maya is currently in Legacy Render Layers mode."
-  dialog = cmds.confirmDialog(title="Render Setup Mismatch", message=dialogMsg, button="That's too bad", cancelButton="That's too bad", dismissString="That's too bad", icon="warning")
+    dialog = cmds.confirmDialog(title="Render Setup Mismatch", message=dialogMsg, button="Ok", cancelButton="Ok", dismissString="Ok", icon="warning")
+  return dialog
 
 def onSceneLoad(userdata):
   onSceneDefaults(userdata)
