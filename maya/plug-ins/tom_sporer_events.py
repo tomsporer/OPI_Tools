@@ -55,8 +55,9 @@ def checkForRenderSetupMismatch():
     if len(renderSetupLayers) > 0:
       renderSetupWarning(0)
       # Todo: Implement clean up dialog to delete obsolete render setup layers.
-      #       Currently (in Maya 2017 Update 3) there's a bug that crashes the render setup window
-      #       when trying to delete layers with a script
+      #       Note: Currently (in Maya 2017 Update 3) deleting render setup layers 
+      #       while being in render setup mode and having the render layer editor open
+      #       crashes the editor window.
       
   if cleanUp:
     dialog = cmds.confirmDialog(title="Delete Layers", message=dialogMsg, button=["Delete", "Cancel"], cancelButton="Cancel", dismissString="Cancel", icon="question")
@@ -82,6 +83,17 @@ def onSceneLoad(userdata):
 def onSceneSave(userdata):
   setProjectPath()
 
+def beforeSceneSave(userdata):
+  prefRenderSetup = cmds.optionVar(q="renderSetupEnable")
+  # 1 = New Render Setup
+  # 0 = Legacy Render Layers
+  if prefRenderSetup == 1:
+    try:
+      cmds.editRenderLayerGlobals( currentRenderLayer="defaultRenderLayer" )
+      print "# INFO: set 'defaultRenderLayer' as current render layer before saving the scene"
+    except:
+      print "# WARNING: FAILED to set 'defaultRenderLayer' as current render layer before saving the scene!"
+  
 def initializePlugin(mobject):
   mplugin = maya.OpenMayaMPx.MFnPlugin(mobject)
 
@@ -103,6 +115,12 @@ def initializePlugin(mobject):
     sys.stderr.write('Failed to register kAfterSave callback.')
     raise
 
+  try:
+    globals()['ts_gBeforeSceneSaveCallbackId'] = maya.OpenMaya.MSceneMessage.addCallback(maya.OpenMaya.MSceneMessage.kBeforeSave, beforeSceneSave);
+  except Exception as e:
+    sys.stderr.write('Failed to register kBeforeSave callback.')
+    raise
+
 def uninitializePlugin(mobject):
   mplugin = maya.OpenMayaMPx.MFnPlugin(mobject)
 
@@ -122,4 +140,10 @@ def uninitializePlugin(mobject):
     maya.OpenMaya.MSceneMessage.removeCallback(globals()['ts_gOnSceneSaveCallbackId'])
   except:
     sys.stderr.write('Failed to remove kAfterSave callback.')
+    raise
+
+  try:
+    maya.OpenMaya.MSceneMessage.removeCallback(globals()['ts_gBeforeSceneSaveCallbackId'])
+  except:
+    sys.stderr.write('Failed to remove kBeforeSave callback.')
     raise
