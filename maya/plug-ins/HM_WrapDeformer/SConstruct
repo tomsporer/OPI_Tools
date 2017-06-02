@@ -1,0 +1,13 @@
+import os
+
+env = Environment(MSVC='12.0')
+
+mayaPath = r"C:\Program Files\Autodesk\Maya2017"
+
+env.Append(CPPPATH = [os.path.join(mayaPath, 'include')])
+env.Append(LIBPATH = [os.path.join(mayaPath, 'lib')])
+env.Append(LIBS = ['OpenMaya', 'OpenMayaAnim', 'OpenMayaUI', 'OpenMayaRender', 'Foundation'])
+
+lib = env.SharedLibrary('HM_WrapDeformer', env.File('plugin.cpp'), SHLIBSUFFIX='.mll', SHLIBPREFIX='')
+installedLib = env.Install(env.Dir('#').Dir('..'), lib)
+env.Default(installedLib)

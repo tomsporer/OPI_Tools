@@ -1,0 +1,4 @@
+*.exp
+*.obj
+*.lib
+*.dblite
