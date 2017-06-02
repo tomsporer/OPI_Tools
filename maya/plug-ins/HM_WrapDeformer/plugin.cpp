@@ -58,6 +58,7 @@ public:
   static MObject vMax;
   static MObject uOffset;
   static MObject vOffset;
+  static MObject zOffset;
   static MObject uScale;
   static MObject vScale;
   static MObject zScale;
@@ -78,6 +79,7 @@ MObject HM_WrapDeformer::uMax;
 MObject HM_WrapDeformer::vMax;
 MObject HM_WrapDeformer::uOffset;
 MObject HM_WrapDeformer::vOffset;
+MObject HM_WrapDeformer::zOffset;
 MObject HM_WrapDeformer::uScale;
 MObject HM_WrapDeformer::vScale;
 MObject HM_WrapDeformer::zScale;
@@ -135,6 +137,11 @@ MStatus HM_WrapDeformer::initialize()
   nAttr.setConnectable(true);
   nAttr.setWritable(true);
   nAttr.setReadable(true);
+  zOffset = nAttr.create("zOffset", "zOffset",  MFnNumericData::kDouble, 0.0);
+  nAttr.setStorable(true);
+  nAttr.setConnectable(true);
+  nAttr.setWritable(true);
+  nAttr.setReadable(true);
   uScale = nAttr.create("uScale", "uScale",  MFnNumericData::kDouble, 1.0);
   nAttr.setStorable(true);
   nAttr.setConnectable(true);
@@ -163,6 +170,7 @@ MStatus HM_WrapDeformer::initialize()
   addAttribute(vMax);
   addAttribute(uOffset);
   addAttribute(vOffset);
+  addAttribute(zOffset);
   addAttribute(uScale);
   addAttribute(vScale);
   addAttribute(zScale);
@@ -175,6 +183,7 @@ MStatus HM_WrapDeformer::initialize()
   attributeAffects(HM_WrapDeformer::vMax, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::uOffset, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::vOffset, HM_WrapDeformer::outputGeom);
+  attributeAffects(HM_WrapDeformer::zOffset, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::uScale, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::vScale, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::zScale, HM_WrapDeformer::outputGeom);
@@ -228,6 +237,7 @@ HM_WrapDeformer::deform( MDataBlock& block,
   double vCenterValue = 0.5;
   double uOffsetValue = block.inputValue(uOffset).asDouble();
   double vOffsetValue = block.inputValue(vOffset).asDouble();
+  double zOffsetValue = block.inputValue(zOffset).asDouble();
   double uScaleValue = block.inputValue(uScale).asDouble();
   double vScaleValue = block.inputValue(vScale).asDouble();
   double zScaleValue = block.inputValue(zScale).asDouble();
@@ -264,7 +274,7 @@ HM_WrapDeformer::deform( MDataBlock& block,
 
     if(targetSurfaceFn.getPointAtParam(u, v, pt) != MS::kSuccess)
       continue;
-    pt += targetSurfaceFn.normal(u, v) * z * zScaleValue;
+    pt += targetSurfaceFn.normal(u, v) * (z * zScaleValue + zOffsetValue);
 
     pt = oriPt * (1.0 - env) + pt * env;
     iter.setPosition(pt);
