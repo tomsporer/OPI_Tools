@@ -47,7 +47,7 @@ def checkForRenderSetupMismatch():
       if renderSetupWarning(1) == "Clean up":
         dialogMsg = "Delete the following legacy render layer(s)?\n"
         for renderSetupLayer in renderSetupLayers:
-          renderLayers.remove("rs_" + renderSetupLayer) 
+          renderLayers.remove("rs_" + renderSetupLayer)
         for renderLayer in renderLayers:
           dialogMsg += "\n" + renderLayer
         cleanUp = True
@@ -62,7 +62,7 @@ def checkForRenderSetupMismatch():
   if cleanUp:
     dialog = cmds.confirmDialog(title="Delete Layers", message=dialogMsg, button=["Delete", "Cancel"], cancelButton="Cancel", dismissString="Cancel", icon="question")
     if dialog == "Delete":
-      for renderlayer in renderLayers:
+      for renderLayer in renderLayers:
         cmds.delete(renderLayer)
 
 
