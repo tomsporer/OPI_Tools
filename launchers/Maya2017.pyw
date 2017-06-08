@@ -30,9 +30,10 @@ cfgPath = os.path.join(launchersPath, 'configs', 'maya.cfg')
 
 # find the maya executable
 # first connect to the registry and get a specific key
+import _winreg
 from _winreg import ConnectRegistry, OpenKey, EnumKey, QueryValueEx, HKEY_LOCAL_MACHINE
 registry = ConnectRegistry(None, HKEY_LOCAL_MACHINE)
-key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2017\\Setup\\InstallPath")
+key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2017\\Setup\\InstallPath", 0, (_winreg.KEY_WOW64_64KEY + _winreg.KEY_READ))
 value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 
 # setup options for running maya in batch mode
