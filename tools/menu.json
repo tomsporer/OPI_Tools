@@ -5,6 +5,8 @@
     { "type": "menu", "folder": "Rendering" },
     { "type": "menu", "folder": "Save_and_Load" },
     { "type": "separator" },
+    { "type": "menu", "folder": "Rigging" },
+    { "type": "separator" },
     { "type": "menu", "folder": "Sekt" },
   	{ "type": "tool", "module": "RefreshOpiDbTool.py"}
   ]
