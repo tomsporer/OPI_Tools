@@ -68,7 +68,7 @@ public:
 private:
 };
 
-MTypeId HM_WrapDeformer::id( 0x8000c );
+MTypeId HM_WrapDeformer::id( 0x0011AF3F );
 
 // local attributes
 //
