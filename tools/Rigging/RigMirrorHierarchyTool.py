@@ -44,7 +44,10 @@ class RigMirrorHierarchyTool(Tool):
 
     expr = re.compile('^([a-zA-Z0-9]+)_([a-zA-Z0-9_]+)_([a-zA-Z0-9]+)$')
 
-    objects = self.args.getValue('objects').split(',')
+    objects = self.args.getValue('objects')
+    if not objects:
+      return
+    objects = objects.split(',')
     objects = sorted(objects)
 
     roles = self.args.getValue('roles').split(',')

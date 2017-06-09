@@ -42,7 +42,10 @@ class RigRenameTool(Tool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
-    objects = self.args.getValue('objects').split(',')
+    objects = self.args.getValue('objects')
+    if not objects:
+      return
+    objects = objects.split(',')
 
     side = self.args.getValue('side')
     name = self.args.getValue('name')

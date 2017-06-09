@@ -46,7 +46,10 @@ class RigMirrorTransformComponentTool(Tool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
-    objects = self.args.getValue('objects').split(',')
+    objects = self.args.getValue('objects')
+    if not objects:
+      return
+    objects = objects.split(',')
 
     options = {
       'translateX': self.args.getValue('translateX'),

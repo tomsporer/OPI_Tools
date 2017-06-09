@@ -39,7 +39,11 @@ class RigSetDisplayColorTool(Tool):
   def execute(self):
     pm = self.host.apis['pymel'].core
 
-    objects = self.args.getValue('objects').split(',')
+    objects = self.args.getValue('objects')
+    if not objects:
+      return
+    objects = objects.split(',')
+
     r = self.args.getValue('r')
     g = self.args.getValue('g')
     b = self.args.getValue('b')

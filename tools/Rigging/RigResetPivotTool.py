@@ -41,7 +41,10 @@ class RigResetPivotTool(Tool):
 
     radToDeg = 57.29577951308232
 
-    objects = self.args.getValue('objects').split(',')
+    objects = self.args.getValue('objects')
+    if not objects:
+      return
+    objects = objects.split(',')
     objects = reversed(sorted(objects))
 
     for o in objects:
