@@ -13,7 +13,7 @@ from opi.common.opiexception import OPIException
 class RigInjectSpaceTool(Tool):
 
   ToolName = 'RigInjectSpace'
-  ToolLabel = 'Inject Space'
+  ToolLabel = 'Inject / Update Space'
   ToolCommand = 'riginjectspace'
   ToolDescription = 'Inject Space'
   ToolTooltip = 'Inject Space'
@@ -24,6 +24,7 @@ class RigInjectSpaceTool(Tool):
 
   def initialize(self, **args):
     self.args.add(name="objects", type="str", value=args.get('objects', None), hidden=True)
+    self.args.add(name="updateExisting", type="bool", value=args.get('updateExisting', True))
 
   def preexecute(self, **args):
     maya = self.host.apis['maya']
@@ -49,6 +50,8 @@ class RigInjectSpaceTool(Tool):
     objects = objects.split(',')
     objects = reversed(sorted(objects))
 
+    updateExisting = self.args.getValue('updateExisting')
+
     for o in objects:
       sel = om.MSelectionList()
       sel.add(o)
@@ -72,6 +75,26 @@ class RigInjectSpaceTool(Tool):
       name = m.group(2)
       role = m.group(3)
 
+      if parent and updateExisting:
+
+        # check if we already have a spacer here... if so let's update it
+        if parent.rpartition('|')[2] == '%s_%s_SPACE' % (side, name):
+          groupTransformObj = parentDagPath.transform()
+          groupTransform = om.MFnTransform(groupTransformObj)
+
+          m = om.MTransformationMatrix(dagPath.inclusiveMatrix())
+
+          # localize the matrix into the space of the parent
+          parentDagPath = parentDagPath.pop()
+          if parentDagPath.isValid():
+            parentM = parentDagPath.inclusiveMatrixInverse()
+            m = om.MTransformationMatrix(m.asMatrix() * parentM)
+
+          groupTransform.setTransformation(m)
+          transform.setTransformation(om.MTransformationMatrix(om.MMatrix().setToIdentity()))
+          return
+
+      # the code below creates a new group
       if role == 'SPACE':
         newName = '%s_%sSpace_SPACE' % (side, name)
       else:
