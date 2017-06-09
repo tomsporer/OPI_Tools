@@ -35,7 +35,7 @@ class RigRenameTool(Tool):
 
     objects = args.get('objects', None)
     if objects is None:
-      objects = ','.join(cmds.ls(sl=True))
+      objects = ','.join(cmds.ls(sl=True, l=True))
       self.args.setValue('objects', objects)
 
   def execute(self):

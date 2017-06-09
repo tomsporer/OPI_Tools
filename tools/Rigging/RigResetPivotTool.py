@@ -20,10 +20,10 @@ class RigResetPivotTool(Tool):
 
   def __init__(self, host):
     super (RigResetPivotTool, self).__init__(host)
-    self._noUI = True
 
   def initialize(self, **args):
     self.args.add(name="objects", type="str", value=args.get('objects', None), hidden=True)
+    self.args.add(name="updateTransform", type="bool", value=args.get('updateTransform', True))
 
   def preexecute(self, **args):
     maya = self.host.apis['maya']
@@ -31,7 +31,7 @@ class RigResetPivotTool(Tool):
 
     objects = args.get('objects', None)
     if objects is None:
-      objects = ','.join(cmds.ls(sl=True))
+      objects = ','.join(cmds.ls(sl=True, l=True))
       self.args.setValue('objects', objects)
 
   def execute(self):
@@ -46,6 +46,8 @@ class RigResetPivotTool(Tool):
       return
     objects = objects.split(',')
     objects = reversed(sorted(objects))
+
+    updateTransform = self.args.getValue('updateTransform')
 
     for o in objects:
       sel = om.MSelectionList()
@@ -73,12 +75,13 @@ class RigResetPivotTool(Tool):
       transform.setRotatePivot(om.MPoint(0, 0, 0, 1), om.MSpace.kTransform, True)
       transform.setScalePivot(om.MPoint(0, 0, 0, 1), om.MSpace.kTransform, True)
 
-      cmds.setAttr("%s.translateX" % o, m.translation(om.MSpace.kTransform).x)
-      cmds.setAttr("%s.translateY" % o, m.translation(om.MSpace.kTransform).y)
-      cmds.setAttr("%s.translateZ" % o, m.translation(om.MSpace.kTransform).z)
-      cmds.setAttr("%s.rotateX" % o, m.rotation(asQuaternion=False).x * radToDeg)
-      cmds.setAttr("%s.rotateY" % o, m.rotation(asQuaternion=False).y * radToDeg)
-      cmds.setAttr("%s.rotateZ" % o, m.rotation(asQuaternion=False).z * radToDeg)
-      cmds.setAttr("%s.scaleX" % o, m.scale(om.MSpace.kTransform)[0])
-      cmds.setAttr("%s.scaleY" % o, m.scale(om.MSpace.kTransform)[1])
-      cmds.setAttr("%s.scaleZ" % o, m.scale(om.MSpace.kTransform)[2])
+      if updateTransform:
+        cmds.setAttr("%s.translateX" % o, m.translation(om.MSpace.kTransform).x)
+        cmds.setAttr("%s.translateY" % o, m.translation(om.MSpace.kTransform).y)
+        cmds.setAttr("%s.translateZ" % o, m.translation(om.MSpace.kTransform).z)
+        cmds.setAttr("%s.rotateX" % o, m.rotation(asQuaternion=False).x * radToDeg)
+        cmds.setAttr("%s.rotateY" % o, m.rotation(asQuaternion=False).y * radToDeg)
+        cmds.setAttr("%s.rotateZ" % o, m.rotation(asQuaternion=False).z * radToDeg)
+        cmds.setAttr("%s.scaleX" % o, m.scale(om.MSpace.kTransform)[0])
+        cmds.setAttr("%s.scaleY" % o, m.scale(om.MSpace.kTransform)[1])
+        cmds.setAttr("%s.scaleZ" % o, m.scale(om.MSpace.kTransform)[2])

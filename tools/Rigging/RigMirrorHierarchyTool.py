@@ -20,11 +20,11 @@ class RigMirrorHierarchyTool(Tool):
 
   def __init__(self, host):
     super (RigMirrorHierarchyTool, self).__init__(host)
-    self._noUI = True
 
   def initialize(self, **args):
     self.args.add(name="objects", type="str", value=args.get('objects', None), hidden=True)
-    self.args.add(name="roles", type="str", value=args.get('roles', 'SPACE,PAR'), hidden=True)
+    self.args.add(name="roles", type="str", value=args.get('roles', 'SPACE,PAR'))
+    self.args.add(name="rotation", type="bool", value=args.get('rotation', True))
 
   def preexecute(self, **args):
     maya = self.host.apis['maya']
@@ -32,7 +32,7 @@ class RigMirrorHierarchyTool(Tool):
 
     objects = args.get('objects', None)
     if objects is None:
-      objects = ','.join(cmds.ls(sl=True))
+      objects = ','.join(cmds.ls(sl=True, l=True))
       self.args.setValue('objects', objects)
 
   def execute(self):
@@ -51,6 +51,22 @@ class RigMirrorHierarchyTool(Tool):
     objects = sorted(objects)
 
     roles = self.args.getValue('roles').split(',')
+    rotation = self.args.getValue('rotation')
+
+    matrices = {}
+    for o in objects:
+      sel = om.MSelectionList()
+      sel.add(o)
+
+      dagPath = sel.getDagPath(0)
+      parentDagPath = om.MDagPath(dagPath)
+      parentDagPath = parentDagPath.pop()
+
+      transformObj = dagPath.transform()
+      transform = om.MFnTransform(transformObj)
+
+      m = om.MTransformationMatrix(dagPath.inclusiveMatrix())
+      matrices[o] = m
 
     for o in objects:
       sel = om.MSelectionList()
@@ -76,7 +92,7 @@ class RigMirrorHierarchyTool(Tool):
 
       print 'Mirroring %s' % o
 
-      m = om.MTransformationMatrix(dagPath.inclusiveMatrix())
+      m = om.MTransformationMatrix(matrices[o])
       tr = m.translation(om.MSpace.kTransform)
       sc = m.scale(om.MSpace.kTransform)
 
@@ -101,14 +117,21 @@ class RigMirrorHierarchyTool(Tool):
       oriM.setElement(2, 1, oriZ.y)
       oriM.setElement(2, 2, oriZ.z)
 
-      m = om.MTransformationMatrix(oriM)
+      if rotation:
+        m = om.MTransformationMatrix(oriM)
+      else:
+        m = om.MTransformationMatrix(m)
+        
       m.setTranslation(tr, om.MSpace.kTransform)
       m.setScale(sc, om.MSpace.kTransform)
 
+      matrices[o] = om.MTransformationMatrix(m)
+
       if parentDagPath.isValid():
-        parentM = parentDagPath.inclusiveMatrixInverse()
+        parentM = parentDagPath.inclusiveMatrix().inverse()
         m = om.MTransformationMatrix(m.asMatrix() * parentM)
 
+      # transform.setTransformation(m)
       cmds.setAttr("%s.translateX" % o, m.translation(om.MSpace.kTransform).x)
       cmds.setAttr("%s.translateY" % o, m.translation(om.MSpace.kTransform).y)
       cmds.setAttr("%s.translateZ" % o, m.translation(om.MSpace.kTransform).z)

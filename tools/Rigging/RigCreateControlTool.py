@@ -26,7 +26,7 @@ class RigCreateControlTool(Tool):
     self.args.add(name="parent", type="str", value=args.get('parent', None), hidden=True)
     self.args.add(name="side", type="str", value=args.get('side', None), combo=['L', 'M', 'R'])
     self.args.add(name="name", type="str", value=args.get('name', 'control'))
-    self.args.add(name="type", type="str", value=args.get('type', 'square'), combo=['square', 'circle', 'diamond', 'pyramid', 'arrows', 'switch'])
+    self.args.add(name="type", type="str", value=args.get('type', 'square'), combo=['square', 'circle', 'cube', 'sphere', 'diamond', 'pyramid', 'arrow', '2 arrows', '3 arrows', '4 arrows'])
     self.args.add(name="resolution", type="int", value=args.get('resolution', 16))
     self.args.add(name="scale", type="float", value=args.get('scale', 1), range=[0.1, 8])
     self.results.add(name='curve', type='str')
@@ -87,6 +87,37 @@ class RigCreateControlTool(Tool):
         v = om.MVector(1, 0, 0).rotateBy(q)
         points.append([v.x, v.y, v.z])
 
+    elif controlType == 'cube':
+      points.append([-1, -1, -1])
+      points.append([-1, -1,  1])
+      points.append([-1,  1,  1])
+      points.append([ 1,  1,  1])
+      points.append([ 1, -1,  1])
+      points.append([ 1, -1, -1])
+      points.append([ 1,  1, -1])
+      points.append([-1,  1, -1])
+      points.append([-1,  1,  1])
+      points.append([-1, -1,  1])
+      points.append([ 1, -1,  1])
+      points.append([ 1, -1, -1])
+      points.append([-1, -1, -1])
+      points.append([-1,  1, -1])
+      points.append([ 1,  1, -1])
+      points.append([ 1,  1,  1])
+      closed = False
+
+    elif controlType == 'sphere':
+      if resolution < 5:
+        resolution = 5
+      for i in range(resolution):
+        q = om.MQuaternion(pi * float(i * 2) / float(resolution), om.MVector(0, 1, 0))
+        v = om.MVector(1, 0, 0).rotateBy(q)
+        points.append([v.x, v.y, v.z])
+      for i in range(resolution):
+        q = om.MQuaternion(pi * float(i * 2) / float(resolution), om.MVector(0, 0, 1))
+        v = om.MVector(1, 0, 0).rotateBy(q)
+        points.append([v.x, v.y, v.z])
+
     elif controlType == 'diamond':
       points.append([1, 0, -1])
       points.append([-1, 0, -1])
@@ -115,6 +146,74 @@ class RigCreateControlTool(Tool):
       points.append([1, 0, 1])
       points.append([1, 0, -1])
       points.append([-1, 0, 1])
+
+    elif controlType == 'arrow':
+      points.append([-1, 0, -0.5])
+      points.append([-1, 0, 0.5])
+      points.append([0, 0, 0.5])
+      points.append([0, 0, 1.0])
+      points.append([1.0, 0, 0.0])
+      points.append([0, 0, -1.0])
+      points.append([0, 0, -0.5])
+
+    elif controlType == '2 arrows':
+      points.append([-0.5, 0, 0.5])
+      points.append([0.5, 0, 0.5])
+      points.append([0.5, 0, 1.0])
+      points.append([1.5, 0, 0.0])
+      points.append([0.5, 0, -1.0])
+      points.append([0.5, 0, -0.5])
+      points.append([-0.5, 0, -0.5])
+      points.append([-0.5, 0, -1.0])
+      points.append([-1.5, 0, 0.0])
+      points.append([-0.5, 0, 1.0])
+
+    elif controlType == '3 arrows':
+      points.append([-1.5, 0, 0.5])
+      points.append([-0.5, 0, 0.5])
+      points.append([-0.5, 0, 1.5])
+      points.append([-1.0, 0, 1.5])
+      points.append([0.0, 0, 2.5])
+      points.append([1.0, 0, 1.5])
+      points.append([0.5, 0, 1.5])
+      points.append([0.5, 0, 0.5])
+      points.append([1.5, 0, 0.5])
+      points.append([1.5, 0, 1.0])
+      points.append([2.5, 0, 0.0])
+      points.append([1.5, 0, -1.0])
+      points.append([1.5, 0, -0.5])
+      points.append([0.5, 0, -0.5])
+      points.append([-0.5, 0, -0.5])
+      points.append([-1.5, 0, -0.5])
+      points.append([-1.5, 0, -1.0])
+      points.append([-2.5, 0, 0.0])
+      points.append([-1.5, 0, 1.0])
+
+    elif controlType == '4 arrows':
+      points.append([-1.5, 0, 0.5])
+      points.append([-0.5, 0, 0.5])
+      points.append([-0.5, 0, 1.5])
+      points.append([-1.0, 0, 1.5])
+      points.append([0.0, 0, 2.5])
+      points.append([1.0, 0, 1.5])
+      points.append([0.5, 0, 1.5])
+      points.append([0.5, 0, 0.5])
+      points.append([1.5, 0, 0.5])
+      points.append([1.5, 0, 1.0])
+      points.append([2.5, 0, 0.0])
+      points.append([1.5, 0, -1.0])
+      points.append([1.5, 0, -0.5])
+      points.append([0.5, 0, -0.5])
+      points.append([0.5, 0, -1.5])
+      points.append([1.0, 0, -1.5])
+      points.append([0.0, 0, -2.5])
+      points.append([-1.0, 0, -1.5])
+      points.append([-0.5, 0, -1.5])
+      points.append([-0.5, 0, -0.5])
+      points.append([-1.5, 0, -0.5])
+      points.append([-1.5, 0, -1.0])
+      points.append([-2.5, 0, 0.0])
+      points.append([-1.5, 0, 1.0])
 
     if len(points) == 0:
       self.logError('No points for control type %s' % controlType)
