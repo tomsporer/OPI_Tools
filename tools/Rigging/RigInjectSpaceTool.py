@@ -92,7 +92,7 @@ class RigInjectSpaceTool(Tool):
 
           groupTransform.setTransformation(m)
           transform.setTransformation(om.MTransformationMatrix(om.MMatrix().setToIdentity()))
-          return
+          continue
 
       # the code below creates a new group
       if role == 'SPACE':
