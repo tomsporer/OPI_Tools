@@ -9,6 +9,7 @@
 
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
+#include <maya/MFnMatrixAttribute.h>
 
 #include <maya/MFnPlugin.h>
 #include <maya/MFnDependencyNode.h>
@@ -52,6 +53,7 @@ public:
 
   // local node attributes
   static MObject targetSurface;
+  static MObject worldReference;
   static MObject uMin;
   static MObject vMin;
   static MObject uMax;
@@ -73,6 +75,7 @@ MTypeId HM_WrapDeformer::id( 0x0011AF3F );
 // local attributes
 //
 MObject HM_WrapDeformer::targetSurface;
+MObject HM_WrapDeformer::worldReference;
 MObject HM_WrapDeformer::uMin;
 MObject HM_WrapDeformer::vMin;
 MObject HM_WrapDeformer::uMax;
@@ -100,12 +103,19 @@ MStatus HM_WrapDeformer::initialize()
 
   MFnNumericAttribute nAttr;
   MFnTypedAttribute tAttr;
+  MFnMatrixAttribute mAttr;
 
   targetSurface = tAttr.create("targetSurface", "targetSurface", MFnData::kNurbsSurface);
   tAttr.setStorable(true);
   tAttr.setConnectable(true);
   tAttr.setWritable(true);
   tAttr.setReadable(true);
+
+  worldReference = mAttr.create("worldReference", "worldReference", MFnMatrixAttribute::kDouble);
+  mAttr.setStorable(true);
+  mAttr.setConnectable(true);
+  mAttr.setWritable(true);
+  mAttr.setReadable(true);
 
   uMin = nAttr.create("uMin", "uMin",  MFnNumericData::kDouble, -1.0);
   nAttr.setStorable(true);
@@ -164,6 +174,7 @@ MStatus HM_WrapDeformer::initialize()
   nAttr.setReadable(true);
 
   addAttribute(targetSurface);
+  addAttribute(worldReference);
   addAttribute(uMin);
   addAttribute(vMin);
   addAttribute(uMax);
@@ -177,6 +188,7 @@ MStatus HM_WrapDeformer::initialize()
   addAttribute(uvRotation);
 
   attributeAffects(HM_WrapDeformer::targetSurface, HM_WrapDeformer::outputGeom);
+  attributeAffects(HM_WrapDeformer::worldReference, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::uMin, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::vMin, HM_WrapDeformer::outputGeom);
   attributeAffects(HM_WrapDeformer::uMax, HM_WrapDeformer::outputGeom);
@@ -229,6 +241,10 @@ HM_WrapDeformer::deform( MDataBlock& block,
 
   MFnNurbsSurface targetSurfaceFn(targetSurfaceObject);
 
+  MDataHandle worldReferenceHandle = block.inputValue(worldReference, &returnStatus);
+  if (MS::kSuccess != returnStatus) return returnStatus;
+  MMatrix worldReferenceInv = worldReferenceHandle.asMatrix().inverse();
+
   double uMinValue = block.inputValue(uMin).asDouble();
   double vMinValue = block.inputValue(vMin).asDouble();
   double uMaxValue = block.inputValue(uMax).asDouble();
@@ -247,7 +263,7 @@ HM_WrapDeformer::deform( MDataBlock& block,
   for ( ; !iter.isDone(); iter.next(), index++) {
 
     MPoint oriPt = iter.position();
-    MPoint pt = oriPt;
+    MPoint pt = oriPt * worldReferenceInv;
 
     double u, v, z;
     u = (pt.x - uMinValue) / (uMaxValue - uMinValue);

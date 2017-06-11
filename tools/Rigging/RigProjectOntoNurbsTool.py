@@ -106,6 +106,8 @@ class RigProjectOntoNurbsTool(Tool):
       return
     uvMarginPercent = self.args.getValue('uvMarginPercent')
 
+    cmds.loadPlugin('HM_WrapDeformer')
+
     # boundingBox = cmds.exactWorldBoundingBox(geometries)
     # print boundingBox
     bboxMin = []
@@ -128,16 +130,10 @@ class RigProjectOntoNurbsTool(Tool):
             if bboxMax[i] < box[j][i]:
               bboxMax[i] = box[j][i]
 
-    print bboxMin
-    print bboxMax
-
     for i in range(3):
       c = float(bboxMin[i] + bboxMax[i]) * 0.5
       bboxMin[i] = c + (float(bboxMin[i]) - c) * (1 + uvMarginPercent / 100.0)
       bboxMax[i] = c + (float(bboxMax[i]) - c) * (1 + uvMarginPercent / 100.0)
-
-    print bboxMin
-    print bboxMax
 
     deformer = cmds.deformer(geometries, type='HM_WrapDeformer')[0]
     cmds.connectAttr(nurbsSurface+'.local', deformer+'.targetSurface')
