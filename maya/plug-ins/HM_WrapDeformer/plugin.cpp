@@ -15,6 +15,7 @@
 #include <maya/MFnDependencyNode.h>
 
 #include <maya/MFnNurbsSurface.h>
+#include <maya/MFnNurbsCurve.h>
 #include <maya/MFnMesh.h>
 
 #include <maya/MTypeId.h> 
@@ -71,28 +72,6 @@ public:
 private:
 };
 
-class HM_CopyPointsDeformer : public MPxDeformerNode
-{
-public:
-  HM_CopyPointsDeformer();
-  virtual ~HM_CopyPointsDeformer();
-
-  static void* creator();
-  static MStatus initialize();
-
-  // deformation function
-  //
-  virtual MStatus deform(MDataBlock& block, MItGeometry& iter, const MMatrix& mat, unsigned int multiIndex);
-
-public:
-
-  // local node attributes
-  static MObject targetMesh;
-  static MTypeId id;
-
-private:
-};
-
 MTypeId HM_WrapDeformer::id( 0x0011AF3F );
 
 // local attributes
@@ -110,7 +89,6 @@ MObject HM_WrapDeformer::uScale;
 MObject HM_WrapDeformer::vScale;
 MObject HM_WrapDeformer::zScale;
 MObject HM_WrapDeformer::uvRotation;
-
 
 HM_WrapDeformer::HM_WrapDeformer() {}
 HM_WrapDeformer::~HM_WrapDeformer() {}
@@ -321,6 +299,28 @@ HM_WrapDeformer::deform( MDataBlock& block,
   return returnStatus;
 }
 
+class HM_CopyPointsDeformer : public MPxDeformerNode
+{
+public:
+  HM_CopyPointsDeformer();
+  virtual ~HM_CopyPointsDeformer();
+
+  static void* creator();
+  static MStatus initialize();
+
+  // deformation function
+  //
+  virtual MStatus deform(MDataBlock& block, MItGeometry& iter, const MMatrix& mat, unsigned int multiIndex);
+
+public:
+
+  // local node attributes
+  static MObject targetMesh;
+  static MTypeId id;
+
+private:
+};
+
 MTypeId HM_CopyPointsDeformer::id( 0x0011AF3E );
 
 // local attributes
@@ -405,6 +405,145 @@ HM_CopyPointsDeformer::deform( MDataBlock& block,
   return returnStatus;
 }
 
+class HM_PushCurveDeformer : public MPxDeformerNode
+{
+public:
+  HM_PushCurveDeformer();
+  virtual ~HM_PushCurveDeformer();
+
+  static void* creator();
+  static MStatus initialize();
+
+  // deformation function
+  //
+  virtual MStatus deform(MDataBlock& block, MItGeometry& iter, const MMatrix& mat, unsigned int multiIndex);
+
+public:
+
+  // local node attributes
+  static MObject factor;
+  static MObject axis;
+  static MTypeId id;
+
+private:
+};
+
+MTypeId HM_PushCurveDeformer::id( 0x0011AF3D );
+
+// local attributes
+//
+MObject HM_PushCurveDeformer::factor;
+MObject HM_PushCurveDeformer::axis;
+
+HM_PushCurveDeformer::HM_PushCurveDeformer() {}
+HM_PushCurveDeformer::~HM_PushCurveDeformer() {}
+
+void* HM_PushCurveDeformer::creator()
+{
+  return new HM_PushCurveDeformer();
+}
+
+MStatus HM_PushCurveDeformer::initialize()
+{
+  // local attribute initialization
+
+  MFnNumericAttribute nAttr;
+  MFnTypedAttribute tAttr;
+
+  factor = nAttr.create("factor", "factor",  MFnNumericData::kDouble, 1.0);
+  nAttr.setStorable(true);
+  nAttr.setConnectable(true);
+  nAttr.setWritable(true);
+  nAttr.setReadable(true);
+
+  axis = nAttr.create("axis", "axis",  MFnNumericData::k3Double, 0.0);
+  nAttr.setStorable(true);
+  nAttr.setConnectable(true);
+  nAttr.setWritable(true);
+  nAttr.setReadable(true);
+
+  addAttribute(factor);
+  addAttribute(axis);
+
+  attributeAffects(HM_PushCurveDeformer::factor, HM_WrapDeformer::outputGeom);
+  attributeAffects(HM_PushCurveDeformer::axis, HM_WrapDeformer::outputGeom);
+
+  return MStatus::kSuccess;
+}
+
+
+MStatus
+HM_PushCurveDeformer::deform( MDataBlock& block,
+                                MItGeometry& iter,
+                                const MMatrix& /*m*/,
+                                unsigned int multiIndex)
+//
+// Method: deform
+//
+// Description:   Deform the point with a squash algorithm
+//
+// Arguments:
+//   block              : the datablock of the node
+//       iter           : an iterator for the geometry to be deformed
+//   m                  : matrix to transform the point into world space
+//       multiIndex : the index of the geometry that we are deforming
+//
+//
+{
+  MStatus returnStatus;
+  
+  // Envelope data from the base class.
+  // The envelope is simply a scale factor.
+  //
+  MDataHandle envData = block.inputValue(envelope, &returnStatus);
+  if (MS::kSuccess != returnStatus) return returnStatus;
+  float env = envData.asFloat();  
+
+  MArrayDataHandle sourceCurveArrayHandle = block.outputArrayValue(input, &returnStatus);
+  if (MS::kSuccess != returnStatus) return returnStatus;
+
+  returnStatus = sourceCurveArrayHandle.jumpToElement( multiIndex );
+  if (MS::kSuccess != returnStatus) return returnStatus;
+
+  MObject sourceCurveObject = sourceCurveArrayHandle.outputValue().child( inputGeom ).asNurbsCurve();
+  if(sourceCurveObject.isNull())
+    return MS::kInvalidParameter;
+
+  MFnNurbsCurve sourceCurveFn(sourceCurveObject);
+
+  double factorValue = block.inputValue(factor).asDouble();
+  MVector axisValue = block.inputValue(axis).asVector().normal();
+  if(axisValue.x == 0.0 && axisValue.y == 0.0 && axisValue.z == 0.0)
+  {
+    MGlobal::displayError("You need to set the axis for the HM_PushCurveDeformer.");
+    return MS::kInvalidParameter;
+  }
+
+  // MVectorArray tangents(iter.count());
+  // for(int i=0;i<tangents.length();i++)
+  // {
+    // tangents[i] = sourceCurveFn.tangent((double)i);
+  // }
+
+  int index = 0;
+  for ( ; !iter.isDone(); iter.next(), index++) {
+
+    MPoint oriPt = iter.position();
+
+    MPoint pt = oriPt;
+    double param = double(iter.count() - 2 - sourceCurveFn.degree()) * double(index) / double(iter.count()-1);
+    // sourceCurveFn.closestPoint(pt, &param);
+    MVector tangent = sourceCurveFn.tangent(param).normal();
+    // MVector tangent = tangents[index];
+    MVector direction = tangent ^ axisValue;
+    pt += direction * factorValue;
+
+    pt = oriPt * (1.0 - env) + pt * env;
+    iter.setPosition(pt);
+  }
+  return returnStatus;
+}
+
 // standard initialization procedures
 //
 
@@ -419,6 +558,8 @@ MAYA_EXPORT initializePlugin( MObject obj )
                                                    HM_WrapDeformer::initialize, MPxNode::kDeformerNode );
   result = plugin.registerNode( "HM_CopyPointsDeformer", HM_CopyPointsDeformer::id, HM_CopyPointsDeformer::creator, 
                                                    HM_CopyPointsDeformer::initialize, MPxNode::kDeformerNode );
+  result = plugin.registerNode( "HM_PushCurveDeformer", HM_PushCurveDeformer::id, HM_PushCurveDeformer::creator, 
+                                                   HM_PushCurveDeformer::initialize, MPxNode::kDeformerNode );
 
   return result;
 }
@@ -432,5 +573,6 @@ MAYA_EXPORT uninitializePlugin( MObject obj)
   MFnPlugin plugin( obj );
   result = plugin.deregisterNode( HM_WrapDeformer::id );
   result = plugin.deregisterNode( HM_CopyPointsDeformer::id );
+  result = plugin.deregisterNode( HM_PushCurveDeformer::id );
   return result;
 }

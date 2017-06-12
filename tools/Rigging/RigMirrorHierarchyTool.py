@@ -23,7 +23,7 @@ class RigMirrorHierarchyTool(Tool):
 
   def initialize(self, **args):
     self.args.add(name="objects", type="str", value=args.get('objects', None), hidden=True)
-    self.args.add(name="roles", type="str", value=args.get('roles', 'SPACE,PAR'))
+    self.args.add(name="roles", type="str", value=args.get('roles', 'CNS,PAR,SPACE'))
     self.args.add(name="rotation", type="bool", value=args.get('rotation', True))
 
   def preexecute(self, **args):
@@ -132,12 +132,15 @@ class RigMirrorHierarchyTool(Tool):
         m = om.MTransformationMatrix(m.asMatrix() * parentM)
 
       # transform.setTransformation(m)
-      cmds.setAttr("%s.translateX" % o, m.translation(om.MSpace.kTransform).x)
-      cmds.setAttr("%s.translateY" % o, m.translation(om.MSpace.kTransform).y)
-      cmds.setAttr("%s.translateZ" % o, m.translation(om.MSpace.kTransform).z)
-      cmds.setAttr("%s.rotateX" % o, m.rotation(asQuaternion=False).x * radToDeg)
-      cmds.setAttr("%s.rotateY" % o, m.rotation(asQuaternion=False).y * radToDeg)
-      cmds.setAttr("%s.rotateZ" % o, m.rotation(asQuaternion=False).z * radToDeg)
-      cmds.setAttr("%s.scaleX" % o, m.scale(om.MSpace.kTransform)[0])
-      cmds.setAttr("%s.scaleY" % o, m.scale(om.MSpace.kTransform)[1])
-      cmds.setAttr("%s.scaleZ" % o, m.scale(om.MSpace.kTransform)[2])
+      try:
+        cmds.setAttr("%s.translateX" % o, m.translation(om.MSpace.kTransform).x)
+        cmds.setAttr("%s.translateY" % o, m.translation(om.MSpace.kTransform).y)
+        cmds.setAttr("%s.translateZ" % o, m.translation(om.MSpace.kTransform).z)
+        cmds.setAttr("%s.rotateX" % o, m.rotation(asQuaternion=False).x * radToDeg)
+        cmds.setAttr("%s.rotateY" % o, m.rotation(asQuaternion=False).y * radToDeg)
+        cmds.setAttr("%s.rotateZ" % o, m.rotation(asQuaternion=False).z * radToDeg)
+        cmds.setAttr("%s.scaleX" % o, m.scale(om.MSpace.kTransform)[0])
+        cmds.setAttr("%s.scaleY" % o, m.scale(om.MSpace.kTransform)[1])
+        cmds.setAttr("%s.scaleZ" % o, m.scale(om.MSpace.kTransform)[2])
+      except:
+        pass
