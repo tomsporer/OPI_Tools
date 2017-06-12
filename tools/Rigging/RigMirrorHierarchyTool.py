@@ -23,7 +23,7 @@ class RigMirrorHierarchyTool(Tool):
 
   def initialize(self, **args):
     self.args.add(name="objects", type="str", value=args.get('objects', None), hidden=True)
-    self.args.add(name="roles", type="str", value=args.get('roles', 'CNS,PAR,SPACE'))
+    self.args.add(name="roles", type="str", value=args.get('roles', 'CNS,SPACE'))
     self.args.add(name="rotation", type="bool", value=args.get('rotation', True))
 
   def preexecute(self, **args):

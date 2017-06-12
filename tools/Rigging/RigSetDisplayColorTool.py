@@ -50,6 +50,9 @@ class RigSetDisplayColorTool(Tool):
 
     for o in objects:
       node = pm.ls(o)[0]
-      node.overrideEnabled.set(True)
-      node.overrideRGBColors.set(True)
-      node.overrideColorRGB.set(r, g, b)
+      try:
+        node.overrideEnabled.set(True)
+        node.overrideRGBColors.set(True)
+        node.overrideColorRGB.set(r, g, b)
+      except:
+        pass
