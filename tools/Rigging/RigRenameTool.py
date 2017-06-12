@@ -60,7 +60,7 @@ class RigRenameTool(Tool):
     if defaultRole.startswith('['):
       defaultRole = 'PAR'
 
-    expr = re.compile('^([a-zA-Z0-9]+)_([a-zA-Z0-9_]+)_([a-zA-Z0-9]+)$')
+    expr = re.compile('^([a-zA-Z0-9]+)_([a-zA-Z0-9_]+)_([a-zA-Z]+)([0-9]*)$')
     nameSuffixExpr = re.compile('([0-9]+)$')
 
     objects = reversed(sorted(objects))
@@ -70,6 +70,14 @@ class RigRenameTool(Tool):
       m = expr.search(n)
       if m is None:
         print "Warning: Object '%s' does not follow the naming convention. Adapting..."
+
+        if name != '[unchanged]':
+          if keepNameSuffix:
+            m2 = nameSuffixExpr.search(n)
+            if m2:
+              n = "%s%s" % (name, m2.group(1))
+            else:
+              n = name
         n = "%s_%s_%s" % (defaultSide, n, defaultRole)
       else:
 

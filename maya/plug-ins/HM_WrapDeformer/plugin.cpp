@@ -15,6 +15,7 @@
 #include <maya/MFnDependencyNode.h>
 
 #include <maya/MFnNurbsSurface.h>
+#include <maya/MFnMesh.h>
 
 #include <maya/MTypeId.h> 
 #include <maya/MPlug.h>
@@ -28,7 +29,7 @@
 #include <maya/MQuaternion.h>
 #include <maya/MMatrix.h>
 
-#include <maya/MDagModifier.h>
+#include <maya/MGlobal.h>
 
 #ifdef _MSC_VER
   #define MAYA_EXPORT extern "C" __declspec(dllexport) MStatus _cdecl
@@ -65,6 +66,28 @@ public:
   static MObject vScale;
   static MObject zScale;
   static MObject uvRotation;
+  static MTypeId id;
+
+private:
+};
+
+class HM_CopyPointsDeformer : public MPxDeformerNode
+{
+public:
+  HM_CopyPointsDeformer();
+  virtual ~HM_CopyPointsDeformer();
+
+  static void* creator();
+  static MStatus initialize();
+
+  // deformation function
+  //
+  virtual MStatus deform(MDataBlock& block, MItGeometry& iter, const MMatrix& mat, unsigned int multiIndex);
+
+public:
+
+  // local node attributes
+  static MObject targetMesh;
   static MTypeId id;
 
 private:
@@ -298,6 +321,90 @@ HM_WrapDeformer::deform( MDataBlock& block,
   return returnStatus;
 }
 
+MTypeId HM_CopyPointsDeformer::id( 0x0011AF3E );
+
+// local attributes
+//
+MObject HM_CopyPointsDeformer::targetMesh;
+
+HM_CopyPointsDeformer::HM_CopyPointsDeformer() {}
+HM_CopyPointsDeformer::~HM_CopyPointsDeformer() {}
+
+void* HM_CopyPointsDeformer::creator()
+{
+  return new HM_CopyPointsDeformer();
+}
+
+MStatus HM_CopyPointsDeformer::initialize()
+{
+  // local attribute initialization
+
+  MFnTypedAttribute tAttr;
+
+  targetMesh = tAttr.create("targetMesh", "targetMesh", MFnData::kMesh);
+  tAttr.setStorable(true);
+  tAttr.setConnectable(true);
+  tAttr.setWritable(true);
+  tAttr.setReadable(true);
+
+  addAttribute(targetMesh);
+
+  attributeAffects(HM_CopyPointsDeformer::targetMesh, HM_WrapDeformer::outputGeom);
+
+  return MStatus::kSuccess;
+}
+
+
+MStatus
+HM_CopyPointsDeformer::deform( MDataBlock& block,
+                                MItGeometry& iter,
+                                const MMatrix& /*m*/,
+                                unsigned int multiIndex)
+//
+// Method: deform
+//
+// Description:   Deform the point with a squash algorithm
+//
+// Arguments:
+//   block              : the datablock of the node
+//       iter           : an iterator for the geometry to be deformed
+//   m                  : matrix to transform the point into world space
+//       multiIndex : the index of the geometry that we are deforming
+//
+//
+{
+  MStatus returnStatus;
+  
+  // Envelope data from the base class.
+  // The envelope is simply a scale factor.
+  //
+  MDataHandle envData = block.inputValue(envelope, &returnStatus);
+  if (MS::kSuccess != returnStatus) return returnStatus;
+  float env = envData.asFloat();  
+
+  MDataHandle targetMeshHandle = block.inputValue(targetMesh, &returnStatus);
+  if (MS::kSuccess != returnStatus) return returnStatus;
+
+  MObject targetMeshObject = targetMeshHandle.asMesh();
+  if(targetMeshObject.isNull())
+    return MS::kInvalidParameter;
+
+  MFnMesh targetMeshFn(targetMeshObject);
+
+  int index = 0;
+  for ( ; !iter.isDone(); iter.next(), index++) {
+
+    MPoint pt;
+    if(targetMeshFn.getPoint(index, pt) != MS::kSuccess)
+      break;
+
+    MPoint oriPt = iter.position();
+    pt = oriPt * (1.0 - env) + pt * env;
+    iter.setPosition(pt);
+  }
+  return returnStatus;
+}
+
 // standard initialization procedures
 //
 
@@ -310,6 +417,8 @@ MAYA_EXPORT initializePlugin( MObject obj )
   MFnPlugin plugin( obj, PLUGIN_COMPANY, "3.0", "Any");
   result = plugin.registerNode( "HM_WrapDeformer", HM_WrapDeformer::id, HM_WrapDeformer::creator, 
                                                    HM_WrapDeformer::initialize, MPxNode::kDeformerNode );
+  result = plugin.registerNode( "HM_CopyPointsDeformer", HM_CopyPointsDeformer::id, HM_CopyPointsDeformer::creator, 
+                                                   HM_CopyPointsDeformer::initialize, MPxNode::kDeformerNode );
 
   return result;
 }
@@ -322,5 +431,6 @@ MAYA_EXPORT uninitializePlugin( MObject obj)
   MStatus result;
   MFnPlugin plugin( obj );
   result = plugin.deregisterNode( HM_WrapDeformer::id );
+  result = plugin.deregisterNode( HM_CopyPointsDeformer::id );
   return result;
 }
