@@ -35,7 +35,13 @@ def checkForRenderSetupMismatch():
 
   # Check Render Setup System in current Scene
   renderLayers = cmds.ls( type="renderLayer" )
-  renderLayers.remove("defaultRenderLayer")
+  # renderLayers.remove("defaultRenderLayer")
+
+  # ignore default render layers
+  for rl in cmds.ls(type="renderLayer"):
+    if "defaultRenderLayer" in rl:
+        renderLayers.remove(rl)
+
   try:
     renderSetupLayers = cmds.ls( type="renderSetupLayer" )
   except:
