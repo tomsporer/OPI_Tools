@@ -1,0 +1,12 @@
+{
+  "items":[
+
+    { "type": "tool", "module": "ImportCacheTool.py"},
+    { "type": "tool", "module": "ExportCacheTool.py" },
+    { "type": "separator"},
+  	{ "type": "tool", "module": "PopulateLocatorsTool.py"},
+  	{ "type": "tool", "module": "RenameLocatorTool.py"},
+  	{ "type": "tool", "module": "UpdateLocatorTool.py"},
+  	{ "type": "tool", "module": "SelectAbcNodeTool.py"}
+  ]
+}

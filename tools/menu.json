@@ -7,7 +7,9 @@
     { "type": "separator" },
     { "type": "menu", "folder": "Rigging" },
     { "type": "separator" },
+    { "type": "menu", "folder": "PaybackApp"},
     { "type": "menu", "folder": "Sekt" },
+    { "type": "separator"},
   	{ "type": "tool", "module": "RefreshOpiDbTool.py"}
   ]
 }
