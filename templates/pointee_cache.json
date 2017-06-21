@@ -1,0 +1,26 @@
+{
+  "name": "Pointee_Cache",
+  "type": "File",
+  "args": [
+    {
+      "name": "project",
+      "type": "instance",
+      "template": "project",
+      "backreferencefield": "pointeescache"
+    },
+    {
+      "name": "object",
+      "type": "str"
+    },
+    {
+      "name": "type",
+      "type": "str"
+    },
+    {
+      "name": "name",
+      "type": "str"
+    }
+  ],
+  "filename": "${object}_${type}_${name}.abc",
+  "location": "${project.location}/Cache/alembic/${filename}"
+}
