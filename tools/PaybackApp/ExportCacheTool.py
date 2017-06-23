@@ -67,6 +67,8 @@ class ExportCacheTool(DataBaseTool):
         self.args.get("type").value = "Special"
         self.args.get("name").enabled = False
         self.args.get("matchWithPointee").enabled = True
+        self.args.get("name").value = self.args.getValue("matchWithPointee").name
+
     if arg.name == "name":
       QtWidgets = self.host.apis["QtWidgets"]
       cObject = self.args.getValue("object")
@@ -80,6 +82,8 @@ class ExportCacheTool(DataBaseTool):
         msgBox = QtWidgets.QMessageBox
         msgBox.warning(None, "File already exists", "A Cache with that name already exists.\nIt will be overridden if you continue")
 
+    if arg.name == "matchWithPointee":
+      self.args.get("name").value = arg.value.name
 
 
 

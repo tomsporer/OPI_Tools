@@ -27,21 +27,17 @@ class SelectAbcNodeTool(DataBaseTool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
+    foundAbcNodes = []
     lr = cmds.listRelatives(rootLocator, allDescendents=True, path=True)
     for r in lr:
-      if cmds.nodeType(r) == "mesh":
-        lc = cmds.listConnections(r, connections=True)
+      lc = cmds.listConnections(r, connections=True)
+      if not lc == None:
         for c in lc:
           if "AlembicNode" in c:
-            return c
+            foundAbcNodes.append(c)
             break
-        else:
-          continue
-      else:
-        continue
-      break
-    else:
-      return None
+
+    return list(set(foundAbcNodes))
 
   def executeMaya(self):
     db = self.host.apis['db']
@@ -55,7 +51,6 @@ class SelectAbcNodeTool(DataBaseTool):
     abcNodes = []
     for s in sel:
       abcNode = self.getAlembicNode(s)
-      if abcNode != None:
-        abcNodes += [abcNode]
+      abcNodes += abcNode
 
     cmds.select(abcNodes)

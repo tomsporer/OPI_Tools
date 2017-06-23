@@ -102,6 +102,7 @@ class ImportCacheTool(DataBaseTool):
       abcImportString += "\""
       abcImportString += abcImportStringEnd
       cacheNode = mel.eval(abcImportString)
-      
-    print cacheNode
+     
+    print "# INFO: loaded cache   \"" + str(cFilepath) + "\""
+    print "# INFO: cache node:    \"" + cacheNode + "\""
     self.results.setValue("cacheNode", cacheNode)
