@@ -92,8 +92,8 @@ class UpdateLocatorTool(DataBaseTool):
         refFilePath = os.path.join(refFolder, refName + ".mb")
 
         refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
-        refNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
-        pointeeRef = refNamespace + ":" + refName
+        pointeeRefNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
+        pointeeRef = pointeeRefNamespace + ":" + refName
 
         cmds.parent( pointeeRef, loc, relative=True)
       
@@ -133,13 +133,34 @@ class UpdateLocatorTool(DataBaseTool):
         assetQuery = db.query("pointee_asset", project=project, type="Special")
         for asset in assetQuery:
           if asset.name.lower() in cName.lower():
-            importAsset = asset
+
+            # Importing asset ref
+            refName = "Asset_Special_" + asset.name
+            refFilePath = os.path.join(refFolder, refName + ".mb")
+
+            refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
+            refNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
+            assetRef = refNamespace + ":" + refName
+
+            cmds.parent( assetRef, loc, relative=True)
+
+            # Importing asset cache
+            aCache = db.queryOne("pointee_cache", project=project, object="Asset", type=cType, name=cName)
+            cmds.select(assetRef)
+            importCache = importCacheTool.invoke(object="Asset", type=cType, cache=aCache, importMode="Merge")
+            importCacheNodes = importCache["cacheNode"].split()
+            abcNode = cmds.rename(importCacheNodes[0], "Asset_%s_%s_%s_AlembicNode" %(cType, cName, cLocator))
+            cmds.setAttr(abcNode + ".cycleType", 1) # 1 = loop
+            cmds.setAttr(abcNode + ".offset", randOffset)
+
             break
         else:
           print "# ERROR: no asset found for special cache \"%s\"" %(cName)
 
-        # Importing asset ref
-        refName = "Asset_Special_" + asset.name
+      # Import generic assets
+      if "baby" in cName.lower():
+        # Importing baby hair
+        refName = "Asset_Baby_Hair"
         refFilePath = os.path.join(refFolder, refName + ".mb")
 
         refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
@@ -147,15 +168,60 @@ class UpdateLocatorTool(DataBaseTool):
         assetRef = refNamespace + ":" + refName
 
         cmds.parent( assetRef, loc, relative=True)
-        
-        # Importing asset cache
-        aCache = db.queryOne("pointee_cache", project=project, object="Asset", type=cType, name=cName)
-        cmds.select(assetRef)
-        importCache = importCacheTool.invoke(object="Asset", type=cType, cache=aCache, importMode="Merge")
-        importCacheNodes = importCache["cacheNode"].split()
-        abcNode = cmds.rename(importCacheNodes[0], "Asset_%s_%s_%s_AlembicNode" %(cType, cName, cLocator))
-        cmds.setAttr(abcNode + ".cycleType", 1) # 1 = loop
-        cmds.setAttr(abcNode + ".offset", randOffset)
+
+        cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+        cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+      elif "girl" in cName.lower():
+        # Importing girl schleife
+        refName = "Asset_Girl_Schleife"
+        refFilePath = os.path.join(refFolder, refName + ".mb")
+
+        refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
+        refNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
+        assetRef = refNamespace + ":" + refName
+
+        cmds.parent( assetRef, loc, relative=True)
+
+        cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+        cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+      else:
+        # Importing random generic assets
+        tAssetList = db.query("pointee_asset", project=project, type="Top")
+        numTAssets = len(tAssetList)
+        eAssetList = db.query("pointee_asset", project=project, type="Eyes")
+        numEAssets = len(eAssetList)
+        mAssetList = db.query("pointee_asset", project=project, type="Mouth")
+        numMAssets = len(mAssetList)
+        percentTop = 65
+        percentEyes = 20
+        percentMouth = 35
+        randTop = randint(0, 100)
+        randEyes = randint(0, 100)
+        randMouth = randint(0, 100)
+        assetList = []
+        if randTop <= percentTop:
+          assetList.append(tAssetList[randint(0,numTAssets-1)])
+        if randEyes <= percentEyes:
+          assetList.append(eAssetList[randint(0,numEAssets-1)])
+        if randMouth <= percentMouth:
+          assetList.append(mAssetList[randint(0,numMAssets-1)])
+
+        # Importing assets
+        for asset in assetList:
+          refName = "Asset_%s_%s" %(asset.type, asset.name)
+          refFilePath = os.path.join(refFolder, refName + ".mb")
+
+          refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
+          refNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
+          assetRef = refNamespace + ":" + refName
+
+          cmds.parent( assetRef, loc, relative=True)
+
+          cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+          cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+
+
+
 
 
     # Restore original selection

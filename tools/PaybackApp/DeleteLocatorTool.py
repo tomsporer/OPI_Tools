@@ -32,12 +32,13 @@ class DeleteLocatorTool(DataBaseTool):
     for r in lr:
       if cmds.nodeType(r) == "mesh":
         lc = cmds.listConnections(r, connections=True)
-        for c in lc:
-          if "AlembicNode" in c:
-            cmds.delete(c)
-            break
-        else:
-          continue
+        if not lc == None:
+          for c in lc:
+            if "AlembicNode" in c:
+              cmds.delete(c)
+              break
+          else:
+            continue
       else:
         continue
       break
