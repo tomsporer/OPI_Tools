@@ -131,5 +131,5 @@ class ExportCacheTool(DataBaseTool):
     cmds.AbcExport( j= abcExportString )
     if cObject == "Pointee":
       db.getOrCreateNew("pointee_cache", project=self.__project, object=cObject, type=cType, name=cName, createEmptyFile=False)
-    elif cObject == "Special":
+    elif cObject == "Asset":
       db.getOrCreateNew("asset_cache", project=self.__project, object=cObject, type=cType, name=cName, createEmptyFile=False)

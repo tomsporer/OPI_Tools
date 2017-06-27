@@ -73,8 +73,11 @@ class UpdateLocatorTool(DataBaseTool):
 
     possibleAssets = db.query("pointee_asset", project=project)
 
+    progressMax = len(sel)
+    progress = float(0)
     for loc in sel:
-
+      percent = int((progress/progressMax)*100)
+      print "# ---- PROGRESS: %s%% ----" %(percent)
       cObject = loc.split("_")[0]
       cType = loc.split("_")[1]
       cName = loc.split("_")[2]
@@ -146,6 +149,7 @@ class UpdateLocatorTool(DataBaseTool):
 
             # Importing asset cache
             aCache = db.queryOne("pointee_cache", project=project, object="Asset", type=cType, name=cName)
+
             cmds.select(assetRef)
             importCache = importCacheTool.invoke(object="Asset", type=cType, cache=aCache, importMode="Merge")
             importCacheNodes = importCache["cacheNode"].split()
@@ -220,7 +224,7 @@ class UpdateLocatorTool(DataBaseTool):
           cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
           cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
 
-
+      progress += 1
 
 
 
