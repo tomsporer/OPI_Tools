@@ -111,6 +111,7 @@ class UpdateLocatorTool(DataBaseTool):
               cmds.file(refFile, removeReference=True, force=True)
             else:
               pointeeRef = c
+              pointeeRefNamespace = cmds.ls(c, showNamespace=True)[1]
           elif not cmds.objectType(c, isType="locator"):
             print "# INFO: deleting \"" + str(c) + "\""
             cmds.delete(c)
