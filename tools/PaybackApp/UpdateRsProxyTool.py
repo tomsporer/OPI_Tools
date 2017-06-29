@@ -19,6 +19,7 @@ class UpdateRsProxyTool(DataBaseTool):
   ToolDescription = 'Update rsProxy'
   ToolTooltip = 'Update rsProxy'
 
+
   def __init__(self, host):
     super (UpdateRsProxyTool, self).__init__(host)
     # self._noUI = True
@@ -150,6 +151,7 @@ class UpdateRsProxyTool(DataBaseTool):
         pCacheList = db.query("pointee_cache", project=project, object=cObject, type="CenterJnt")
         numCaches = len(pCacheList)
         pCache = pCacheList[randint(0, numCaches-1)]
+        cName = pCache.name
       else:
         pCache = db.queryOne("pointee_cache", project=project, object=cObject, type="CenterJnt", name=cName)
       cmds.select(pointeeRef)
