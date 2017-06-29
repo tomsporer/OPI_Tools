@@ -21,10 +21,12 @@ class UpdateLocatorTool(DataBaseTool):
 
   def __init__(self, host):
     super (UpdateLocatorTool, self).__init__(host)
-    self._noUI = True
+    # self._noUI = True
 
   def initialize(self, **args):
-    self.args.add(name="selection", type="str", value=args.get("selection", ""))
+    self.args.add(name="selection", type="str", value=args.get("selection", ""), hidden=True)
+    self.args.add(name="genericassets", type="bool", value=args.get("genericassets", False))
+    self.args.add(name="randoffset", type="bool", value=args.get("randoffset", False))
     
   def preexecute(self, **args):
     maya = self.host.apis['maya']
@@ -36,7 +38,6 @@ class UpdateLocatorTool(DataBaseTool):
     else:
       sel = sel.split()
 
-    print "selection for \"UpdateLocatorTool\" = " + str(sel)
     self.__sel = sel
 
   def deleteAlembicNode(self, rootLocator):
@@ -83,7 +84,10 @@ class UpdateLocatorTool(DataBaseTool):
       cName = loc.split("_")[2]
       cLocator = loc.split("_")[3]
 
-      randOffset = randint(-50, 0)
+      if self.args.getValue("randoffset"):
+        randOffset = randint(-50, 0)
+      else:
+        randOffset = 0
 
       self.deleteAlembicNode(loc)
       children = cmds.listRelatives(loc, children=True)
@@ -94,6 +98,7 @@ class UpdateLocatorTool(DataBaseTool):
         refName = "Pointee_clean"
         refFilePath = os.path.join(refFolder, refName + ".mb")
 
+        loadUnload = randint(0, 100)
         refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
         pointeeRefNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
         pointeeRef = pointeeRefNamespace + ":" + refName
@@ -108,12 +113,16 @@ class UpdateLocatorTool(DataBaseTool):
             refFile = cmds.referenceQuery(c, filename=True)
             if refFile.split("{")[0] != "E:/PROJECTS/PAY_Payback_App/Models/ref/Pointee_clean.mb":
               print "# INFO: removing reference \"" + str(c) + "\""
+              for nonRef in cmds.listRelatives(c, children=True):
+                if not cmds.referenceQuery(nonRef, isNodeReferenced=True):
+                  print "# INFO: deleting \"%s\"" %(nonRef)
+                  cmds.delete(nonRef)
               cmds.file(refFile, removeReference=True, force=True)
             else:
               pointeeRef = c
               pointeeRefNamespace = cmds.ls(c, showNamespace=True)[1]
           elif not cmds.objectType(c, isType="locator"):
-            print "# INFO: deleting \"" + str(c) + "\""
+            print "# INFO: deleting \"%s\"" %(c)
             cmds.delete(c)
 
       # Importing pointee cache
@@ -137,7 +146,6 @@ class UpdateLocatorTool(DataBaseTool):
         assetQuery = db.query("pointee_asset", project=project, type="Special")
         for asset in assetQuery:
           if asset.name.lower() in cName.lower():
-
             # Importing asset ref
             refName = "Asset_Special_" + asset.name
             refFilePath = os.path.join(refFolder, refName + ".mb")
@@ -150,19 +158,22 @@ class UpdateLocatorTool(DataBaseTool):
 
             # Importing asset cache
             aCache = db.queryOne("pointee_cache", project=project, object="Asset", type=cType, name=cName)
-
-            cmds.select(assetRef)
-            importCache = importCacheTool.invoke(object="Asset", type=cType, cache=aCache, importMode="Merge")
-            importCacheNodes = importCache["cacheNode"].split()
-            abcNode = cmds.rename(importCacheNodes[0], "Asset_%s_%s_%s_AlembicNode" %(cType, cName, cLocator))
-            cmds.setAttr(abcNode + ".cycleType", 1) # 1 = loop
-            cmds.setAttr(abcNode + ".offset", randOffset)
+            if aCache == None:
+              missingCache = "Asset_%s_%s.abc" %(cType, cName)
+              print "# ERROR: No cache found for special asset. Missing \"%s\"" %(missingCache)
+            else:
+              cmds.select(assetRef)
+              importCache = importCacheTool.invoke(object="Asset", type=cType, cache=aCache, importMode="Merge")
+              importCacheNodes = importCache["cacheNode"].split()
+              abcNode = cmds.rename(importCacheNodes[0], "Asset_%s_%s_%s_AlembicNode" %(cType, cName, cLocator))
+              cmds.setAttr(abcNode + ".cycleType", 1) # 1 = loop
+              cmds.setAttr(abcNode + ".offset", randOffset)
 
             break
         else:
           print "# ERROR: no asset found for special cache \"%s\"" %(cName)
 
-      # Import generic assets
+
       if "baby" in cName.lower():
         # Importing baby hair
         refName = "Asset_Baby_Hair"
@@ -176,44 +187,12 @@ class UpdateLocatorTool(DataBaseTool):
 
         cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
         cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
-      elif "girl" in cName.lower():
-        # Importing girl schleife
-        refName = "Asset_Girl_Schleife"
-        refFilePath = os.path.join(refFolder, refName + ".mb")
 
-        refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
-        refNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
-        assetRef = refNamespace + ":" + refName
-
-        cmds.parent( assetRef, loc, relative=True)
-
-        cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
-        cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
-      else:
-        # Importing random generic assets
-        tAssetList = db.query("pointee_asset", project=project, type="Top")
-        numTAssets = len(tAssetList)
-        eAssetList = db.query("pointee_asset", project=project, type="Eyes")
-        numEAssets = len(eAssetList)
-        mAssetList = db.query("pointee_asset", project=project, type="Mouth")
-        numMAssets = len(mAssetList)
-        percentTop = 65
-        percentEyes = 20
-        percentMouth = 35
-        randTop = randint(0, 100)
-        randEyes = randint(0, 100)
-        randMouth = randint(0, 100)
-        assetList = []
-        if randTop <= percentTop:
-          assetList.append(tAssetList[randint(0,numTAssets-1)])
-        if randEyes <= percentEyes:
-          assetList.append(eAssetList[randint(0,numEAssets-1)])
-        if randMouth <= percentMouth:
-          assetList.append(mAssetList[randint(0,numMAssets-1)])
-
-        # Importing assets
-        for asset in assetList:
-          refName = "Asset_%s_%s" %(asset.type, asset.name)
+      if self.args.getValue("genericassets"):
+        # Import generic assets
+        if "girl" in cName.lower():
+          # Importing girl schleife
+          refName = "Asset_Girl_Schleife"
           refFilePath = os.path.join(refFolder, refName + ".mb")
 
           refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
@@ -224,6 +203,41 @@ class UpdateLocatorTool(DataBaseTool):
 
           cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
           cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+        else:
+          # Choosing random generic assets
+          tAssetList = db.query("pointee_asset", project=project, type="Top")
+          numTAssets = len(tAssetList)
+          eAssetList = db.query("pointee_asset", project=project, type="Eyes")
+          numEAssets = len(eAssetList)
+          mAssetList = db.query("pointee_asset", project=project, type="Mouth")
+          numMAssets = len(mAssetList)
+          percentTop = 65
+          percentEyes = 20
+          percentMouth = 35
+          randTop = randint(0, 100)
+          randEyes = randint(0, 100)
+          randMouth = randint(0, 100)
+          assetList = []
+          if randTop <= percentTop:
+            assetList.append(tAssetList[randint(0,numTAssets-1)])
+          if randEyes <= percentEyes:
+            assetList.append(eAssetList[randint(0,numEAssets-1)])
+          if randMouth <= percentMouth:
+            assetList.append(mAssetList[randint(0,numMAssets-1)])
+
+          # Importing assets
+          for asset in assetList:
+            refName = "Asset_%s_%s" %(asset.type, asset.name)
+            refFilePath = os.path.join(refFolder, refName + ".mb")
+
+            refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
+            refNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
+            assetRef = refNamespace + ":" + refName
+
+            cmds.parent( assetRef, loc, relative=True)
+
+            cmds.parentConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
+            cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
 
       progress += 1
 

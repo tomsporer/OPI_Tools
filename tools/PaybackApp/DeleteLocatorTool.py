@@ -56,6 +56,9 @@ class DeleteLocatorTool(DataBaseTool):
       children = cmds.listRelatives(loc, children=True)
       for c in children:
         if cmds.referenceQuery(c, isNodeReferenced=True):
+          for nonRef in cmds.listRelatives(c, children=True):
+            if not cmds.referenceQuery(nonRef, isNodeReferenced=True):
+              cmds.delete(nonRef)
           refFile = cmds.referenceQuery(c, filename=True)
           cmds.file(refFile, removeReference=True, force=True)
         elif not cmds.objectType(c, isType="locator"):
