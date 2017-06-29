@@ -1,0 +1,22 @@
+{
+  "name": "Pointee_rsProxy",
+  "type": "File",
+  "args": [
+    {
+      "name": "project",
+      "type": "instance",
+      "template": "project",
+      "backreferencefield": "pointeesrsproxy"
+    },
+    {
+      "name": "name",
+      "type": "str"
+    },
+    {
+      "name": "frame",
+      "type": "int"
+    }
+  ],
+  "filename": "Pointee_rsProxy_${name}_${frame}.rs",
+  "location": "${project.location}/Cache/rsProxy/${filename}"
+}

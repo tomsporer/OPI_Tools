@@ -31,7 +31,7 @@ class ExportCacheTool(DataBaseTool):
     self.args.addSpacer(13)
     self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Payback_App'", enabled=False, hidden=True)
     self.args.add(name="object", type="str", label="Pointee/Asset", combo=["Pointee", "Asset"], value="Pointee")
-    self.args.add(name="type", type="str", label="Pointee Type", combo=["Generic", "Special"], value="Generic", enabled=True)
+    self.args.add(name="type", type="str", label="Pointee Type", combo=["Generic", "Special", "CenterJnt"], value="Generic", enabled=True)
     self.args.add(name="matchWithPointee", type="instance", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE project_id == ${project} AND object == 'Pointee' AND type == 'Special' ORDER BY name", enabled=False, optional=True)
     self.args.add(name="name", type="str", label="Name", expression="[A-Za-z]+[A-Za-z0-9]*", value=None, enabled=True)
     self.args.addSpacer(10,0)
