@@ -35,6 +35,10 @@ class RenameLocatorTool(DataBaseTool):
     self.args.addStaticText("_locator")
     self.args.endRow()
     self.args.add(name="allRandom", type="bool", label="All Random", value=False)
+    self.args.addSpacer(7,1)
+    self.args.add(name="bGespannt", type="bool", label="Gespannt", value=True, enabled=False)
+    self.args.add(name="bJoy", type="bool", label="Joy", value=True, enabled=False)
+    self.args.add(name="bNormal", type="bool", label="Normal", value=True, enabled=False)
 
   def preexecute(self):
     maya = self.host.apis['maya']
@@ -70,6 +74,9 @@ class RenameLocatorTool(DataBaseTool):
     if arg.name == "allRandom":
       self.args.get("type").enabled = not arg.value
       self.args.get("cache").enabled = not arg.value
+      self.args.get("bgespannt").enabled = arg.value
+      self.args.get("bjoy").enabled = arg.value
+      self.args.get("bnormal").enabled = arg.value
 
     self.updateNewName()
 
@@ -77,12 +84,31 @@ class RenameLocatorTool(DataBaseTool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
     allRandom = self.args.getValue("allRandom")
+    bGespannt = self.args.getValue("bGespannt")
+    bJoy = self.args.getValue("bJoy")
+    bNormal = self.args.getValue("bNormal")
     
     if allRandom:
       db = self.host.apis['db']
       project = db.queryOne("project", name="Payback_App")
       cObject = self.args.getValue("object")
-      cQuery = db.query("pointee_cache", project=project, object=cObject)
+      cQueryG = db.query("pointee_cache", project=project, object=cObject, type="Generic")
+      cQueryS = db.query("pointee_cache", project=project, object=cObject, type="Special")
+      cQuery = cQueryG + cQueryS
+      cList = []
+      for c in cQuery:
+        print "---- checking " + c.name
+        if bGespannt and "gespannt" in c.name.lower():
+          print "---- found \"gespannt\""
+          cList.append(c)
+        if bJoy and "joy" in c.name.lower():
+          print "---- found \"joy\""
+          cList.append(c)
+        if bNormal and "gespannt" not in c.name.lower() and "joy" not in c.name.lower():
+          print "---- found \"anything but\""
+          cList.append(c)
+      for c in cList:
+        print "---- cList = " + str(c.name)
 
     sel = cmds.ls(selection=True)
     for s in sel:

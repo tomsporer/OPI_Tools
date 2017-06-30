@@ -92,7 +92,7 @@ class UpdateRsProxyTool(DataBaseTool):
     progressMax = len(sel)
     progress = float(0)
     for loc in sel:
-      percent = int((progress/progressMax)*100)
+      percent = round((progress/progressMax)*100, 1)
       print "# ---- PROGRESS: %s%% ----" %(percent)
       cObject = loc.split("_")[0]
       cType = loc.split("_")[1]
@@ -105,11 +105,11 @@ class UpdateRsProxyTool(DataBaseTool):
         randOffset = 0
 
       self.deleteAlembicNode(loc)
-      children = cmds.listRelatives(loc, children=True)
 
       # Importing new centerJnt under empty locator
       foundCenterJnt = False
       while not foundCenterJnt:
+        children = cmds.listRelatives(loc, children=True)
         if len(children) == 1:
           print "# INFO: no centerJnt ref model found. importing now..."
           refName = "Pointee_centerJnt"
@@ -194,25 +194,32 @@ class UpdateRsProxyTool(DataBaseTool):
           cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
         else:
           # Choosing random generic assets
+          gAssetList = db.query("pointee_asset", project=project, type="Girl")
+          numGAssets = len(gAssetList)
           tAssetList = db.query("pointee_asset", project=project, type="Top")
           numTAssets = len(tAssetList)
           eAssetList = db.query("pointee_asset", project=project, type="Eyes")
           numEAssets = len(eAssetList)
           mAssetList = db.query("pointee_asset", project=project, type="Mouth")
           numMAssets = len(mAssetList)
-          percentTop = 65
+          percentGirl = 20
+          percentTop = 60
           percentEyes = 20
           percentMouth = 35
+          randGirl = randint(0, 100)
           randTop = randint(0, 100)
           randEyes = randint(0, 100)
           randMouth = randint(0, 100)
           assetList = []
-          if randTop <= percentTop:
-            assetList.append(tAssetList[randint(0,numTAssets-1)])
-          if randEyes <= percentEyes:
-            assetList.append(eAssetList[randint(0,numEAssets-1)])
-          if randMouth <= percentMouth:
-            assetList.append(mAssetList[randint(0,numMAssets-1)])
+          if randGirl <= percentGirl:
+            assetList.append(gAssetList[randint(0,numGAssets-1)])
+          else:
+            if randTop <= percentTop:
+              assetList.append(tAssetList[randint(0,numTAssets-1)])
+            if randEyes <= percentEyes:
+              assetList.append(eAssetList[randint(0,numEAssets-1)])
+            if randMouth <= percentMouth:
+              assetList.append(mAssetList[randint(0,numMAssets-1)])
 
           # Importing assets
           for asset in assetList:
