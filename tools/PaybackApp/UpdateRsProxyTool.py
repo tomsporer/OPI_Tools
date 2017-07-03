@@ -94,6 +94,7 @@ class UpdateRsProxyTool(DataBaseTool):
     for loc in sel:
       percent = round((progress/progressMax)*100, 1)
       print "# ---- PROGRESS: %s%% ----" %(percent)
+      print "# INFO: Updating " + loc
       cObject = loc.split("_")[0]
       cType = loc.split("_")[1]
       cName = loc.split("_")[2]
@@ -177,6 +178,7 @@ class UpdateRsProxyTool(DataBaseTool):
 
       if self.args.getValue("genericassets"):
         # Import generic assets
+        print "# INFO: importing generic assets..."
         if "baby" in cName.lower():
           pass
         elif "girl" in cName.lower():
@@ -225,7 +227,6 @@ class UpdateRsProxyTool(DataBaseTool):
           for asset in assetList:
             refName = "Asset_%s_%s" %(asset.type, asset.name)
             refFilePath = os.path.join(refFolder, refName + ".mb")
-
             refImport = cmds.file( refFilePath, reference=True, type="mayaBinary", ignoreVersion=True, mergeNamespacesOnClash=False, namespace=refName, returnNewNodes=True)
             refNamespace = cmds.ls(refImport[0], showNamespace=True)[1]
             assetRef = refNamespace + ":" + refName

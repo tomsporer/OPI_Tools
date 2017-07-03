@@ -97,18 +97,12 @@ class RenameLocatorTool(DataBaseTool):
       cQuery = cQueryG + cQueryS
       cList = []
       for c in cQuery:
-        print "---- checking " + c.name
         if bGespannt and "gespannt" in c.name.lower():
-          print "---- found \"gespannt\""
           cList.append(c)
         if bJoy and "joy" in c.name.lower():
-          print "---- found \"joy\""
           cList.append(c)
         if bNormal and "gespannt" not in c.name.lower() and "joy" not in c.name.lower():
-          print "---- found \"anything but\""
           cList.append(c)
-      for c in cList:
-        print "---- cList = " + str(c.name)
 
     sel = cmds.ls(selection=True)
     for s in sel:
@@ -116,7 +110,7 @@ class RenameLocatorTool(DataBaseTool):
       if not cmds.objectType(checkLoc, isType="locator"):
         continue
       if allRandom:
-        cQueryRand = cQuery[randint(0, len(cQuery)-1)]
+        cQueryRand = cList[randint(0, len(cList)-1)]
         newName = cQueryRand.object + "_" + cQueryRand.type + "_" + cQueryRand.name + "_locator"
       else:
         newName = self.args.getValue("newName") + "_locator"
