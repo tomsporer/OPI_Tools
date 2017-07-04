@@ -26,7 +26,7 @@ class RigCreateControlTool(Tool):
     self.args.add(name="parent", type="str", value=args.get('parent', None), hidden=True)
     self.args.add(name="side", type="str", value=args.get('side', None), combo=['L', 'M', 'R'])
     self.args.add(name="name", type="str", value=args.get('name', 'control'))
-    self.args.add(name="type", type="str", value=args.get('type', 'square'), combo=['square', 'circle', 'cube', 'sphere', 'diamond', 'pyramid', 'arrow', '2 arrows', '3 arrows', '4 arrows'])
+    self.args.add(name="type", type="str", value=args.get('type', 'square'), combo=['square', 'circle', 'cube', 'sphere', 'diamond', 'pyramid', 'pin', 'arrow', '2 arrows', '3 arrows', '4 arrows'])
     self.args.add(name="resolution", type="int", value=args.get('resolution', 16))
     self.args.add(name="scale", type="float", value=args.get('scale', 1), range=[0.1, 8])
     self.results.add(name='curve', type='str')
@@ -146,6 +146,16 @@ class RigCreateControlTool(Tool):
       points.append([1, 0, 1])
       points.append([1, 0, -1])
       points.append([-1, 0, 1])
+
+    elif controlType == 'pin':
+      points.append([0, 0, 0])
+      points.append([0, 0, -2])
+      points.append([-1, 0, -2])
+      points.append([-1, 0, -4])
+      points.append([1, 0, -4])
+      points.append([1, 0, -2])
+      points.append([0, 0, -2])
+      points.append([0, 0, 0])
 
     elif controlType == 'arrow':
       points.append([-1, 0, -0.5])
