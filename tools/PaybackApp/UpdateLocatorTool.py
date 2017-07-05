@@ -217,7 +217,7 @@ class UpdateLocatorTool(DataBaseTool):
           numEAssets = len(eAssetList)
           mAssetList = db.query("pointee_asset", project=project, type="Mouth")
           numMAssets = len(mAssetList)
-          percentGirl = 20
+          percentGirl = 5
           percentTop = 65
           percentEyes = 20
           percentMouth = 35
