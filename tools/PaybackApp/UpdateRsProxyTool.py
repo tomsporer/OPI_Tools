@@ -110,7 +110,7 @@ class UpdateRsProxyTool(DataBaseTool):
       # Importing new centerJnt under empty locator
       foundCenterJnt = False
       while not foundCenterJnt:
-        children = cmds.listRelatives(loc, children=True)
+        children = cmds.listRelatives(loc, children=True, path=True)
         if len(children) == 1:
           print "# INFO: no centerJnt ref model found. importing now..."
           refName = "Pointee_centerJnt"
@@ -129,6 +129,7 @@ class UpdateRsProxyTool(DataBaseTool):
           print "# INFO: found children. cleaning up..."
           for c in children:
             if cmds.referenceQuery(c, isNodeReferenced=True):
+              print "c is ref " + c
               refFile = cmds.referenceQuery(c, filename=True)
               if refFile.split("{")[0] != "E:/PROJECTS/PAY_Payback_App/Models/ref/Pointee_centerJnt.mb":
                 print "# INFO: removing reference \"" + str(c) + "\""

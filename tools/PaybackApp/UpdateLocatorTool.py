@@ -93,7 +93,7 @@ class UpdateLocatorTool(DataBaseTool):
       # Importing new pointee ref under empty locator
       foundPointeeRef = False
       while not foundPointeeRef:
-        children = cmds.listRelatives(loc, children=True)
+        children = cmds.listRelatives(loc, children=True, path=True)
         if len(children) == 1:
           print "# INFO: no Pointee ref model found. importing now..."
           refName = "Pointee_clean"
