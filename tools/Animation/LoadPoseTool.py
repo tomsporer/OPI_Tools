@@ -24,7 +24,6 @@ class LoadPoseTool(DataBaseTool):
 
   def executeMaya(self):
 
-    db = self.host.apis['db']
     maya = self.host.apis['maya'] 
     cmds = maya.cmds
 
@@ -44,11 +43,26 @@ class LoadPoseTool(DataBaseTool):
     selList = list(set(selList))
 
     for each in selList:
-      data = jo.get(name=each)
-      if not data == None:
-        cmds.setAttr(each + ".translate", data.translate[0], data.translate[1], data.translate[2])
-        cmds.setAttr(each + ".rotate", data.rotate[0], data.rotate[1], data.rotate[2])
-        cmds.setAttr(each + ".scale", data.scale[0], data.scale[1], data.scale[2])
+      if ":" in each:
+        name = each.split(":")[1]
       else:
-        print "# WARNING: No transform data found for %s" %(each)
+        name = each
+      data = jo.get(name=name)
+      if not data == None:
+        axis = ["X", "Y", "Z"]
+        for i in range(3):
+          try:
+            cmds.setAttr(each + ".translate" + axis[i], data.translate[i])
+          except:
+            print "# WARNING: could not set translate%s for %s." %(axis[i], each)
+          try:
+            cmds.setAttr(each + ".rotate" + axis[i], data.rotate[i])
+          except:
+            print "# WARNING: could not set rotate%s for %s." %(axis[i], each)
+          try:
+            cmds.setAttr(each + ".scale" + axis[i], data.scale[i])
+          except:
+            print "# WARNING: could not set scale%s for %s." %(axis[i], each)
+      else:
+        print "# WARNING: No transform data found for %s." %(each)
 

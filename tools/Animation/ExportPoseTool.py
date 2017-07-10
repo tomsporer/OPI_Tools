@@ -24,7 +24,6 @@ class ExportPoseTool(DataBaseTool):
 
   def executeMaya(self):
 
-    db = self.host.apis['db']
     maya = self.host.apis['maya'] 
     cmds = maya.cmds
 
@@ -47,7 +46,11 @@ class ExportPoseTool(DataBaseTool):
       jo.clear()
 
     for each in selList:
-      jo.__setattr__(name=each, value=self.getTransforms(each))
+      if ":" in each:
+        name = each.split(":")[1] # Strip Namespaces
+      else:
+        name = each
+      jo.__setattr__(name=name, value=self.getTransforms(each))
 
     jo.write()
 
