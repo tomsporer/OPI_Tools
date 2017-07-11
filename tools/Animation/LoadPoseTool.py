@@ -31,9 +31,10 @@ class LoadPoseTool(DataBaseTool):
     project = cmds.workspace( q=True, sn=True )
     poseDir = os.path.join(project, "Cache", "Poses")
 
-    jsonPath = cmds.fileDialog2(fileFilter="Json (*.json)", fileMode=1, dir=poseDir, dialogStyle=2)
-    if not jsonPath == None:
-      jo = JsonObject(jsonPath[0])
+    fileDialog = cmds.fileDialog2(fileFilter="Json (*.json)", fileMode=1, dir=poseDir, dialogStyle=2)
+    if not fileDialog == None:
+      jsonPath = fileDialog[0]
+      jo = JsonObject(jsonPath)
 
       # Get selection:
       sel = cmds.ls(selection=True)
