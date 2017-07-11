@@ -24,35 +24,42 @@ class ExportPoseTool(DataBaseTool):
 
   def executeMaya(self):
 
+    db = self.host.apis['db']
     maya = self.host.apis['maya'] 
     cmds = maya.cmds
 
     # sceneFile = cmds.file(q=True, sn=True)
-    jsonPath = cmds.fileDialog2(fileFilter="Json (*.json)", fileMode=0, dialogStyle=2)[0]
-    jo = JsonObject(jsonPath)
+    project = cmds.workspace( q=True, sn=True )
+    poseDir = os.path.join(project, "Cache", "Poses")
+    if not os.path.exists(poseDir):
+      os.makedirs(poseDir)
 
-    # Get selection:
-    sel = cmds.ls(selection=True)
-    selList = []
-    for s in sel:
-      sType = cmds.ls(s, showType=True)[1]
-      if sType == "objectSet":
-        selList += cmds.sets(s, q=True)
-      else:
-        selList.append(s)
-    selList = list(set(selList))
+    jsonPath = cmds.fileDialog2(fileFilter="Json (*.json)", fileMode=0, dir=poseDir, dialogStyle=2)
+    if not jsonPath == None:
+      jo = JsonObject(jsonPath[0])
 
-    if os.path.exists(jsonPath):
-      jo.clear()
+      # Get selection:
+      sel = cmds.ls(selection=True)
+      selList = []
+      for s in sel:
+        sType = cmds.ls(s, showType=True)[1]
+        if sType == "objectSet":
+          selList += cmds.sets(s, q=True)
+        else:
+          selList.append(s)
+      selList = list(set(selList))
 
-    for each in selList:
-      if ":" in each:
-        name = each.split(":")[1] # Strip Namespaces
-      else:
-        name = each
-      jo.__setattr__(name=name, value=self.getTransforms(each))
+      if os.path.exists(jsonPath):
+        jo.clear()
 
-    jo.write()
+      for each in selList:
+        if ":" in each:
+          name = each.split(":")[1] # Strip Namespaces
+        else:
+          name = each
+        jo.__setattr__(name=name, value=self.getTransforms(each))
+
+      jo.write()
 
 
   def getTransforms(self, obj):
