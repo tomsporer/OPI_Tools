@@ -68,7 +68,7 @@ class ExportRsProxyTool(DataBaseTool):
         filepath = os.path.join(self.__projectPath, "Cache", "rsProxy", filename).replace("\\", "/")
 
       if not os.path.exists(filepath):
-        os.path.makedirs(filepath)
+        os.makedirs(filepath)
 
       rsProxyExportString = "rsProxy"
       rsProxyExportString += " -fp \"%s\"" %(filepath)
