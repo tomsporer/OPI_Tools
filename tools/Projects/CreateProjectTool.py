@@ -34,7 +34,7 @@ class CreateProjectTool(DataBaseTool):
 
     shorthand = self.args.getValue('shorthand')
     if not shorthand:
-      shorthand = str(name)[:3].upper()
+      shorthand = str(name)[:3].upper().replace("_", "")
 
     db = self.host.apis['db']
 
