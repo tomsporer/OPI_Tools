@@ -59,8 +59,10 @@ class ExportRsProxyTool(DataBaseTool):
       abcNode = self.getAlembicNode(loc)
       rangeStart = int(cmds.getAttr(abcNode + ".startFrame"))
       rangeEnd = int(cmds.getAttr(abcNode + ".endFrame"))
+      speed = cmds.getAttr(abcNode + ".speed")
+      rangeEnd = rangeEnd/speed
       filename = "Pointee_rsProxy_" + pName + "_####.rs"
-      filepath = os.path.join(self.__projectPath, "Cache", "rsProxy", filename).replace("\\", "/")
+      filepath = os.path.join(self.__projectPath, "Cache", "rsProxy", "slowmow", filename).replace("\\", "/")
 
       rsProxyExportString = "rsProxy"
       rsProxyExportString += " -fp \"%s\"" %(filepath)
