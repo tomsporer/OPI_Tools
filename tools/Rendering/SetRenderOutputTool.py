@@ -38,6 +38,7 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.add(name="version", label="", type="str", expression='[0-9]+[0-9]*')
     self.args.addButton("plusOne", "+1")
     self.args.endRow()
+    self.args.add(name="camsubfolder", label="Camera subfolder", type="bool", value=False)
     self.args.addSpacer(5,1)
     self.args.beginRow("camera")
     self.args.add(name="changeCamera", label="", type="bool", value=False)
@@ -59,6 +60,42 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.add(name="resY", label="Y", type="int", enabled=False)
     self.args.endRow()
 
+
+  def onButtonPressed(self, button):
+
+    if button == "plusOne":
+      version = self.args.getValue("version")
+      versionPlus = str(int(version) + 1).rjust(2,"0")
+      self.args.setValue("version", versionPlus)
+
+  def onValueChanged(self, arg):
+
+    if arg.name == "changeRange":
+      self.args.get("in").enabled = arg.value
+      self.args.get("out").enabled = arg.value
+    elif arg.name == "in":
+      if arg.value > self.args.getValue("out"):
+        self.args.setValue("out", arg.value)
+    elif arg.name == "out":
+      if arg.value < self.args.getValue("in"):
+        self.args.setValue("in", arg.value)
+    elif arg.name == "changeResolution":
+      self.args.get("resX").enabled = arg.value
+      self.args.get("resY").enabled = arg.value
+    elif arg.name == "changeCamera":
+      self.args.get("camera").enabled = arg.value
+    elif arg.name == "changePadding":
+      self.args.get("padding").enabled = arg.value
+    elif arg.name == "renderpath":
+      renderpath = arg.value.replace("/", "\\")
+      renderfolder = renderpath.split("Render\\")[-1]
+      if renderpath == renderfolder:
+        renderfolder = ""
+      self.args.setValue("renderfolder", renderfolder)
+      self.__readJson()
+
+
+
   def preexecute(self, **args):
 
     db = self.host.apis['db']
@@ -66,7 +103,6 @@ class SetRenderOutputTool(DataBaseTool):
     cmds = maya.cmds
     mel = maya.mel
 
-    
     # ----
     # get current scene data and set default values
     # ----
@@ -136,6 +172,9 @@ class SetRenderOutputTool(DataBaseTool):
         renderpath = os.path.split(renderpath)[0] # rip off versioning folder
       else:
         self.__versionFromPrefix = "01" # default
+      if os.path.split(renderpath)[1] == "<Camera>":
+        renderpath = os.path.split(renderpath)[0] # rip off camera folder
+        self.args.setValue("camsubfolder", True)
       if renderPrefix[1] == ":":
         renderfolder = renderpath.split("Render\\")[-1]
         if renderpath == renderfolder:
@@ -146,7 +185,6 @@ class SetRenderOutputTool(DataBaseTool):
           renderpath = os.path.join(projectPath, "Render")
         else:
           renderpath = os.path.join(projectPath, "Render", renderpath)
-
 
     self.args.setValue("renderpath", renderpath)
     self.args.setValue("renderfolder", renderfolder)
@@ -246,6 +284,7 @@ class SetRenderOutputTool(DataBaseTool):
     rendername = self.args.getValue('rendername')
     version = self.args.getValue('version')
     version = version.rjust(2, '0')
+    camsubfolder = self.args.getValue("camsubfolder")
     changeCamera = self.args.getValue("changeCamera")
     camera = self.args.getValue("camera")
     changeRange = self.args.getValue("changeRange")
@@ -260,9 +299,9 @@ class SetRenderOutputTool(DataBaseTool):
     # ----
 
 
-    # Create Render Folder
-    project = self.__getProject()
-    render = db.getOrCreateNew('Render', project=project, name=renderfolder, version=int(version))
+    # # Create Render Folder
+    # project = self.__getProject()
+    # render = db.getOrCreateNew('Render', project=project, name=renderfolder, version=int(version))
     
 
     # ----
@@ -275,6 +314,8 @@ class SetRenderOutputTool(DataBaseTool):
       # cmds.deleteUI("unifiedRenderGlobalsWindow")
         
     renderfile = rendername + "_<renderlayer>_V" + str(version)
+    if camsubfolder:
+      renderpath = os.path.join(renderpath, "<Camera>")
     renderPrefix = os.path.join(renderpath, "V" + version, renderfile)
     # mel.eval('fillSelectedTabForCurrentRenderer;')
     cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
@@ -322,39 +363,6 @@ class SetRenderOutputTool(DataBaseTool):
     saveJson.write()
 
 
-
-  def onButtonPressed(self, button):
-
-    if button == "plusOne":
-      version = self.args.getValue("version")
-      versionPlus = str(int(version) + 1).rjust(2,"0")
-      self.args.setValue("version", versionPlus)
-
-  def onValueChanged(self, arg):
-
-    if arg.name == "changeRange":
-      self.args.get("in").enabled = arg.value
-      self.args.get("out").enabled = arg.value
-    elif arg.name == "in":
-      if arg.value > self.args.getValue("out"):
-        self.args.setValue("out", arg.value)
-    elif arg.name == "out":
-      if arg.value < self.args.getValue("in"):
-        self.args.setValue("in", arg.value)
-    elif arg.name == "changeResolution":
-      self.args.get("resX").enabled = arg.value
-      self.args.get("resY").enabled = arg.value
-    elif arg.name == "changeCamera":
-      self.args.get("camera").enabled = arg.value
-    elif arg.name == "changePadding":
-      self.args.get("padding").enabled = arg.value
-    elif arg.name == "renderpath":
-      renderpath = arg.value.replace("/", "\\")
-      renderfolder = renderpath.split("Render\\")[-1]
-      if renderpath == renderfolder:
-        renderfolder = ""
-      self.args.setValue("renderfolder", renderfolder)
-      self.__readJson()
 
 
 
