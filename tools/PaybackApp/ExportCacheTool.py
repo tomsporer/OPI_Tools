@@ -29,10 +29,10 @@ class ExportCacheTool(DataBaseTool):
 
     self.args.addStaticText("\tExport Cache \t \t \t")
     self.args.addSpacer(13)
-    self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Payback_App'", enabled=False, hidden=True)
+    # self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Payback_App'", enabled=False, hidden=True)
     self.args.add(name="object", type="str", label="Pointee/Asset", combo=["Pointee", "Asset"], value="Pointee")
     self.args.add(name="type", type="str", label="Pointee Type", combo=["Generic", "Special", "CenterJnt"], value="Generic", enabled=True)
-    self.args.add(name="matchWithPointee", type="instance", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE project_id == ${project} AND object == 'Pointee' AND type == 'Special' ORDER BY name", enabled=False, optional=True)
+    self.args.add(name="matchWithPointee", type="instance", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE object == 'Pointee' AND type == 'Special' ORDER BY name", enabled=False, optional=True)
     self.args.add(name="name", type="str", label="Name", expression="[A-Za-z]+[A-Za-z0-9]*", value=None, enabled=True)
     self.args.addSpacer(10,0)
     self.args.beginRow("Frame Range")
@@ -130,6 +130,6 @@ class ExportCacheTool(DataBaseTool):
 
     cmds.AbcExport( j= abcExportString )
     if cObject == "Pointee":
-      db.getOrCreateNew("pointee_cache", project=self.__project, object=cObject, type=cType, name=cName, createEmptyFile=False)
+      db.getOrCreateNew("pointee_cache", object=cObject, type=cType, name=cName, createEmptyFile=False)
     elif cObject == "Asset":
-      db.getOrCreateNew("asset_cache", project=self.__project, object=cObject, type=cType, name=cName, createEmptyFile=False)
+      db.getOrCreateNew("asset_cache", object=cObject, type=cType, name=cName, createEmptyFile=False)

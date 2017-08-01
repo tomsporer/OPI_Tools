@@ -87,7 +87,7 @@ class UpdateRsProxyTool(DataBaseTool):
     refFolder = "E:/PROJECTS/PAY_Payback_App/Models/ref"
     sel = self.__sel
 
-    possibleAssets = db.query("pointee_asset", project=project)
+    possibleAssets = db.query("pointee_asset")
 
     progressMax = len(sel)
     progress = float(0)
@@ -150,12 +150,12 @@ class UpdateRsProxyTool(DataBaseTool):
       # Importing centerJnt cache
       print "# INFO: importing centerJnt cache..."
       if cName == "Random":
-        pCacheList = db.query("pointee_cache", project=project, object=cObject, type="CenterJnt")
+        pCacheList = db.query("pointee_cache", object=cObject, type="CenterJnt")
         numCaches = len(pCacheList)
         pCache = pCacheList[randint(0, numCaches-1)]
         cName = pCache.name
       else:
-        pCache = db.queryOne("pointee_cache", project=project, object=cObject, type="CenterJnt", name=cName)
+        pCache = db.queryOne("pointee_cache", object=cObject, type="CenterJnt", name=cName)
       cmds.select(pointeeRef)
       importCache = importCacheTool.invoke(object=cObject, type="CenterJnt", cache=pCache, importMode="Merge")
       importCacheNodes = importCache["cacheNode"].split()
@@ -197,13 +197,13 @@ class UpdateRsProxyTool(DataBaseTool):
           cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
         else:
           # Choosing random generic assets
-          gAssetList = db.query("pointee_asset", project=project, type="Girl")
+          gAssetList = db.query("pointee_asset", type="Girl")
           numGAssets = len(gAssetList)
-          tAssetList = db.query("pointee_asset", project=project, type="Top")
+          tAssetList = db.query("pointee_asset", type="Top")
           numTAssets = len(tAssetList)
-          eAssetList = db.query("pointee_asset", project=project, type="Eyes")
+          eAssetList = db.query("pointee_asset", type="Eyes")
           numEAssets = len(eAssetList)
-          mAssetList = db.query("pointee_asset", project=project, type="Mouth")
+          mAssetList = db.query("pointee_asset", type="Mouth")
           numMAssets = len(mAssetList)
           percentGirl = 5
           percentTop = 60

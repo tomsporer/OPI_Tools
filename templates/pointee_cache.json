@@ -3,12 +3,6 @@
   "type": "File",
   "args": [
     {
-      "name": "project",
-      "type": "instance",
-      "template": "project",
-      "backreferencefield": "pointeescache"
-    },
-    {
       "name": "object",
       "type": "str"
     },
@@ -22,5 +16,5 @@
     }
   ],
   "filename": "${object}_${type}_${name}.abc",
-  "location": "${project.location}/Cache/alembic/${filename}"
+  "location": "PAY_Payback_App/Cache/alembic/${filename}"
 }

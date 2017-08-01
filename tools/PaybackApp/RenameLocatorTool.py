@@ -54,7 +54,7 @@ class RenameLocatorTool(DataBaseTool):
     project = db.queryOne("project", name="Payback_App")
     cObject = self.args.getValue("object")
     cType = self.args.getValue("type")
-    cQuery = db.query("pointee_cache", project=project, object=cObject, type=cType)
+    cQuery = db.query("pointee_cache", object=cObject, type=cType)
     cCombo = []
     if cType == "Generic":
       cCombo += ["Random"]
@@ -92,8 +92,8 @@ class RenameLocatorTool(DataBaseTool):
       db = self.host.apis['db']
       project = db.queryOne("project", name="Payback_App")
       cObject = self.args.getValue("object")
-      cQueryG = db.query("pointee_cache", project=project, object=cObject, type="Generic")
-      cQueryS = db.query("pointee_cache", project=project, object=cObject, type="Special")
+      cQueryG = db.query("pointee_cache", object=cObject, type="Generic")
+      cQueryS = db.query("pointee_cache", object=cObject, type="Special")
       cQuery = cQueryG + cQueryS
       cList = []
       for c in cQuery:

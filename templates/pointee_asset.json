@@ -3,12 +3,6 @@
   "type": "File",
   "args": [
     {
-      "name": "project",
-      "type": "instance",
-      "template": "project",
-      "backreferencefield": "pointeeassets"
-    },
-    {
       "name": "type",
       "type": "str"
     },
@@ -18,5 +12,5 @@
     }
   ],
   "filename": "Asset_${type}_${name}.mb",
-  "location": "${project.location}/Models/ref/${filename}"
+  "location": "PAY_Payback_App/Models/ref/${filename}"
 }

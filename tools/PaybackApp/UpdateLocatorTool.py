@@ -71,7 +71,7 @@ class UpdateLocatorTool(DataBaseTool):
     refFolder = "E:/PROJECTS/PAY_Payback_App/Models/ref"
     sel = self.__sel
 
-    possibleAssets = db.query("pointee_asset", project=project)
+    possibleAssets = db.query("pointee_asset")
 
     progressMax = len(sel)
     progress = float(0)
@@ -132,11 +132,11 @@ class UpdateLocatorTool(DataBaseTool):
       # Importing pointee cache
       print "# INFO: importing cache..."
       if cName == "Random":
-        pCacheList = db.query("pointee_cache", project=project, object=cObject, type=cType)
+        pCacheList = db.query("pointee_cache", object=cObject, type=cType)
         numCaches = len(pCacheList)
         pCache = pCacheList[randint(0, numCaches-1)]
       else:
-        pCache = db.queryOne("pointee_cache", project=project, object=cObject, type=cType, name=cName)
+        pCache = db.queryOne("pointee_cache", object=cObject, type=cType, name=cName)
       cmds.select(pointeeRef)
       importCache = importCacheTool.invoke(object=cObject, type=cType, cache=pCache, importMode="Merge")
       importCacheNodes = importCache["cacheNode"].split()
@@ -147,7 +147,7 @@ class UpdateLocatorTool(DataBaseTool):
       # Special case
       if cType == "Special":
         print "# INFO: importing special asset"
-        assetQuery = db.query("pointee_asset", project=project, type="Special")
+        assetQuery = db.query("pointee_asset", type="Special")
         for asset in assetQuery:
           if asset.name.lower() in cName.lower():
             # Importing asset ref
@@ -161,7 +161,7 @@ class UpdateLocatorTool(DataBaseTool):
             cmds.parent( assetRef, loc, relative=True)
 
             # Importing asset cache
-            aCache = db.queryOne("pointee_cache", project=project, object="Asset", type=cType, name=cName)
+            aCache = db.queryOne("pointee_cache", object="Asset", type=cType, name=cName)
             if aCache == None:
               missingCache = "Asset_%s_%s.abc" %(cType, cName)
               print "# ERROR: No cache found for special asset. Missing \"%s\"" %(missingCache)
@@ -209,13 +209,13 @@ class UpdateLocatorTool(DataBaseTool):
           cmds.scaleConstraint(pointeeRefNamespace + ":M_Body_JNT", assetRef, maintainOffset=False)
         else:
           # Choosing random generic assets
-          gAssetList = db.query("pointee_asset", project=project, type="Girl")
+          gAssetList = db.query("pointee_asset", type="Girl")
           numGAssets = len(gAssetList)
-          tAssetList = db.query("pointee_asset", project=project, type="Top")
+          tAssetList = db.query("pointee_asset", type="Top")
           numTAssets = len(tAssetList)
-          eAssetList = db.query("pointee_asset", project=project, type="Eyes")
+          eAssetList = db.query("pointee_asset", type="Eyes")
           numEAssets = len(eAssetList)
-          mAssetList = db.query("pointee_asset", project=project, type="Mouth")
+          mAssetList = db.query("pointee_asset", type="Mouth")
           numMAssets = len(mAssetList)
           percentGirl = 5
           percentTop = 65
