@@ -29,10 +29,10 @@ class ImportCacheTool(DataBaseTool):
 
     self.args.addStaticText("\tImport Cache \t \t \t")
     self.args.addSpacer(13)
-    self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Payback_App'", enabled=False, hidden=True)
+    # self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Payback_App'", enabled=False, hidden=True)
     self.args.add(name="object", type="str", label="Pointee/Asset", combo=["Pointee", "Asset"], value=args.get("object", "Pointee"))
     self.args.add(name="type", type="str", label="Pointee Type", combo=["Generic", "Special", "CenterJnt"], value=args.get("type", "Generic"), enabled=True)
-    self.args.add(name="cache", type="instance", label="Cache", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE project_id == ${project} AND object == '${object}' AND type == '${type}' ORDER BY name", value=args.get("cache", None))
+    self.args.add(name="cache", type="instance", label="Cache", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE object == '${object}' AND type == '${type}' ORDER BY name", value=args.get("cache", None))
     self.args.add(name="importMode", type="str", label="Import mode", combo=["Merge", "Add under selection", "Add under root"], value=args.get("importMode", "Merge"), enabled=True)
 
     self.results.add(name="cacheNode", type="str")

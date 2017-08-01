@@ -3,12 +3,6 @@
   "type": "File",
   "args": [
     {
-      "name": "project",
-      "type": "instance",
-      "template": "project",
-      "backreferencefield": "pointeesrsproxy"
-    },
-    {
       "name": "name",
       "type": "str"
     },
@@ -18,5 +12,5 @@
     }
   ],
   "filename": "Pointee_rsProxy_${name}_${frame}.rs",
-  "location": "${project.location}/Cache/rsProxy/${filename}"
+  "location": "PAY_Payback_App/Cache/rsProxy/${filename}"
 }
