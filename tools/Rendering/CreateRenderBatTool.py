@@ -48,6 +48,7 @@ class CreateRenderBatTool(DataBaseTool):
 "
 
     batEnvVariables = "\
+SET ADSKFLEX_LICENSE_FILE=@192.168.1.14;@192.168.1.21;@192.168.1.22\n\
 SET MAYA_VERSION=" + os.environ.get("MAYA_VERSION") + "\n\
 SET REDSHIFT_VERSION=" + os.environ.get("REDSHIFT_VERSION") + "\n\
 SET REDSHIFT_INSTALLATION_ROOT=" + os.environ.get("REDSHIFT_INSTALLATION_ROOT") + "\n\
