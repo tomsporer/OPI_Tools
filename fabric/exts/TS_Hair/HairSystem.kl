@@ -38,8 +38,7 @@ namespace TS
       Curve curve = curves.getCurve(i);
       if(curve.pointCount() != HairGuide_NbPoints)
         continue;
-      HairGuide guide(curve, Vec3(0, 1, 0), color);
-      guide.layer = layer;
+      HairGuide guide(curve, Vec3(0, 1, 0), color, layer);
       result.push(this.addGuide(guide));
     }
     return result;
@@ -83,6 +82,8 @@ namespace TS
       // convert the curves
       for(Size i=0;i<this.guides.size();i++)
       {
+        if(!this.guides[i].isValid())
+          continue;
         Curve curve = this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
         Index first = curve.getFirstPointIndex();
         Index last = first + curve.pointCount();
@@ -202,6 +203,9 @@ namespace TS
 
   drawHairSystem(io DrawingHandle handle, HairSystem hair)
   {
+    if(handle == null || hair == null)
+      return;
+
     // create a name based on the unique id of the hair system
     String shapeName = hair.uid();
     InlineDebugShape shape = handle.getEmptyDebugShape(shapeName);
@@ -209,6 +213,8 @@ namespace TS
     for(Size i=0;i<hair.guides.size();i++)
     {
       HairGuide guide = hair.guides[i];
+      if(!guide.isValid())
+        continue;
       
       shape.setPen(guide.color, 4 /*radius*/);
       shape.drawLineStrip(guide.points);

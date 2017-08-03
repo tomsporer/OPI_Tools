@@ -1,0 +1,41 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: HairGuide\n  result: Boolean\n"
+    },
+  "title" : "IsValid",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "TS::HairGuide"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Boolean"
+      }
+    ],
+  "extDeps" : {
+    "TS_Hair" : "*"
+    },
+  "presetGUID" : "A21F1D2530FE45540DBD1D68CB4D7DC1",
+  "code" : "require TS_Hair;
+
+dfgEntry {
+  result = this.isValid();
+}
+"
+  }

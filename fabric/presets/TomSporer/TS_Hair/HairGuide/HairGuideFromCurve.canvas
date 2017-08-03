@@ -2,7 +2,7 @@
 {
   "objectType" : "Func",
   "metadata" : {
-    "uiTooltip" : "Supported types:\n  curve: Curve\n  normal: Vec3\n  color: Color\n  result: HairGuide\n"
+    "uiTooltip" : "Supported types:\n  curve: Curve\n  normal: Vec3\n  color: Color\n  layer: Integer\n  result: HairGuide\n"
     },
   "title" : "HairGuideFromCurve",
   "ports" : [
@@ -60,6 +60,13 @@
       },
     {
       "objectType" : "ExecPort",
+      "name" : "layer",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Integer"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "result",
       "nodePortType" : "In",
       "execPortType" : "Out",
@@ -69,11 +76,11 @@
   "extDeps" : {
     "TS_Hair" : "*"
     },
-  "presetGUID" : "14E8D094D73998ED9F9BC70A0CC3B65F",
+  "presetGUID" : "150008D559847FD92BB6253A9254011D",
   "code" : "require TS_Hair;
 
 dfgEntry {
-  result = TS::HairGuide(curve, normal, color);
+  result = TS::HairGuide(curve, normal, color, layer);
 }
 "
   }

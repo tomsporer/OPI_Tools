@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9970248341560364,\n    \"y\" : 0.00995718315243721,\n    \"z\" : -0.07581242173910141,\n    \"t\" : 7.054222106933594\n    },\n  \"row1\" : {\n    \"x\" : -2.066972001557588e-06,\n    \"y\" : 0.9914001822471619,\n    \"z\" : 0.1302064955234528,\n    \"t\" : 4.099135398864746\n    },\n  \"row2\" : {\n    \"x\" : 0.07645980268716812,\n    \"y\" : -0.1298134624958038,\n    \"z\" : 0.9885867834091187,\n    \"t\" : 11.2389554977417\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9970248341560364,\n    \"y\" : 0.00995718315243721,\n    \"z\" : -0.07581242173910141,\n    \"t\" : 4.314405918121338\n    },\n  \"row1\" : {\n    \"x\" : -2.066972001557588e-06,\n    \"y\" : 0.9914001822471619,\n    \"z\" : 0.1302064955234528,\n    \"t\" : 2.991298675537109\n    },\n  \"row2\" : {\n    \"x\" : 0.07645980268716812,\n    \"y\" : -0.1298134624958038,\n    \"z\" : 0.9885867834091187,\n    \"t\" : 6.206156253814697\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.6716181039810181\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.6263218522071838\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "12.61034297943115",
+    "camera_focalDistance" : "7.698461532592773",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 105.930908203125,\n  \"y\" : 43.61680603027344\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 194.4281191488788,\n  \"y\" : -16.62643466451294\n  }"
     },
   "title" : "",
   "ports" : [
@@ -82,69 +82,6 @@
         ],
       "executable" : "TomSporer.TS_Hair.HairSystem.AddGuide",
       "presetGUID" : "F17E3B7BA98975D48EDDB27C1DF8E6CB"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":250.0,\"y\":489.0}"
-        },
-      "name" : "HairGuide_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "a",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "b",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0.4000000059604645,
-              "y" : 1,
-              "z" : 0
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "c",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "d",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "e",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "normal",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "color",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "result",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "TomSporer.TS_Hair.HairGuide.HairGuide",
-      "presetGUID" : "79451667154EED3D6E6386614DA98CCC"
       },
     {
       "objectType" : "Inst",
@@ -223,105 +160,6 @@
         ],
       "executable" : "TomSporer.TS_Hair.HairSystem.AddGuide",
       "presetGUID" : "F17E3B7BA98975D48EDDB27C1DF8E6CB"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":555.5,\"y\":580.5}"
-        },
-      "name" : "HairGuide_2",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "a",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 3,
-              "y" : 0,
-              "z" : 0
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "b",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 3,
-              "y" : 2.200000047683716,
-              "z" : 0
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "c",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 3.299999952316284,
-              "y" : 2.900000095367432,
-              "z" : 0
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "d",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 4.599999904632568,
-              "y" : 3,
-              "z" : -0.1000000983476639
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "e",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 3,
-              "y" : 4,
-              "z" : 0
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "normal",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "color",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 1,
-              "g" : 0,
-              "b" : 0.01568627543747425,
-              "a" : 1
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "result",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "TomSporer.TS_Hair.HairGuide.HairGuide",
-      "presetGUID" : "79451667154EED3D6E6386614DA98CCC"
       },
     {
       "objectType" : "Inst",
@@ -412,7 +250,7 @@
                 "w" : 1
                 },
               "tr" : {
-                "x" : 6.700000286102295,
+                "x" : 3.500000238418579,
                 "y" : 0,
                 "z" : 0
                 },
@@ -501,7 +339,7 @@
                 "w" : 1
                 },
               "tr" : {
-                "x" : 12.39999961853027,
+                "x" : 7.699999809265137,
                 "y" : 0,
                 "z" : 0
                 },
@@ -770,6 +608,171 @@
         },
       "name" : "backDrop_4",
       "ports" : []
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":281.0,\"y\":495.999999614}"
+        },
+      "name" : "HairGuide_3",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "a",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "b",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "c",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "d",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "e",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "normal",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "color",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "layer",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "TomSporer.TS_Hair.HairGuide.HairGuide",
+      "presetGUID" : "CFD7CBE06426CB4ABFF48DC9C9A9A482"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":520.0,\"y\":543.499999614}"
+        },
+      "name" : "HairGuide_4",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "a",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1.199999928474426,
+              "y" : 0,
+              "z" : 0
+              }
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "b",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1,
+              "y" : 1,
+              "z" : 0
+              }
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "c",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1.399999976158142,
+              "y" : 2,
+              "z" : 0
+              }
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "d",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 2,
+              "y" : 3,
+              "z" : 0
+              }
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "e",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 2.099999904632568,
+              "y" : 4,
+              "z" : 0
+              }
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "normal",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "color",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 1,
+              "g" : 0.2862745225429535,
+              "b" : 0.2862745225429535,
+              "a" : 1
+              }
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "layer",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "result",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "TomSporer.TS_Hair.HairGuide.HairGuide",
+      "presetGUID" : "CFD7CBE06426CB4ABFF48DC9C9A9A482"
       }
     ],
   "connections" : {
@@ -778,9 +781,6 @@
       ],
     "AddGuide_1.this" : [
       "AddGuide_2.this"
-      ],
-    "HairGuide_1.result" : [
-      "AddGuide_1.guide"
       ],
     "DrawHairSystem_1.handle" : [
       "DrawCurves_1.this"
@@ -792,9 +792,6 @@
       "DrawHairSystem_1.hair",
       "GenerateCurves_1.this",
       "HairMeshGenerator.hair"
-      ],
-    "HairGuide_2.result" : [
-      "AddGuide_2.guide"
       ],
     "GenerateCurves_1.result" : [
       "DrawCurves_1.curves"
@@ -810,6 +807,12 @@
       ],
     "HairMeshGenerator.mesh" : [
       "DrawTexturedPolygonMesh_1.mesh"
+      ],
+    "HairGuide_3.result" : [
+      "AddGuide_1.guide"
+      ],
+    "HairGuide_4.result" : [
+      "AddGuide_2.guide"
       ]
     },
   "bindingMetadata" : {
@@ -893,159 +896,6 @@ dfgEntry {
 
 dfgEntry {
   result = this.addGuide(guide);
-}
-"
-      },
-    "TomSporer.TS_Hair.HairGuide.HairGuide" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTooltip" : "Supported types:\n  a: Vec3\n  b: Vec3\n  c: Vec3\n  d: Vec3\n  e: Vec3\n  normal: Vec3\n  color: Color\n  result: HairGuide\n"
-        },
-      "title" : "HairGuide",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "a",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 0,
-              "z" : 0
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "b",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 1,
-              "z" : 0
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "c",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 2,
-              "z" : 0
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "d",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 3,
-              "z" : 0
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "e",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 4,
-              "z" : 0
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "normal",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 0,
-              "y" : 1,
-              "z" : 0
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "name" : "color",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 1,
-              "g" : 1,
-              "b" : 0,
-              "a" : 1
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "result",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "TS::HairGuide"
-          }
-        ],
-      "extDeps" : {
-        "TS_Hair" : "*"
-        },
-      "presetGUID" : "79451667154EED3D6E6386614DA98CCC",
-      "code" : "require TS_Hair;
-
-dfgEntry {
-  result = TS::HairGuide(a, b, c, d, e, normal, color);
 }
 "
       },
@@ -2094,6 +1944,166 @@ dfgEntry {
 
 dfgEntry {
   result = this.generateMesh(curveIndex, radius, segmentLength, cylinderSides, upvector);
+}
+"
+      },
+    "TomSporer.TS_Hair.HairGuide.HairGuide" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  a: Vec3\n  b: Vec3\n  c: Vec3\n  d: Vec3\n  e: Vec3\n  normal: Vec3\n  color: Color\n  layer: Integer\n  result: HairGuide\n"
+        },
+      "title" : "HairGuide",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "a",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "b",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "c",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 2,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "d",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 3,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "e",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 4,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "normal",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0,
+              "y" : 1,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
+            },
+          "name" : "color",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 1,
+              "g" : 1,
+              "b" : 0,
+              "a" : 1
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Color"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "layer",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "TS::HairGuide"
+          }
+        ],
+      "extDeps" : {
+        "TS_Hair" : "*"
+        },
+      "presetGUID" : "CFD7CBE06426CB4ABFF48DC9C9A9A482",
+      "code" : "require TS_Hair;
+
+dfgEntry {
+  result = TS::HairGuide(a, b, c, d, e, normal, color, layer);
 }
 "
       }
