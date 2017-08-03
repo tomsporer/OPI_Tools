@@ -8,37 +8,126 @@ namespace TS
   {
     HairGuide guides[];
     Curves curves;
-    Integer version;
   };
 
   HairSystem()
   {
     this.curves = Curves();
-    this.version = 1;
   }
 
   // ! means that the method is mutable (can change content)
   Index HairSystem.addGuide!(HairGuide guide)
   {
     this.guides.push(guide);
-    this.version += 1;
     return this.guides.size() - 1;
   }
 
   Curves HairSystem.generateCurves!()
   {
-    if(this.curves.getVersion() != this.version ||
-      this.curves.curveCount() != this.guides.size())
-    {
-      // convert the curves
-      for(Size i=0;i<this.guides.size();i++)
-      {
-        this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
-      }
+    this.curves = Curves();
 
-      this.version = this.curves.getVersion();
+    // convert the curves
+    for(Size i=0;i<this.guides.size();i++)
+    {
+      this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
     }
     return this.curves;
+  }
+
+  /// \dfgPresetDefault radius 0.1
+  /// \dfgPresetRange radius (0, 1)
+  /// \dfgPresetDefault segmentLength 1.0
+  /// \dfgPresetRange segmentLength (0, 0.5)
+  /// \dfgPresetDefault cylinderSides 6
+  /// \dfgPresetRange cylinderSides (3, 24)
+  /// \dfgPresetDefault upvector {"x": 1.0, "y": 0.0, "z": 0.0}
+  PolygonMesh HairSystem.generateMesh!(
+    Index curveIndex,
+    Scalar radius,
+    Scalar segmentLength,
+    Integer cylinderSides,
+    Vec3 upvector)
+  {
+    Curves curves = this.generateCurves();
+    if(curveIndex >= curves.curveCount())
+      throw('curveIndex is out of range - there are only '+curves.curveCount()+' curves.');
+    if(segmentLength <= 0.0)
+      throw('segmentLength needs to be higher than 0');
+
+    Scalar length = curves.getCurveLength(curveIndex);
+    Integer subdivU = SInt32(length / segmentLength + 0.5) + 1;
+    if(subdivU < 3)
+      subdivU = 3;
+    Integer subdivV = cylinderSides;
+    if(subdivV < 3)
+      subdivV = 3;
+
+    Xfo xfos[];
+    xfos.resize(subdivU);
+    for(Size i=0;i<subdivU;i++)
+    {
+      Scalar ratio = length * Scalar(i) / Scalar(subdivU-1);
+      Scalar u = curves.getParameterFromLength(curveIndex, ratio);
+
+      xfos[i].tr = curves.getPositionAtParam(curveIndex, u);
+
+      Vec3 tangent = curves.getTangentAtParam(curveIndex, u);
+      xfos[i].ori.setFromDirectionAndUpvector(tangent, upvector);
+      xfos[i].sc = Vec3(radius, radius, radius);
+    }
+
+    Vec3 profile[];
+    profile.resize(subdivV);
+
+    for(Size i=0;i<subdivV;i++)
+    {
+      Quat quat;
+      quat.setFromAxisAndAngle(Vec3(0, 0, -1), TWO_PI * Scalar(i) / Scalar(subdivV));
+      profile[i] = quat.rotateVector(Vec3(0, 1, 0));
+    }
+
+    PolygonMesh mesh();
+    mesh.addExtrusion(xfos, profile, true /* close profile */);
+
+    // add the caps
+    // first add two points
+    Index startCenterPoint = mesh.createPoints(1);
+    Index endCenterPoint = mesh.createPoints(1);
+    mesh.setPointPosition(startCenterPoint, xfos[0].tr);
+    mesh.setPointPosition(endCenterPoint, xfos[xfos.size()-1].tr);
+
+    // create the triangles for the start cap
+    mesh.beginStructureChanges();
+    for(Size i=0;i<subdivV;i++)
+    {
+      mesh.addPolygon(startCenterPoint, i, (i + 1) % subdivV);
+    }
+    // create the triangles for the end cap
+    Index lastRowFirstPoint = mesh.pointCount() - 2 - subdivV;
+    for(Size i=0;i<subdivV;i++)
+    {
+      mesh.addPolygon(endCenterPoint, lastRowFirstPoint + (i + 1) % subdivV, lastRowFirstPoint + i);
+    }
+    mesh.endStructureChanges();
+
+    // setup UVs
+    Ref<Vec2Attribute> uvs = mesh.getOrCreateVec2Attribute('uvs0');
+    for(Size i=0;i<subdivU;i++)
+    {
+      for(Size j=0;j<subdivV;j++)
+      {
+        Index idx = i * subdivV + j;
+        Vec2 singleUv;
+        singleUv.x = 1.0 - Scalar(j) / Scalar(subdivV);
+        singleUv.y = Scalar(i) / Scalar(subdivU-1);
+        mesh.setPointAttribute(idx, uvs, singleUv);
+      }
+    }
+    mesh.setPointAttribute(startCenterPoint, uvs, Vec2(0.0, 0.0));
+    mesh.setPointAttribute(endCenterPoint, uvs, Vec2(0.0, 1.0));
+
+    mesh.recomputePointNormals();
+    return mesh;
   }
 
   drawHairSystem(io DrawingHandle handle, HairSystem hair)

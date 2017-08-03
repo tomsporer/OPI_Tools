@@ -2,13 +2,4 @@ require TS_Hair;
 
 operator entry ()
 {
-  TS::HairSystem hair();
-  hair.generateCurves();
-  hair.addGuide(TS::HairGuide());
-  hair.generateCurves();
-  hair.addGuide(TS::HairGuide());
-  hair.generateCurves();
-
-  report(hair.version);
-  report(hair.curves.getVersion());
 }
