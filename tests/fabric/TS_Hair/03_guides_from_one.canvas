@@ -2,14 +2,14 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9953221082687378,\n    \"y\" : 0.0503922663629055,\n    \"z\" : -0.08208807557821274,\n    \"t\" : -0.8368408679962158\n    },\n  \"row1\" : {\n    \"x\" : -2.602041831778479e-06,\n    \"y\" : 0.8522335886955261,\n    \"z\" : 0.5231409668922424,\n    \"t\" : 6.096413135528565\n    },\n  \"row2\" : {\n    \"x\" : 0.09631972014904022,\n    \"y\" : -0.5207068920135498,\n    \"z\" : 0.8482732176780701,\n    \"t\" : 5.594155311584473\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9953173995018005,\n    \"y\" : 0.03844780474901199,\n    \"z\" : -0.08832264691591263,\n    \"t\" : -1.579976797103882\n    },\n  \"row1\" : {\n    \"x\" : -2.846029929060023e-06,\n    \"y\" : 0.9168872237205505,\n    \"z\" : 0.3991058170795441,\n    \"t\" : 5.52893590927124\n    },\n  \"row2\" : {\n    \"x\" : 0.09632608294487,\n    \"y\" : -0.3972460627555847,\n    \"z\" : 0.9126313328742981,\n    \"t\" : 6.76024866104126\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "8.610298156738281",
+    "camera_focalDistance" : "9.429473876953125",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 198.0,\n  \"y\" : -1.0\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 239.0,\n  \"y\" : -113.0\n  }"
     },
   "title" : "",
   "ports" : [
@@ -113,7 +113,14 @@
         {
           "objectType" : "InstPort",
           "name" : "a",
-          "nodePortType" : "In"
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : -0.5,
+              "y" : 0,
+              "z" : 0
+              }
+            }
           },
         {
           "objectType" : "InstPort",
@@ -123,7 +130,14 @@
         {
           "objectType" : "InstPort",
           "name" : "c",
-          "nodePortType" : "In"
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 0.2000000178813934,
+              "y" : 2,
+              "z" : 0
+              }
+            }
           },
         {
           "objectType" : "InstPort",
@@ -133,7 +147,14 @@
         {
           "objectType" : "InstPort",
           "name" : "e",
-          "nodePortType" : "In"
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : -0.800000011920929,
+              "y" : 5,
+              "z" : 0
+              }
+            }
           },
         {
           "objectType" : "InstPort",
@@ -162,7 +183,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":550.0,\"y\":225.5}"
+        "uiGraphPos" : "{\"x\":505.0,\"y\":203.5}"
         },
       "name" : "AddGuidesFromGuides_1",
       "ports" : [
@@ -201,7 +222,7 @@
           "name" : "count",
           "nodePortType" : "In",
           "defaultValues" : {
-            "Size" : 128
+            "Size" : 1000
             }
           }
         ],
@@ -225,7 +246,7 @@
               "name" : "min",
               "nodePortType" : "In",
               "defaultValues" : {
-                "Float32" : -4.800000190734863
+                "Float32" : -5.300000190734863
                 },
               "outsidePortType" : "In"
               },
@@ -234,7 +255,7 @@
               "name" : "max",
               "nodePortType" : "In",
               "defaultValues" : {
-                "Float32" : 4.200000286102295
+                "Float32" : 5.600000381469727
                 },
               "outsidePortType" : "In"
               }
@@ -248,7 +269,6 @@
             "ports" : [
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "seed",
                 "nodePortType" : "Out",
                 "defaultValues" : {
@@ -259,7 +279,6 @@
                 },
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "min",
                 "nodePortType" : "Out",
                 "defaultValues" : {
@@ -270,7 +289,6 @@
                 },
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "max",
                 "nodePortType" : "Out",
                 "defaultValues" : {
@@ -922,7 +940,7 @@ dfgEntry {
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
         },
-      "title" : "AddGuidesFromThree",
+      "title" : "AddGuidesFromGuides",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -1201,8 +1219,8 @@ dfgEntry {
     hair.addGuide(guideA);
     Float32 ratio = 1.0;
     if(count > 1)
-      ratio = Float32(idx) / Float32(count-1);
-    hair.guides[idx] = dfgPullBlockPort('addGuide.result', guideA, guideB, guideC, guideD, idx, count, ratio);
+      ratio = Float32(i) / Float32(count-1);
+    hair.guides[idx] = dfgPullBlockPort('addGuide.result', guideA, guideB, guideC, guideD, i, count, ratio);
   }
 }
 "
