@@ -1,0 +1,48 @@
+// Created by kl2dfg (processFunction)
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: HairSystem\n  guide: TS::HairGuide\n  result: Index\n"
+    },
+  "title" : "AddGuide",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "guide",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "TS::HairGuide"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Index"
+      }
+    ],
+  "extDeps" : {
+    "TS_Hair" : "*"
+    },
+  "presetGUID" : "F17E3B7BA98975D48EDDB27C1DF8E6CB",
+  "code" : "require TS_Hair;
+
+dfgEntry {
+  result = this.addGuide(guide);
+}
+"
+  }

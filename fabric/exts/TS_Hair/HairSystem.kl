@@ -1,0 +1,59 @@
+require Math;
+require Geometry;
+require InlineDrawing;
+
+namespace TS
+{
+  object HairSystem
+  {
+    HairGuide guides[];
+    Curves curves;
+    Integer version;
+  };
+
+  HairSystem()
+  {
+    this.curves = Curves();
+    this.version = 1;
+  }
+
+  // ! means that the method is mutable (can change content)
+  Index HairSystem.addGuide!(HairGuide guide)
+  {
+    this.guides.push(guide);
+    this.version += 1;
+    return this.guides.size() - 1;
+  }
+
+  Curves HairSystem.generateCurves!()
+  {
+    if(this.curves.getVersion() != this.version ||
+      this.curves.curveCount() != this.guides.size())
+    {
+      // convert the curves
+      for(Size i=0;i<this.guides.size();i++)
+      {
+        this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
+      }
+
+      this.version = this.curves.getVersion();
+    }
+    return this.curves;
+  }
+
+  drawHairSystem(io DrawingHandle handle, HairSystem hair)
+  {
+    // create a name based on the unique id of the hair system
+    String shapeName = hair.uid();
+    InlineDebugShape shape = handle.getEmptyDebugShape(shapeName);
+
+    for(Size i=0;i<hair.guides.size();i++)
+    {
+      HairGuide guide = hair.guides[i];
+      
+      shape.setPen(guide.color, 4 /*radius*/);
+      shape.drawLineStrip(guide.points);
+      shape.drawPoints(guide.points);
+    }
+  }
+}

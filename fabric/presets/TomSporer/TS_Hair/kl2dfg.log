@@ -1,0 +1,77 @@
+[FABRIC:MT] Fabric Engine version 2.6.0 (development)
+[FABRIC:MT] Loading Canvas presets from e:\escher\stage\Windows\x86_64\Release\Presets\DFG
+[FABRIC:MT] Loading Canvas presets from e:\escher\Test\Canvas\Presets
+[FABRIC:MT] Loading Canvas presets from e:\OPI_Tools\fabric\presets
+[FABRIC:MT] Loading Canvas presets from C:\Users\helge\Fabric\Presets
+[FABRIC:MT] Registered extensions {Adaptors:1.0.0,Alembic:1.1.0,AlembicPatterns:1.0.0,AlembicWrapper:1.8.0,AnimX:1.0.0,AssetPatterns:1.1.0,AttributeHelpers:1.0.2,BinPacking:1.0.0,Bullet:1.0.3,Bullet2:1.0.0,Bullet2Wrapper:1.0.0,BulletHelpers:1.0.0,Characters:1.2.0,Containers:1.2.0,DFGWrapper:1.2.0,FabricInterfaces:1.1.0,FabricSynchronization:1.2.0,Fbx:2.0.0,FbxPatterns:1.0.0,FbxWrapper:2.0.0,FileIO:1.3.1,FreeTypeGL:2.3.1,FTL:1.0.0,Geometry:1.7.0,Images:2.1.0,InlineDrawing:1.6.1,Kludge,LA:1.0.0,LibLas:1.0.0,LidarPatterns:1.0.0,Manipulation:1.2.2,Math:1.5.1,FabricOBJ:1.1.0,ObjPatterns:1.0.0,OGLWrappers:1.2.0,FabricOGL:1.1.0,OpenImageIO:1.1.0,OSOGL:1.1.0,Parameters:1.1.0,RBF:2.6.0,Singletons:1.1.2,SQLite3:1.0.0,SQLite3Wrapper:1.0.0,FabricStatistics:1.1.1,Text:2.4.0,ToolExamples:1.0.0,USD:1.0.0,UsdPatterns:1.0.0,Util:1.4.2,ZeroMQ:1.0.0,ImageProcessing,RTR,RTRAdaptors,RTShaders,Multipede:1.0.0,Particles:1.0.0} in directory: e:\escher\stage\Windows\x86_64\Release\Exts
+[FABRIC:MT] Ignored extension directory 'e:\escher\stage\Windows\x86_64\Release\Tests\Core\Exts': unable to open directory 'e:\escher\stage\Windows\x86_64\Release\Tests\Core\Exts': The system cannot find the path specified. (code 3 [0x3])
+[FABRIC:MT] Ignored extension directory 'e:\escher\stage\Windows\x86_64\Release\Tests\SceneHub': unable to open directory 'e:\escher\stage\Windows\x86_64\Release\Tests\SceneHub': The system cannot find the path specified. (code 3 [0x3])
+[FABRIC:MT] Registered extension {TS_Hair} in directory: e:\OPI_Tools\fabric\exts
+[FABRIC:MT] IRCache: Not pruning since last prune was less than 24 hours ago
+[FABRIC:MT] Loaded extension Math in 352.441ms (cached)
+[FABRIC:MT] Loaded extension FabricSynchronization in 75.743ms (cached)
+[FABRIC:MT] Loaded extension FabricStatistics in 64.811ms (cached)
+[FABRIC:MT] Loaded extension Singletons in 11.241ms (cached)
+[FABRIC:MT] Loaded extension Util in 42.844ms (cached)
+[FABRIC:MT] Loaded extension Containers in 1382.217ms (cached)
+[FABRIC:MT] Loaded extension BinPacking in 18.407ms (cached)
+[FABRIC:MT] Loaded extension Geometry in 1129.037ms (cached)
+[FABRIC:MT] Loaded extension FabricOGL in 167.818ms (cached)
+[FABRIC:MT] Loaded extension Parameters in 118.347ms (cached)
+[FABRIC:MT] Loaded extension FabricInterfaces in 182.671ms (cached)
+[FABRIC:MT] Loaded extension FreeTypeGL in 27.856ms (cached)
+[FABRIC:MT] Loaded extension FileIO in 102.737ms (cached)
+[FABRIC:MT] Loaded extension Text in 60.455ms (cached)
+[FABRIC:MT] Loaded extension OpenImageIO in 29.163ms (cached)
+[FABRIC:MT] Loaded extension Images in 21.249ms (cached)
+[FABRIC:MT] Loaded extension InlineDrawing in 1012.693ms (cached)
+[FABRIC:MT] Loaded extension TS_Hair in 614.823ms (first time)
+registerFunction: thisType='' func='function drawHairSystem( io DrawingHandle handle, in HairSystem hair )'
+  Added to bin[normal][drawHairSystem]
+registerFunction: thisType='HairGuide' func='function HairGuide?( in Curve curve, in Vec3 normal, in Color color )'
+  Added to bin[normal][HairGuideFromCurve]
+registerFunction: thisType='HairGuide' func='function HairGuide?( in Vec3 a, in Vec3 b, in Vec3 c, in Vec3 d, in Vec3 e, in Vec3 normal, in Color color )'
+  Added to bin[normal][HairGuide]
+registerFunction: thisType='HairSystem' func='function HairSystem?()'
+  Added to bin[normal][HairSystem]
+registerFunction: thisType='HairSystem' func='function Index HairSystem.addGuide!( in HairGuide guide )'
+  Added to bin[normal][Index HairSystem.addGuide]
+registerFunction: thisType='HairSystem' func='function Curves HairSystem.generateCurves!()'
+  Added to bin[normal][Curves HairSystem.generateCurves]
+registerFunction: thisType='TS::HairGuide' func='function HairGuide?( in Vec3 a, in Vec3 b, in Vec3 c, in Vec3 d, in Vec3 e, in Vec3 normal, in Color color )'
+  Added to bin[normal][HairGuide]
+registerFunction: thisType='TS::HairGuide' func='function HairGuide?( in Curve curve, in Vec3 normal, in Color color )'
+  Added to bin[normal][HairGuideFromCurve]
+registerFunction: thisType='TS::HairSystem' func='function HairSystem?()'
+  Added to bin[normal][HairSystem]
+registerFunction: thisType='TS::HairSystem' func='function Index HairSystem.addGuide!( in HairGuide guide )'
+  Added to bin[normal][Index TS::HairSystem.addGuide]
+registerFunction: thisType='TS::HairSystem' func='function Curves HairSystem.generateCurves!()'
+  Added to bin[normal][Curves TS::HairSystem.generateCurves]
+processFunctions
+  bin[normal][drawHairSystem][2] (asArray=false)
+    thisType='' code='function drawHairSystem( io DrawingHandle handle, in HairSystem hair )'
+  bin[normal][HairGuideFromCurve][3] (asArray=false)
+    thisType='HairGuide' code='function HairGuide?( in Curve curve, in Vec3 normal, in Color color )'
+    thisType='TS::HairGuide' code='function HairGuide?( in Curve curve, in Vec3 normal, in Color color )'
+      Skipping func: already have a func and not polyThis and not polyParams
+  bin[normal][HairGuide][7] (asArray=false)
+    thisType='HairGuide' code='function HairGuide?( in Vec3 a, in Vec3 b, in Vec3 c, in Vec3 d, in Vec3 e, in Vec3 normal, in Color color )'
+    thisType='TS::HairGuide' code='function HairGuide?( in Vec3 a, in Vec3 b, in Vec3 c, in Vec3 d, in Vec3 e, in Vec3 normal, in Color color )'
+      Skipping func: already have a func and not polyThis and not polyParams
+  bin[normal][HairSystem][0] (asArray=false)
+    thisType='HairSystem' code='function HairSystem?()'
+    thisType='TS::HairSystem' code='function HairSystem?()'
+      Skipping func: already have a func and not polyThis and not polyParams
+  bin[normal][Index HairSystem.addGuide][1] (asArray=false)
+    thisType='HairSystem' code='function Index HairSystem.addGuide!( in HairGuide guide )'
+  bin[normal][Curves HairSystem.generateCurves][0] (asArray=false)
+    thisType='HairSystem' code='function Curves HairSystem.generateCurves!()'
+  bin[normal][Index TS::HairSystem.addGuide][1] (asArray=false)
+    thisType='TS::HairSystem' code='function Index HairSystem.addGuide!( in HairGuide guide )'
+Skipped '../../presets/TomSporer/TS_Hair/\HairSystem\AddGuide.canvas', 'function Index HairSystem.addGuide!( in HairGuide guide )', file already exists, created by 'function Index HairSystem.addGuide!( in HairGuide guide )'.
+    Skipping bin: no output files were written
+  bin[normal][Curves TS::HairSystem.generateCurves][0] (asArray=false)
+    thisType='TS::HairSystem' code='function Curves HairSystem.generateCurves!()'
+Skipped '../../presets/TomSporer/TS_Hair/\HairSystem\GenerateCurves.canvas', 'function Curves HairSystem.generateCurves!()', file already exists, created by 'function Curves HairSystem.generateCurves!()'.
+    Skipping bin: no output files were written
