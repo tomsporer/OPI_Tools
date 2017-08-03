@@ -28,6 +28,16 @@
       },
     {
       "objectType" : "ExecPort",
+      "name" : "inputCurves",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Curves" : null
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Curves"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "mesh",
       "nodePortType" : "In",
       "defaultValues" : {
@@ -68,6 +78,13 @@
           },
         {
           "objectType" : "ExecBlockPort",
+          "name" : "inputCurves",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Curves"
+          },
+        {
+          "objectType" : "ExecBlockPort",
           "name" : "mesh",
           "nodePortType" : "Out",
           "outsidePortType" : "Out",
@@ -102,6 +119,12 @@
             },
           {
             "objectType" : "ExecFixedPort",
+            "name" : "inputCurves",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
             "name" : "mesh",
             "nodePortType" : "In",
             "outsidePortType" : "Out"
@@ -112,7 +135,7 @@
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":993.5,\"y\":347.0}"
+              "uiGraphPos" : "{\"x\":773.5,\"y\":287.5}"
               },
             "name" : "GenerateMesh_1",
             "ports" : [
@@ -133,19 +156,18 @@
                 },
               {
                 "objectType" : "InstPort",
+                "name" : "inputCurves",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
                 "name" : "radius",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "Scalar" : 0.1000000014901161
-                  }
+                "nodePortType" : "In"
                 },
               {
                 "objectType" : "InstPort",
                 "name" : "segmentLength",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "Scalar" : 0.2000000029802322
-                  }
+                "nodePortType" : "In"
                 },
               {
                 "objectType" : "InstPort",
@@ -155,14 +177,7 @@
               {
                 "objectType" : "InstPort",
                 "name" : "upvector",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "Vec3" : {
-                    "x" : 0,
-                    "y" : 0,
-                    "z" : -1
-                    }
-                  }
+                "nodePortType" : "In"
                 },
               {
                 "objectType" : "InstPort",
@@ -171,7 +186,7 @@
                 }
               ],
             "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
-            "presetGUID" : "7460F5BF9BC1FD8CF3D093F327B20D04"
+            "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848"
             }
           ],
         "connections" : {
@@ -181,6 +196,9 @@
           "hair" : [
             "GenerateMesh_1.this"
             ],
+          "inputCurves" : [
+            "GenerateMesh_1.inputCurves"
+            ],
           "GenerateMesh_1.result" : [
             "mesh"
             ]
@@ -188,14 +206,16 @@
         }
       }
     ],
-  "extDeps" : {},
+  "extDeps" : {
+    "TS_Hair" : "*"
+    },
   "presetGUID" : "B7B9A38EC5EE3523522E8B76BF07078E",
   "code" : "dfgEntry {
   PolygonMesh meshes[];
   
   for(Size i=0;i<hair.guides.size();i++)
   {
-    meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair));
+    meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair, inputCurves));
   }
   
   Xfo xfos[](meshes.size());

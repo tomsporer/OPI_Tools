@@ -103,6 +103,7 @@ namespace TS
   /// \dfgPresetDefault upvector {"x": 1.0, "y": 0.0, "z": 0.0}
   PolygonMesh HairSystem.generateMesh!(
     Index curveIndex,
+    Curves inputCurves,
     Scalar radius,
     Scalar segmentLength,
     Integer cylinderSides,
@@ -111,7 +112,10 @@ namespace TS
     if(this == null)
       return null;
 
-    Curves curves = this.generateCurves();
+    Curves curves = inputCurves;
+    if(!curves)
+      curves = this.generateCurves();
+    
     if(curveIndex >= curves.curveCount())
       throw('curveIndex is out of range - there are only '+curves.curveCount()+' curves.');
     if(segmentLength <= 0.0)

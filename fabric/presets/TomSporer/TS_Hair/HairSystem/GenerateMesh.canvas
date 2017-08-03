@@ -2,7 +2,7 @@
 {
   "objectType" : "Func",
   "metadata" : {
-    "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  radius: Scalar\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
+    "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  inputCurves: Curves\n  radius: Scalar\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
     },
   "title" : "GenerateMesh",
   "ports" : [
@@ -26,6 +26,16 @@
       "nodePortType" : "Out",
       "execPortType" : "In",
       "typeSpec" : "Index"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+        },
+      "name" : "inputCurves",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "Curves"
       },
     {
       "objectType" : "ExecPort",
@@ -97,11 +107,11 @@
   "extDeps" : {
     "TS_Hair" : "*"
     },
-  "presetGUID" : "7460F5BF9BC1FD8CF3D093F327B20D04",
+  "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848",
   "code" : "require TS_Hair;
 
 dfgEntry {
-  result = this.generateMesh(curveIndex, radius, segmentLength, cylinderSides, upvector);
+  result = this.generateMesh(curveIndex, inputCurves, radius, segmentLength, cylinderSides, upvector);
 }
 "
   }

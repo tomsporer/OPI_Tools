@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9970248341560364,\n    \"y\" : 0.00995718315243721,\n    \"z\" : -0.07581242173910141,\n    \"t\" : 4.314405918121338\n    },\n  \"row1\" : {\n    \"x\" : -2.066972001557588e-06,\n    \"y\" : 0.9914001822471619,\n    \"z\" : 0.1302064955234528,\n    \"t\" : 2.991298675537109\n    },\n  \"row2\" : {\n    \"x\" : 0.07645980268716812,\n    \"y\" : -0.1298134624958038,\n    \"z\" : 0.9885867834091187,\n    \"t\" : 6.206156253814697\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9923349022865295,\n    \"y\" : -0.03645695000886917,\n    \"z\" : 0.117630697786808,\n    \"t\" : 5.623356342315674\n    },\n  \"row1\" : {\n    \"x\" : -2.365433147133444e-06,\n    \"y\" : 0.9550771117210388,\n    \"z\" : 0.2960770726203919,\n    \"t\" : 4.050713539123535\n    },\n  \"row2\" : {\n    \"x\" : -0.1231452897191048,\n    \"y\" : -0.2937973737716675,\n    \"z\" : 0.9478912949562073,\n    \"t\" : 6.196237564086914\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
     "uiGraphZoom" : "{\n  \"value\" : 0.6263218522071838\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "7.698461532592773",
+    "camera_focalDistance" : "7.849623680114746",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 194.4281191488788,\n  \"y\" : -16.62643466451294\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -200.5718841552734,\n  \"y\" : -7.626434326171875\n  }"
     },
   "title" : "",
   "ports" : [
@@ -416,152 +416,6 @@
       "presetGUID" : "ED70D3DF7C2BBE104B6E0DA12E8626BF"
       },
     {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":2240.0,\"y\":376.0}"
-        },
-      "name" : "HairMeshGenerator",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "hair",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "mesh",
-          "nodePortType" : "Out"
-          }
-        ],
-      "blocks" : [
-        {
-          "name" : "genMeshPerCurve",
-          "objectType" : "InstBlock",
-          "execBlockRelPath" : "genMeshPerCurve",
-          "ports" : [],
-          "exec" : {
-            "objectType" : "Graph",
-            "metadata" : {
-              "uiGraphPan" : "{\n  \"x\" : 83.0,\n  \"y\" : -86.0\n  }"
-              },
-            "title" : "",
-            "ports" : [],
-            "fixedPorts" : [
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "index",
-                "nodePortType" : "Out",
-                "outsidePortType" : "In"
-                },
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "guide",
-                "nodePortType" : "Out",
-                "outsidePortType" : "In"
-                },
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "hair",
-                "nodePortType" : "IO",
-                "outsidePortType" : "IO"
-                },
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "mesh",
-                "nodePortType" : "In",
-                "outsidePortType" : "Out"
-                }
-              ],
-            "extDeps" : {},
-            "nodes" : [
-              {
-                "objectType" : "Inst",
-                "metadata" : {
-                  "uiGraphPos" : "{\"x\":993.5,\"y\":347.0}"
-                  },
-                "name" : "GenerateMesh_1",
-                "ports" : [
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "exec",
-                    "nodePortType" : "IO"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "this",
-                    "nodePortType" : "IO"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "curveIndex",
-                    "nodePortType" : "In"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "radius",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "Scalar" : 0.1000000014901161
-                      }
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "segmentLength",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "Scalar" : 0.2000000029802322
-                      }
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "cylinderSides",
-                    "nodePortType" : "In"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "upvector",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "Vec3" : {
-                        "x" : 0,
-                        "y" : 0,
-                        "z" : -1
-                        }
-                      }
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "result",
-                    "nodePortType" : "Out"
-                    }
-                  ],
-                "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
-                "presetGUID" : "7460F5BF9BC1FD8CF3D093F327B20D04"
-                }
-              ],
-            "connections" : {
-              "index" : [
-                "GenerateMesh_1.curveIndex"
-                ],
-              "hair" : [
-                "GenerateMesh_1.this"
-                ],
-              "GenerateMesh_1.result" : [
-                "mesh"
-                ]
-              }
-            }
-          }
-        ],
-      "executable" : "TomSporer.TS_Hair.HairSystem.HairMeshGenerator",
-      "presetGUID" : "B7B9A38EC5EE3523522E8B76BF07078E"
-      },
-    {
       "objectType" : "User",
       "metadata" : {
         "uiTitle" : "Create Hair System",
@@ -773,6 +627,158 @@
         ],
       "executable" : "TomSporer.TS_Hair.HairGuide.HairGuide",
       "presetGUID" : "CFD7CBE06426CB4ABFF48DC9C9A9A482"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":2263.5,\"y\":345.000000062}"
+        },
+      "name" : "HairMeshGenerator_2",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "hair",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "inputCurves",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "mesh",
+          "nodePortType" : "Out"
+          }
+        ],
+      "blocks" : [
+        {
+          "name" : "genMeshPerCurve",
+          "objectType" : "InstBlock",
+          "execBlockRelPath" : "genMeshPerCurve",
+          "ports" : [],
+          "exec" : {
+            "objectType" : "Graph",
+            "metadata" : {
+              "uiGraphPan" : "{\n  \"x\" : 83.0,\n  \"y\" : -86.0\n  }"
+              },
+            "title" : "",
+            "ports" : [],
+            "fixedPorts" : [
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "index",
+                "nodePortType" : "Out",
+                "outsidePortType" : "In"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "guide",
+                "nodePortType" : "Out",
+                "outsidePortType" : "In"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "hair",
+                "nodePortType" : "IO",
+                "outsidePortType" : "IO"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "inputCurves",
+                "nodePortType" : "Out",
+                "outsidePortType" : "In"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "mesh",
+                "nodePortType" : "In",
+                "outsidePortType" : "Out"
+                }
+              ],
+            "extDeps" : {},
+            "nodes" : [
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":773.5,\"y\":287.5}"
+                  },
+                "name" : "GenerateMesh_1",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "exec",
+                    "nodePortType" : "IO"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "this",
+                    "nodePortType" : "IO"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "curveIndex",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "inputCurves",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "radius",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "segmentLength",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "cylinderSides",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "upvector",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "result",
+                    "nodePortType" : "Out"
+                    }
+                  ],
+                "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
+                "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848"
+                }
+              ],
+            "connections" : {
+              "index" : [
+                "GenerateMesh_1.curveIndex"
+                ],
+              "hair" : [
+                "GenerateMesh_1.this"
+                ],
+              "inputCurves" : [
+                "GenerateMesh_1.inputCurves"
+                ],
+              "GenerateMesh_1.result" : [
+                "mesh"
+                ]
+              }
+            }
+          }
+        ],
+      "executable" : "TomSporer.TS_Hair.HairSystem.HairMeshGenerator",
+      "presetGUID" : "B7B9A38EC5EE3523522E8B76BF07078E"
       }
     ],
   "connections" : {
@@ -791,7 +797,7 @@
     "AddGuide_2.this" : [
       "DrawHairSystem_1.hair",
       "GenerateCurves_1.this",
-      "HairMeshGenerator.hair"
+      "HairMeshGenerator_2.hair"
       ],
     "GenerateCurves_1.result" : [
       "DrawCurves_1.curves"
@@ -805,14 +811,14 @@
     "FileBrowser_1.result" : [
       "DrawTexturedPolygonMesh_1.filePath"
       ],
-    "HairMeshGenerator.mesh" : [
-      "DrawTexturedPolygonMesh_1.mesh"
-      ],
     "HairGuide_3.result" : [
       "AddGuide_1.guide"
       ],
     "HairGuide_4.result" : [
       "AddGuide_2.guide"
+      ],
+    "HairMeshGenerator_2.mesh" : [
+      "DrawTexturedPolygonMesh_1.mesh"
       ]
     },
   "bindingMetadata" : {
@@ -1635,318 +1641,6 @@ dfgEntry {
 }
 "
       },
-    "TomSporer.TS_Hair.HairSystem.HairMeshGenerator" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-        },
-      "title" : "HairMeshGenerator",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "defaultValues" : {
-            "Execute" : {}
-            },
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "hair",
-          "nodePortType" : "IO",
-          "defaultValues" : {
-            "TS::HairSystem" : null
-            },
-          "execPortType" : "IO",
-          "typeSpec" : "TS::HairSystem"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "mesh",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "PolygonMesh" : null
-            },
-          "execPortType" : "Out",
-          "typeSpec" : "PolygonMesh"
-          }
-        ],
-      "blocks" : [
-        {
-          "objectType" : "ExecBlock",
-          "metadata" : {
-            "uiGraphPos" : "{\"x\":0.0,\"y\":0.0}"
-            },
-          "name" : "genMeshPerCurve",
-          "ports" : [
-            {
-              "objectType" : "ExecBlockPort",
-              "name" : "index",
-              "nodePortType" : "In",
-              "outsidePortType" : "In",
-              "typeSpec" : "Integer"
-              },
-            {
-              "objectType" : "ExecBlockPort",
-              "name" : "guide",
-              "nodePortType" : "In",
-              "outsidePortType" : "In",
-              "typeSpec" : "TS::HairGuide"
-              },
-            {
-              "objectType" : "ExecBlockPort",
-              "name" : "hair",
-              "nodePortType" : "IO",
-              "outsidePortType" : "IO",
-              "typeSpec" : "TS::HairSystem"
-              },
-            {
-              "objectType" : "ExecBlockPort",
-              "name" : "mesh",
-              "nodePortType" : "Out",
-              "outsidePortType" : "Out",
-              "typeSpec" : "PolygonMesh"
-              }
-            ],
-          "defaultExec" : {
-            "objectType" : "Graph",
-            "metadata" : {
-              "uiGraphPan" : "{\n  \"x\" : 83.0,\n  \"y\" : -86.0\n  }"
-              },
-            "title" : "",
-            "ports" : [],
-            "fixedPorts" : [
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "index",
-                "nodePortType" : "Out",
-                "outsidePortType" : "In"
-                },
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "guide",
-                "nodePortType" : "Out",
-                "outsidePortType" : "In"
-                },
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "hair",
-                "nodePortType" : "IO",
-                "outsidePortType" : "IO"
-                },
-              {
-                "objectType" : "ExecFixedPort",
-                "name" : "mesh",
-                "nodePortType" : "In",
-                "outsidePortType" : "Out"
-                }
-              ],
-            "extDeps" : {},
-            "nodes" : [
-              {
-                "objectType" : "Inst",
-                "metadata" : {
-                  "uiGraphPos" : "{\"x\":993.5,\"y\":347.0}"
-                  },
-                "name" : "GenerateMesh_1",
-                "ports" : [
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "exec",
-                    "nodePortType" : "IO"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "this",
-                    "nodePortType" : "IO"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "curveIndex",
-                    "nodePortType" : "In"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "radius",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "Scalar" : 0.1000000014901161
-                      }
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "segmentLength",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "Scalar" : 0.2000000029802322
-                      }
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "cylinderSides",
-                    "nodePortType" : "In"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "upvector",
-                    "nodePortType" : "In",
-                    "defaultValues" : {
-                      "Vec3" : {
-                        "x" : 0,
-                        "y" : 0,
-                        "z" : -1
-                        }
-                      }
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "result",
-                    "nodePortType" : "Out"
-                    }
-                  ],
-                "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
-                "presetGUID" : "7460F5BF9BC1FD8CF3D093F327B20D04"
-                }
-              ],
-            "connections" : {
-              "index" : [
-                "GenerateMesh_1.curveIndex"
-                ],
-              "hair" : [
-                "GenerateMesh_1.this"
-                ],
-              "GenerateMesh_1.result" : [
-                "mesh"
-                ]
-              }
-            }
-          }
-        ],
-      "extDeps" : {},
-      "presetGUID" : "B7B9A38EC5EE3523522E8B76BF07078E",
-      "code" : "dfgEntry {
-  PolygonMesh meshes[];
-  
-  for(Size i=0;i<hair.guides.size();i++)
-  {
-    meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair));
-  }
-  
-  Xfo xfos[](meshes.size());
-  mesh = PolygonMesh();
-  mesh.mergeMeshes(meshes, xfos, true);
-}
-"
-      },
-    "TomSporer.TS_Hair.HairSystem.GenerateMesh" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  radius: Scalar\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
-        },
-      "title" : "GenerateMesh",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "this",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "TS::HairSystem"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "curveIndex",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Index"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiRange" : "(0, 1)"
-            },
-          "name" : "radius",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 0.1000000014901161
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiRange" : "(0, 0.5)"
-            },
-          "name" : "segmentLength",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Scalar" : 1
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiRange" : "(3, 24)"
-            },
-          "name" : "cylinderSides",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Integer" : 6
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Integer"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "upvector",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Vec3" : {
-              "x" : 1,
-              "y" : 0,
-              "z" : 0
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
-            },
-          "name" : "result",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "PolygonMesh"
-          }
-        ],
-      "extDeps" : {
-        "TS_Hair" : "*"
-        },
-      "presetGUID" : "7460F5BF9BC1FD8CF3D093F327B20D04",
-      "code" : "require TS_Hair;
-
-dfgEntry {
-  result = this.generateMesh(curveIndex, radius, segmentLength, cylinderSides, upvector);
-}
-"
-      },
     "TomSporer.TS_Hair.HairGuide.HairGuide" : {
       "objectType" : "Func",
       "metadata" : {
@@ -2104,6 +1798,348 @@ dfgEntry {
 
 dfgEntry {
   result = TS::HairGuide(a, b, c, d, e, normal, color, layer);
+}
+"
+      },
+    "TomSporer.TS_Hair.HairSystem.HairMeshGenerator" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "HairMeshGenerator",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "hair",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "TS::HairSystem" : null
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "TS::HairSystem"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "inputCurves",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Curves" : null
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Curves"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "mesh",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "PolygonMesh" : null
+            },
+          "execPortType" : "Out",
+          "typeSpec" : "PolygonMesh"
+          }
+        ],
+      "blocks" : [
+        {
+          "objectType" : "ExecBlock",
+          "metadata" : {
+            "uiGraphPos" : "{\"x\":0.0,\"y\":0.0}"
+            },
+          "name" : "genMeshPerCurve",
+          "ports" : [
+            {
+              "objectType" : "ExecBlockPort",
+              "name" : "index",
+              "nodePortType" : "In",
+              "outsidePortType" : "In",
+              "typeSpec" : "Integer"
+              },
+            {
+              "objectType" : "ExecBlockPort",
+              "name" : "guide",
+              "nodePortType" : "In",
+              "outsidePortType" : "In",
+              "typeSpec" : "TS::HairGuide"
+              },
+            {
+              "objectType" : "ExecBlockPort",
+              "name" : "hair",
+              "nodePortType" : "IO",
+              "outsidePortType" : "IO",
+              "typeSpec" : "TS::HairSystem"
+              },
+            {
+              "objectType" : "ExecBlockPort",
+              "name" : "inputCurves",
+              "nodePortType" : "In",
+              "outsidePortType" : "In",
+              "typeSpec" : "Curves"
+              },
+            {
+              "objectType" : "ExecBlockPort",
+              "name" : "mesh",
+              "nodePortType" : "Out",
+              "outsidePortType" : "Out",
+              "typeSpec" : "PolygonMesh"
+              }
+            ],
+          "defaultExec" : {
+            "objectType" : "Graph",
+            "metadata" : {
+              "uiGraphPan" : "{\n  \"x\" : 83.0,\n  \"y\" : -86.0\n  }"
+              },
+            "title" : "",
+            "ports" : [],
+            "fixedPorts" : [
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "index",
+                "nodePortType" : "Out",
+                "outsidePortType" : "In"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "guide",
+                "nodePortType" : "Out",
+                "outsidePortType" : "In"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "hair",
+                "nodePortType" : "IO",
+                "outsidePortType" : "IO"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "inputCurves",
+                "nodePortType" : "Out",
+                "outsidePortType" : "In"
+                },
+              {
+                "objectType" : "ExecFixedPort",
+                "name" : "mesh",
+                "nodePortType" : "In",
+                "outsidePortType" : "Out"
+                }
+              ],
+            "extDeps" : {},
+            "nodes" : [
+              {
+                "objectType" : "Inst",
+                "metadata" : {
+                  "uiGraphPos" : "{\"x\":773.5,\"y\":287.5}"
+                  },
+                "name" : "GenerateMesh_1",
+                "ports" : [
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "exec",
+                    "nodePortType" : "IO"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "this",
+                    "nodePortType" : "IO"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "curveIndex",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "inputCurves",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "radius",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "segmentLength",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "cylinderSides",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "upvector",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
+                    "name" : "result",
+                    "nodePortType" : "Out"
+                    }
+                  ],
+                "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
+                "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848"
+                }
+              ],
+            "connections" : {
+              "index" : [
+                "GenerateMesh_1.curveIndex"
+                ],
+              "hair" : [
+                "GenerateMesh_1.this"
+                ],
+              "inputCurves" : [
+                "GenerateMesh_1.inputCurves"
+                ],
+              "GenerateMesh_1.result" : [
+                "mesh"
+                ]
+              }
+            }
+          }
+        ],
+      "extDeps" : {
+        "TS_Hair" : "*"
+        },
+      "presetGUID" : "B7B9A38EC5EE3523522E8B76BF07078E",
+      "code" : "dfgEntry {
+  PolygonMesh meshes[];
+  
+  for(Size i=0;i<hair.guides.size();i++)
+  {
+    meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair, inputCurves));
+  }
+  
+  Xfo xfos[](meshes.size());
+  mesh = PolygonMesh();
+  mesh.mergeMeshes(meshes, xfos, true);
+}
+"
+      },
+    "TomSporer.TS_Hair.HairSystem.GenerateMesh" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  inputCurves: Curves\n  radius: Scalar\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
+        },
+      "title" : "GenerateMesh",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "TS::HairSystem"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "curveIndex",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Index"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "name" : "inputCurves",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Curves"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiRange" : "(0, 1)"
+            },
+          "name" : "radius",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 0.1000000014901161
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiRange" : "(0, 0.5)"
+            },
+          "name" : "segmentLength",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Scalar" : 1
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiRange" : "(3, 24)"
+            },
+          "name" : "cylinderSides",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Integer" : 6
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "upvector",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Vec3" : {
+              "x" : 1,
+              "y" : 0,
+              "z" : 0
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "name" : "result",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "PolygonMesh"
+          }
+        ],
+      "extDeps" : {
+        "TS_Hair" : "*"
+        },
+      "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848",
+      "code" : "require TS_Hair;
+
+dfgEntry {
+  result = this.generateMesh(curveIndex, inputCurves, radius, segmentLength, cylinderSides, upvector);
 }
 "
       }
