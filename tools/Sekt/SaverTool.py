@@ -24,7 +24,9 @@ class SaverTool(DataBaseTool):
 
   def initialize(self, **args):
 
-    self.__ProjectsRoot = "E:\\PROJECTS"
+    db = self.host.apis['db']
+    # self.__ProjectsRoot = "E:\\PROJECTS"
+    self.__ProjectsRoot = db.root
     self.args.addStaticText("\tSave Rotkaeppchen Scene \t \t \t")
     self.args.addSpacer(13)
     self.args.add(name="project", label="Project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Rotkaeppchen'", enabled=False)
