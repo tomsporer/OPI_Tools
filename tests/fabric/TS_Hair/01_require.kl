@@ -1,0 +1,6 @@
+require TS_Hair;
+
+operator entry ()
+{
+  
+}
