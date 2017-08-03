@@ -12,7 +12,7 @@ namespace TS
 
   HairSystem()
   {
-    this.curves = Curves();
+    this.curves = null;
   }
 
   // ! means that the method is mutable (can change content)
@@ -24,12 +24,15 @@ namespace TS
 
   Curves HairSystem.generateCurves!()
   {
-    this.curves = Curves();
-
-    // convert the curves
-    for(Size i=0;i<this.guides.size();i++)
+    if(this.curves == null)
     {
-      this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
+      this.curves = Curves();
+
+      // convert the curves
+      for(Size i=0;i<this.guides.size();i++)
+      {
+        this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
+      }
     }
     return this.curves;
   }
