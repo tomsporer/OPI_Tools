@@ -18,20 +18,76 @@ namespace TS
   // ! means that the method is mutable (can change content)
   Index HairSystem.addGuide!(HairGuide guide)
   {
+    if(this == null)
+      return 0;
+    this.curves = null;
     this.guides.push(guide);
     return this.guides.size() - 1;
   }
 
+  Index[] HairSystem.addGuidesFromCurves!(Curves curves, Color color, Index layer)
+  {
+    Index result[];
+    if(this == null)
+      return result;
+    if(curves == null)
+      return result;
+
+    for(Size i=0;i<curves.curveCount();i++)
+    {
+      Curve curve = curves.getCurve(i);
+      if(curve.pointCount() != HairGuide_NbPoints)
+        continue;
+      HairGuide guide(curve, Vec3(0, 1, 0), color);
+      guide.layer = layer;
+      result.push(this.addGuide(guide));
+    }
+    return result;
+  }
+
+  HairSystem.setGuideColorsFromMesh!(PolygonMesh mesh)
+  {
+    if(this == null || mesh == null)
+      return;
+
+    Ref<Vec3Attribute> normals = mesh.getAttribute('normals');
+    if(!normals)
+      return;
+    Ref<ColorAttribute> vertexColors = mesh.getAttribute('vertexColors');
+    if(!vertexColors)
+      return;
+
+    for(Size i=0;i<this.guides.size();i++)
+    {
+      HairGuide guide = this.guides[i];
+      if(guide.points.size() == 0)
+        continue;
+      GeometryLocation location = mesh.getClosest(guide.points[0], Vec3(1), -1);
+      this.guides[i].normal = GetAttributeAtLocation(mesh, location, normals);
+      this.guides[i].color = GetAttributeAtLocation(mesh, location, vertexColors);
+    }
+  }
+
   Curves HairSystem.generateCurves!()
   {
+    if(this == null)
+      return null;
+
     if(this.curves == null)
     {
       this.curves = Curves();
 
+      GeometryAttributes attributes = this.curves.getAttributes();
+      ColorAttribute vertexColors = attributes.getOrCreateColorAttribute('vertexColors');
+
       // convert the curves
       for(Size i=0;i<this.guides.size();i++)
       {
-        this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
+        Curve curve = this.curves.addNURBS(this.guides[i].points, 2, curveForm_open);
+        Index first = curve.getFirstPointIndex();
+        Index last = first + curve.pointCount();
+        for(Size j=first;j<last;j++)
+          vertexColors.values[j] = this.guides[i].color;
       }
     }
     return this.curves;
@@ -51,6 +107,9 @@ namespace TS
     Integer cylinderSides,
     Vec3 upvector)
   {
+    if(this == null)
+      return null;
+
     Curves curves = this.generateCurves();
     if(curveIndex >= curves.curveCount())
       throw('curveIndex is out of range - there are only '+curves.curveCount()+' curves.');
@@ -130,6 +189,14 @@ namespace TS
     mesh.setPointAttribute(endCenterPoint, uvs, Vec2(0.0, 1.0));
 
     mesh.recomputePointNormals();
+
+    // transfer colors from guide
+    Color color = this.guides[curveIndex].color;
+
+    ColorAttribute vertexColors = mesh.getOrCreateColorAttribute('vertexColors');
+    for(Size i=0;i<vertexColors.values.size();i++)
+      vertexColors.values[i] = color;
+
     return mesh;
   }
 
@@ -145,7 +212,8 @@ namespace TS
       
       shape.setPen(guide.color, 4 /*radius*/);
       shape.drawLineStrip(guide.points);
-      shape.drawPoints(guide.points);
+      if(guide.layer == 0)
+        shape.drawPoints(guide.points);
     }
   }
 }

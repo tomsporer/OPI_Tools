@@ -1,7 +1,10 @@
-// Created by kl2dfg (processComposeFunction)
+// Created by kl2dfg (processFunction)
 {
   "objectType" : "Func",
-  "title" : "-> HairGuide",
+  "metadata" : {
+    "uiTooltip" : "Supported types:\n  this: HairSystem\n  curves: Curves\n  color: Color\n  layer: Index\n  result: Index[]\n"
+    },
+  "title" : "AddGuidesFromCurves",
   "ports" : [
     {
       "objectType" : "ExecPort",
@@ -12,23 +15,20 @@
       },
     {
       "objectType" : "ExecPort",
-      "metadata" : {
-        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-        },
-      "name" : "points",
-      "nodePortType" : "Out",
-      "execPortType" : "In",
-      "typeSpec" : "Vec3[]"
+      "name" : "this",
+      "nodePortType" : "IO",
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairSystem"
       },
     {
       "objectType" : "ExecPort",
       "metadata" : {
-        "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+        "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
         },
-      "name" : "normal",
+      "name" : "curves",
       "nodePortType" : "Out",
       "execPortType" : "In",
-      "typeSpec" : "Vec3"
+      "typeSpec" : "Curves"
       },
     {
       "objectType" : "ExecPort",
@@ -45,27 +45,24 @@
       "name" : "layer",
       "nodePortType" : "Out",
       "execPortType" : "In",
-      "typeSpec" : "Integer"
+      "typeSpec" : "Index"
       },
     {
       "objectType" : "ExecPort",
       "name" : "result",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "TS::HairGuide"
+      "typeSpec" : "Index[]"
       }
     ],
   "extDeps" : {
     "TS_Hair" : "*"
     },
-  "presetGUID" : "BB077A07764658D6870622E673BD137F",
+  "presetGUID" : "9936183D5119AC8BBF910723CCEBFD0A",
   "code" : "require TS_Hair;
 
 dfgEntry {
-  result.points = points;
-  result.normal = normal;
-  result.color = color;
-  result.layer = layer;
+  result = this.addGuidesFromCurves(curves, color, layer);
 }
 "
   }

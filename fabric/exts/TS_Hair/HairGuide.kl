@@ -3,11 +3,14 @@ require Geometry;
 
 namespace TS
 {
+  const Integer HairGuide_NbPoints = 5;
+  
   struct HairGuide
   {
     Vec3 points[];
     Vec3 normal;
     Color color;
+    Integer layer;
   };
 
   /// \dfgPresetDefault a {"x": 0.0, "y": 0.0, "z": 0.0}
@@ -19,7 +22,7 @@ namespace TS
   /// \dfgPresetDefault color {"r": 1.0, "g": 1.0, "b": 0.0, "a": 1.0}
   HairGuide(Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec3 e, Vec3 normal, Color color)
   {
-    this.points.resize(5);
+    this.points.resize(HairGuide_NbPoints);
     this.points[0] = a;
     this.points[1] = b;
     this.points[2] = c;
@@ -27,6 +30,7 @@ namespace TS
     this.points[4] = e;
     this.normal = normal;
     this.color = color;
+    this.layer = 0;
   }
 
   /// \dfgPresetTitle HairGuideFromCurve
@@ -34,12 +38,13 @@ namespace TS
   /// \dfgPresetDefault color {"r": 1.0, "g": 1.0, "b": 0.0, "a": 1.0}
   HairGuide(Curve curve, Vec3 normal, Color color)
   {
-    if(curve.pointCount() != 5)
-      throw("HairGuide can only be created from curves with 5 points");
-    this.points.resize(5);
-    for(Size i=0;i<5;i++)
+    if(curve.pointCount() != HairGuide_NbPoints)
+      throw("HairGuide can only be created from curves with "+HairGuide_NbPoints+" points");
+    this.points.resize(HairGuide_NbPoints);
+    for(Size i=0;i<HairGuide_NbPoints;i++)
       this.points[i] = curve.getPointPosition(i);
     this.normal = normal;
     this.color = color;
+    this.layer = 0;
   }
 }

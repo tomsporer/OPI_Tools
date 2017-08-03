@@ -46,6 +46,13 @@
       "nodePortType" : "In",
       "execPortType" : "Out",
       "typeSpec" : "Color"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "layer",
+      "nodePortType" : "In",
+      "execPortType" : "Out",
+      "typeSpec" : "Integer"
       }
     ],
   "extDeps" : {
@@ -58,6 +65,7 @@ dfgEntry {
   points = value.points;
   normal = value.normal;
   color = value.color;
+  layer = value.layer;
 }
 "
   }
