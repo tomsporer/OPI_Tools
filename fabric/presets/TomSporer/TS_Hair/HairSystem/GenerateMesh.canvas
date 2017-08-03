@@ -2,7 +2,7 @@
 {
   "objectType" : "Func",
   "metadata" : {
-    "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  inputCurves: Curves\n  radius: Scalar\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
+    "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  inputCurves: Curves\n  radius: Scalar\n  profile: AnimX::AnimCurve\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
     },
   "title" : "GenerateMesh",
   "ports" : [
@@ -49,6 +49,13 @@
         },
       "execPortType" : "In",
       "typeSpec" : "Scalar"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "profile",
+      "nodePortType" : "Out",
+      "execPortType" : "In",
+      "typeSpec" : "AnimX::AnimCurve"
       },
     {
       "objectType" : "ExecPort",
@@ -107,11 +114,11 @@
   "extDeps" : {
     "TS_Hair" : "*"
     },
-  "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848",
+  "presetGUID" : "D69A18A2577A37EA4E444F664EFB97B2",
   "code" : "require TS_Hair;
 
 dfgEntry {
-  result = this.generateMesh(curveIndex, inputCurves, radius, segmentLength, cylinderSides, upvector);
+  result = this.generateMesh(curveIndex, inputCurves, radius, profile, segmentLength, cylinderSides, upvector);
 }
 "
   }

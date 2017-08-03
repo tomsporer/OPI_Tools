@@ -9,24 +9,28 @@
 [FABRIC:MT] Ignored extension directory 'e:\Exts\Kraken\Exts': unable to open directory 'e:\Exts\Kraken\Exts': The system cannot find the path specified. (code 3 [0x3])
 [FABRIC:MT] Registered extension {TS_Hair} in directory: e:\OPI_Tools\fabric\exts
 [FABRIC:MT] IRCache: Not pruning since last prune was less than 24 hours ago
-[FABRIC:MT] Loaded extension Math in 281.798ms (cached)
-[FABRIC:MT] Loaded extension FabricSynchronization in 59.059ms (cached)
-[FABRIC:MT] Loaded extension FabricStatistics in 48.382ms (cached)
-[FABRIC:MT] Loaded extension Singletons in 9.147ms (cached)
-[FABRIC:MT] Loaded extension Util in 32.749ms (cached)
-[FABRIC:MT] Loaded extension Containers in 1050.624ms (cached)
-[FABRIC:MT] Loaded extension BinPacking in 13.778ms (cached)
-[FABRIC:MT] Loaded extension Geometry in 867.917ms (cached)
-[FABRIC:MT] Loaded extension FabricOGL in 130.224ms (cached)
-[FABRIC:MT] Loaded extension Parameters in 92.291ms (cached)
-[FABRIC:MT] Loaded extension FabricInterfaces in 140.493ms (cached)
-[FABRIC:MT] Loaded extension FreeTypeGL in 19.105ms (cached)
-[FABRIC:MT] Loaded extension FileIO in 73.169ms (cached)
-[FABRIC:MT] Loaded extension Text in 38.985ms (cached)
-[FABRIC:MT] Loaded extension OpenImageIO in 23.780ms (cached)
-[FABRIC:MT] Loaded extension Images in 15.894ms (cached)
-[FABRIC:MT] Loaded extension InlineDrawing in 777.012ms (cached)
-[FABRIC:MT] Loaded extension TS_Hair in 462.324ms (first time)
+[FABRIC:MT] Loaded extension Math in 277.340ms (cached)
+[FABRIC:MT] Loaded extension FabricSynchronization in 59.202ms (cached)
+[FABRIC:MT] Loaded extension FabricStatistics in 49.674ms (cached)
+[FABRIC:MT] Loaded extension Singletons in 9.244ms (cached)
+[FABRIC:MT] Loaded extension Util in 33.368ms (cached)
+[FABRIC:MT] Loaded extension Containers in 1078.954ms (cached)
+[FABRIC:MT] Loaded extension BinPacking in 13.936ms (cached)
+[FABRIC:MT] Loaded extension Geometry in 864.201ms (cached)
+[FABRIC:MT] Loaded extension FabricOGL in 132.573ms (cached)
+[FABRIC:MT] Loaded extension Parameters in 92.078ms (cached)
+[FABRIC:MT] Loaded extension FabricInterfaces in 142.130ms (cached)
+[FABRIC:MT] Loaded extension FreeTypeGL in 17.423ms (cached)
+[FABRIC:MT] Loaded extension FileIO in 72.236ms (cached)
+[FABRIC:MT] Loaded extension Text in 38.751ms (cached)
+[FABRIC:MT] Loaded extension OpenImageIO in 24.072ms (cached)
+[FABRIC:MT] Loaded extension Images in 15.896ms (cached)
+[FABRIC:MT] Loaded extension InlineDrawing in 769.570ms (cached)
+[FABRIC:MT] Loaded extension Kludge in 1287.578ms (cached)
+[FABRIC:MT] Loaded extension FTL in 129.388ms (cached)
+[FABRIC:MT] Loaded extension AnimX in 110.927ms (cached)
+[FABRIC:MT] [TS_Hair] HairSystem.kl:148:10: warning: variable 'profile' shadows a parameter of the same name
+[FABRIC:MT] Loaded extension TS_Hair in 593.571ms (first time)
 registerFunction: thisType='' func='function drawHairSystem( io DrawingHandle handle, in HairSystem hair )'
   Added to bin[normal][drawHairSystem]
 registerFunction: thisType='HairGuide' func='function HairGuide?( in Curve curve, in Vec3 normal, in Color color, in Integer layer )'
@@ -47,7 +51,7 @@ registerFunction: thisType='HairSystem' func='function Index[] HairSystem.addGui
   Added to bin[normal][Index[] HairSystem.addGuidesFromCurves]
 registerFunction: thisType='HairSystem' func='function Curves HairSystem.generateCurves!()'
   Added to bin[normal][Curves HairSystem.generateCurves]
-registerFunction: thisType='HairSystem' func='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
+registerFunction: thisType='HairSystem' func='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in AnimX::AnimCurve profile, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
   Added to bin[normal][PolygonMesh HairSystem.generateMesh]
 registerFunction: thisType='HairSystem' func='function HairSystem.setGuideColorsFromMesh!( in PolygonMesh mesh )'
   Added to bin[normal][HairSystem.setGuideColorsFromMesh]
@@ -71,7 +75,7 @@ registerFunction: thisType='TS::HairSystem' func='function HairSystem.setGuideCo
   Added to bin[normal][TS::HairSystem.setGuideColorsFromMesh]
 registerFunction: thisType='TS::HairSystem' func='function Curves HairSystem.generateCurves!()'
   Added to bin[normal][Curves TS::HairSystem.generateCurves]
-registerFunction: thisType='TS::HairSystem' func='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
+registerFunction: thisType='TS::HairSystem' func='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in AnimX::AnimCurve profile, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
   Added to bin[normal][PolygonMesh TS::HairSystem.generateMesh]
 processFunctions
   bin[normal][drawHairSystem][2] (asArray=false)
@@ -102,8 +106,8 @@ processFunctions
     thisType='HairSystem' code='function Index[] HairSystem.addGuidesFromCurves!( in Curves curves, in Color color, in Index layer )'
   bin[normal][Curves HairSystem.generateCurves][0] (asArray=false)
     thisType='HairSystem' code='function Curves HairSystem.generateCurves!()'
-  bin[normal][PolygonMesh HairSystem.generateMesh][6] (asArray=false)
-    thisType='HairSystem' code='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
+  bin[normal][PolygonMesh HairSystem.generateMesh][7] (asArray=false)
+    thisType='HairSystem' code='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in AnimX::AnimCurve profile, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
   bin[normal][HairSystem.setGuideColorsFromMesh][1] (asArray=false)
     thisType='HairSystem' code='function HairSystem.setGuideColorsFromMesh!( in PolygonMesh mesh )'
   bin[normal][Boolean TS::HairGuide.isValid][0] (asArray=false)
@@ -130,7 +134,7 @@ Skipped 'fabric/presets/TomSporer/TS_Hair/\HairSystem\SetGuideColorsFromMesh.can
     thisType='TS::HairSystem' code='function Curves HairSystem.generateCurves!()'
 Skipped 'fabric/presets/TomSporer/TS_Hair/\HairSystem\GenerateCurves.canvas', 'function Curves HairSystem.generateCurves!()', file already exists, created by 'function Curves HairSystem.generateCurves!()'.
     Skipping bin: no output files were written
-  bin[normal][PolygonMesh TS::HairSystem.generateMesh][6] (asArray=false)
-    thisType='TS::HairSystem' code='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
-Skipped 'fabric/presets/TomSporer/TS_Hair/\HairSystem\GenerateMesh.canvas', 'function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )', file already exists, created by 'function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'.
+  bin[normal][PolygonMesh TS::HairSystem.generateMesh][7] (asArray=false)
+    thisType='TS::HairSystem' code='function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in AnimX::AnimCurve profile, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'
+Skipped 'fabric/presets/TomSporer/TS_Hair/\HairSystem\GenerateMesh.canvas', 'function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in AnimX::AnimCurve profile, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )', file already exists, created by 'function PolygonMesh HairSystem.generateMesh!( in Index curveIndex, in Curves inputCurves, in Scalar radius, in AnimX::AnimCurve profile, in Scalar segmentLength, in Integer cylinderSides, in Vec3 upvector )'.
     Skipping bin: no output files were written

@@ -10,7 +10,7 @@
     "camera_focalDistance" : "11.63851737976074",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 466.266845703125,\n  \"y\" : -95.40159606933594\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -752.733154296875,\n  \"y\" : -122.4015960693359\n  }"
     },
   "title" : "",
   "ports" : [
@@ -1754,9 +1754,9 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2327.0,\"y\":307.999999624}"
+        "uiGraphPos" : "{\"x\":2337.0,\"y\":311.499999834}"
         },
-      "name" : "HairMeshGenerator_1",
+      "name" : "HairMeshGenerator_2",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -1829,7 +1829,7 @@
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":773.5,\"y\":287.5}"
+                  "uiGraphPos" : "{\"x\":673.5,\"y\":283.0}"
                   },
                 "name" : "GenerateMesh_1",
                 "ports" : [
@@ -1860,6 +1860,11 @@
                     },
                   {
                     "objectType" : "InstPort",
+                    "name" : "profile",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
                     "name" : "segmentLength",
                     "nodePortType" : "In"
                     },
@@ -1880,7 +1885,7 @@
                     }
                   ],
                 "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
-                "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848"
+                "presetGUID" : "D69A18A2577A37EA4E444F664EFB97B2"
                 }
               ],
             "connections" : {
@@ -1889,9 +1894,6 @@
                 ],
               "hair" : [
                 "GenerateMesh_1.this"
-                ],
-              "inputCurves" : [
-                "GenerateMesh_1.inputCurves"
                 ],
               "GenerateMesh_1.result" : [
                 "mesh"
@@ -1919,7 +1921,7 @@
       ],
     "DrawHairSystem_1.hair" : [
       "GenerateCurves_1.this",
-      "HairMeshGenerator_1.hair"
+      "HairMeshGenerator_2.hair"
       ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawHairSystem_1.handle"
@@ -1964,7 +1966,7 @@
       "DrawColoredPolygonMesh_2.mesh",
       "SetGuideColorsFromMesh_1.mesh"
       ],
-    "HairMeshGenerator_1.mesh" : [
+    "HairMeshGenerator_2.mesh" : [
       "DrawColoredPolygonMesh_1.mesh"
       ]
     },
@@ -5008,7 +5010,7 @@ dfgEntry {
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":773.5,\"y\":287.5}"
+                  "uiGraphPos" : "{\"x\":673.5,\"y\":283.0}"
                   },
                 "name" : "GenerateMesh_1",
                 "ports" : [
@@ -5039,6 +5041,11 @@ dfgEntry {
                     },
                   {
                     "objectType" : "InstPort",
+                    "name" : "profile",
+                    "nodePortType" : "In"
+                    },
+                  {
+                    "objectType" : "InstPort",
                     "name" : "segmentLength",
                     "nodePortType" : "In"
                     },
@@ -5059,7 +5066,7 @@ dfgEntry {
                     }
                   ],
                 "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
-                "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848"
+                "presetGUID" : "D69A18A2577A37EA4E444F664EFB97B2"
                 }
               ],
             "connections" : {
@@ -5068,9 +5075,6 @@ dfgEntry {
                 ],
               "hair" : [
                 "GenerateMesh_1.this"
-                ],
-              "inputCurves" : [
-                "GenerateMesh_1.inputCurves"
                 ],
               "GenerateMesh_1.result" : [
                 "mesh"
@@ -5100,7 +5104,7 @@ dfgEntry {
     "TomSporer.TS_Hair.HairSystem.GenerateMesh" : {
       "objectType" : "Func",
       "metadata" : {
-        "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  inputCurves: Curves\n  radius: Scalar\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
+        "uiTooltip" : "Supported types:\n  this: HairSystem\n  curveIndex: Index\n  inputCurves: Curves\n  radius: Scalar\n  profile: AnimX::AnimCurve\n  segmentLength: Scalar\n  cylinderSides: Integer\n  upvector: Vec3\n  result: PolygonMesh\n"
         },
       "title" : "GenerateMesh",
       "ports" : [
@@ -5147,6 +5151,13 @@ dfgEntry {
             },
           "execPortType" : "In",
           "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "profile",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "AnimX::AnimCurve"
           },
         {
           "objectType" : "ExecPort",
@@ -5205,11 +5216,11 @@ dfgEntry {
       "extDeps" : {
         "TS_Hair" : "*"
         },
-      "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848",
+      "presetGUID" : "D69A18A2577A37EA4E444F664EFB97B2",
       "code" : "require TS_Hair;
 
 dfgEntry {
-  result = this.generateMesh(curveIndex, inputCurves, radius, segmentLength, cylinderSides, upvector);
+  result = this.generateMesh(curveIndex, inputCurves, radius, profile, segmentLength, cylinderSides, upvector);
 }
 "
       }

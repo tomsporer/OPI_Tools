@@ -1,6 +1,7 @@
 require Math;
 require Geometry;
 require InlineDrawing;
+require AnimX;
 
 namespace TS
 {
@@ -105,6 +106,7 @@ namespace TS
     Index curveIndex,
     Curves inputCurves,
     Scalar radius,
+    AnimX::AnimCurve profile,
     Scalar segmentLength,
     Integer cylinderSides,
     Vec3 upvector)
@@ -115,11 +117,15 @@ namespace TS
     Curves curves = inputCurves;
     if(!curves)
       curves = this.generateCurves();
-    
+
     if(curveIndex >= curves.curveCount())
       throw('curveIndex is out of range - there are only '+curves.curveCount()+' curves.');
     if(segmentLength <= 0.0)
       throw('segmentLength needs to be higher than 0');
+
+    Boolean useProfile = profile != null;
+    if(useProfile)
+      useProfile = profile.keyframeCount() > 0;
 
     Scalar length = curves.getCurveLength(curveIndex);
     Integer subdivU = SInt32(length / segmentLength + 0.5) + 1;
@@ -133,28 +139,34 @@ namespace TS
     xfos.resize(subdivU);
     for(Size i=0;i<subdivU;i++)
     {
-      Scalar ratio = length * Scalar(i) / Scalar(subdivU-1);
-      Scalar u = curves.getParameterFromLength(curveIndex, ratio);
+      Scalar ratio = Scalar(i) / Scalar(subdivU-1);
+      Scalar u = curves.getParameterFromLength(curveIndex, length * ratio);
 
       xfos[i].tr = curves.getPositionAtParam(curveIndex, u);
 
       Vec3 tangent = curves.getTangentAtParam(curveIndex, u);
       xfos[i].ori.setFromDirectionAndUpvector(tangent, upvector);
-      xfos[i].sc = Vec3(radius, radius, radius);
+
+      Float32 s = radius;
+      if(useProfile)
+      {
+        s *= Float32(profile.evaluate(ratio));
+      }
+      xfos[i].sc = Vec3(s, s, s);
     }
 
-    Vec3 profile[];
-    profile.resize(subdivV);
+    Vec3 circle[];
+    circle.resize(subdivV);
 
     for(Size i=0;i<subdivV;i++)
     {
       Quat quat;
       quat.setFromAxisAndAngle(Vec3(0, 0, -1), TWO_PI * Scalar(i) / Scalar(subdivV));
-      profile[i] = quat.rotateVector(Vec3(0, 1, 0));
+      circle[i] = quat.rotateVector(Vec3(0, 1, 0));
     }
 
     PolygonMesh mesh();
-    mesh.addExtrusion(xfos, profile, true /* close profile */);
+    mesh.addExtrusion(xfos, circle, true /* close profile */);
 
     // add the caps
     // first add two points

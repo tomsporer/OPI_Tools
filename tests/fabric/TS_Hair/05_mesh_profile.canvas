@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9923349022865295,\n    \"y\" : -0.03645695000886917,\n    \"z\" : 0.117630697786808,\n    \"t\" : 5.623356342315674\n    },\n  \"row1\" : {\n    \"x\" : -2.365433147133444e-06,\n    \"y\" : 0.9550771117210388,\n    \"z\" : 0.2960770726203919,\n    \"t\" : 4.050713539123535\n    },\n  \"row2\" : {\n    \"x\" : -0.1231452897191048,\n    \"y\" : -0.2937973737716675,\n    \"z\" : 0.9478912949562073,\n    \"t\" : 6.196237564086914\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9983448386192322,\n    \"y\" : 0.0107055064290762,\n    \"z\" : -0.05548141151666641,\n    \"t\" : 2.522387504577637\n    },\n  \"row1\" : {\n    \"x\" : -2.214091864516377e-06,\n    \"y\" : 0.9818010330200195,\n    \"z\" : 0.1894361823797226,\n    \"t\" : 3.048924446105957\n    },\n  \"row2\" : {\n    \"x\" : 0.05650238692760468,\n    \"y\" : -0.1891179233789444,\n    \"z\" : 0.9803125858306885,\n    \"t\" : 5.119064807891846\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
     "uiGraphZoom" : "{\n  \"value\" : 0.6263218522071838\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "7.849623680114746",
+    "camera_focalDistance" : "6.347208499908447",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : -200.5718841552734,\n  \"y\" : -7.626434326171875\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -316.5718688964844,\n  \"y\" : 0.373565673828125\n  }"
     },
   "title" : "",
   "ports" : [
@@ -164,231 +164,6 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":1750.0,\"y\":235.0}"
-        },
-      "name" : "GenerateCurves_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "this",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "result",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "TomSporer.TS_Hair.HairSystem.GenerateCurves",
-      "presetGUID" : "A1F7BC7F9007BFD82B02710DF1131010"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":1960.0,\"y\":165.5}"
-        },
-      "name" : "DrawCurves_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "this",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "name",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "String" : "asdad"
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "color",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 1,
-              "g" : 1,
-              "b" : 1,
-              "a" : 1
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "specular",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "specFactor",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "transform",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Xfo" : {
-              "ori" : {
-                "v" : {
-                  "x" : 0,
-                  "y" : 0,
-                  "z" : 0
-                  },
-                "w" : 1
-                },
-              "tr" : {
-                "x" : 3.500000238418579,
-                "y" : 0,
-                "z" : 0
-                },
-              "sc" : {
-                "x" : 1,
-                "y" : 1,
-                "z" : 1
-                }
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "curves",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "instance",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawCurves",
-      "presetGUID" : "2A74C12EA0FA19E009583E558FDAC2EE"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
-        "uiGraphPos" : "{\"x\":2486.0,\"y\":174.5}"
-        },
-      "name" : "DrawTexturedPolygonMesh_1",
-      "ports" : [
-        {
-          "objectType" : "InstPort",
-          "name" : "exec",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "this",
-          "nodePortType" : "IO"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "name",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "String" : "texturedMesh"
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "filePath",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "String" : "${FABRIC_DIR}\\Resources\\fe.jpg"
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "specular",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "specFactor",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "ambient",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "transform",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Xfo" : {
-              "ori" : {
-                "v" : {
-                  "x" : 0,
-                  "y" : 0,
-                  "z" : 0
-                  },
-                "w" : 1
-                },
-              "tr" : {
-                "x" : 7.699999809265137,
-                "y" : 0,
-                "z" : 0
-                },
-              "sc" : {
-                "x" : 1,
-                "y" : 1,
-                "z" : 1
-                }
-              }
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "mesh",
-          "nodePortType" : "In"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "wireFrame",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Boolean" : true
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "doubleSided",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Boolean" : true
-            }
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "dummyResult",
-          "nodePortType" : "Out"
-          },
-        {
-          "objectType" : "InstPort",
-          "name" : "instance",
-          "nodePortType" : "Out"
-          }
-        ],
-      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawTexturedPolygonMesh",
-      "presetGUID" : "2422BED0AFC9A66EFC9086103DB69004"
-      },
-    {
-      "objectType" : "Inst",
-      "metadata" : {
         "uiGraphPos" : "{\"x\":2258.0,\"y\":235.0}"
         },
       "name" : "FileBrowser_1",
@@ -442,23 +217,11 @@
     {
       "objectType" : "User",
       "metadata" : {
-        "uiTitle" : "Debug Draw Curves",
-        "uiGraphPos" : "{\"x\":1734.0,\"y\":121.5}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiGraphSize" : "{\"w\":390.0,\"h\":266.0}"
-        },
-      "name" : "backDrop_3",
-      "ports" : []
-      },
-    {
-      "objectType" : "User",
-      "metadata" : {
         "uiTitle" : "Debug Draw Meshes",
         "uiGraphPos" : "{\"x\":2224.0,\"y\":130.5}",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiGraphSize" : "{\"w\":526.0,\"h\":367.5}"
+        "uiGraphSize" : "{\"w\":526.0,\"h\":429.5}"
         },
       "name" : "backDrop_4",
       "ports" : []
@@ -631,7 +394,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":2260.0,\"y\":332.000001316}"
+        "uiGraphPos" : "{\"x\":2250.0,\"y\":331.5}"
         },
       "name" : "HairMeshGenerator_1",
       "ports" : [
@@ -665,7 +428,7 @@
           "exec" : {
             "objectType" : "Graph",
             "metadata" : {
-              "uiGraphPan" : "{\n  \"x\" : 83.0,\n  \"y\" : -86.0\n  }"
+              "uiGraphPan" : "{\n  \"x\" : 71.0,\n  \"y\" : -200.0\n  }"
               },
             "title" : "",
             "ports" : [],
@@ -733,12 +496,18 @@
                   {
                     "objectType" : "InstPort",
                     "name" : "radius",
-                    "nodePortType" : "In"
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "Scalar" : 0.3100000023841858
+                      }
                     },
                   {
                     "objectType" : "InstPort",
                     "name" : "profile",
-                    "nodePortType" : "In"
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "AnimX::AnimCurve" : "{\n  \"keys\" : [\n    [\n      -0.0619857,\n      0.890451,\n      0,\n      0,\n      1.25886,\n      -0.011748,\n      0,\n      1.25886,\n      -0.011748,\n      1.0,\n      false\n      ],\n    [\n      0.564462,\n      1.03456,\n      1,\n      0,\n      0.519543,\n      -0.410063,\n      0,\n      0.51991,\n      -0.410353,\n      1.0,\n      false\n      ],\n    [\n      0.977467,\n      0.0700355,\n      2,\n      0,\n      1.33031,\n      8.317019999999999e-008,\n      0,\n      1.67281,\n      1.04583e-007,\n      1.0,\n      false\n      ]\n    ],\n  \"weighted\" : true,\n  \"preInfinityType\" : 0,\n  \"postInfinityType\" : 0,\n  \"name\" : \"curve\",\n  \"color.r\" : 1.0,\n  \"color.g\" : 0.0,\n  \"color.b\" : 0.0,\n  \"color.a\" : 1.0\n  }"
+                      }
                     },
                   {
                     "objectType" : "InstPort",
@@ -781,6 +550,102 @@
         ],
       "executable" : "TomSporer.TS_Hair.HairSystem.HairMeshGenerator",
       "presetGUID" : "B7B9A38EC5EE3523522E8B76BF07078E"
+      },
+    {
+      "objectType" : "Inst",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":2480.0,\"y\":174.000004094}"
+        },
+      "name" : "DrawColoredPolygonMesh_1",
+      "ports" : [
+        {
+          "objectType" : "InstPort",
+          "name" : "exec",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "this",
+          "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "name",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "String" : "mesh"
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "color",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "specular",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "specFactor",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "transform",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Xfo" : {
+              "ori" : {
+                "v" : {
+                  "x" : 0,
+                  "y" : 0,
+                  "z" : 0
+                  },
+                "w" : 1
+                },
+              "tr" : {
+                "x" : 3.299999952316284,
+                "y" : 0,
+                "z" : 0
+                },
+              "sc" : {
+                "x" : 1,
+                "y" : 1,
+                "z" : 1
+                }
+              }
+            }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "mesh",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "wireFrame",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "doubleSided",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "dummyResult",
+          "nodePortType" : "Out"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "instance",
+          "nodePortType" : "Out"
+          }
+        ],
+      "executable" : "Fabric.Exts.InlineDrawing.DrawingHandle.DrawColoredPolygonMesh",
+      "presetGUID" : "07BA36E70EB4D3E11FFDD778474357C3"
       }
     ],
   "connections" : {
@@ -791,27 +656,14 @@
       "AddGuide_2.this"
       ],
     "DrawHairSystem_1.handle" : [
-      "DrawCurves_1.this"
+      "DrawColoredPolygonMesh_1.this"
       ],
     "EmptyDrawingHandle_1.handle" : [
       "DrawHairSystem_1.handle"
       ],
     "AddGuide_2.this" : [
       "DrawHairSystem_1.hair",
-      "GenerateCurves_1.this",
       "HairMeshGenerator_1.hair"
-      ],
-    "GenerateCurves_1.result" : [
-      "DrawCurves_1.curves"
-      ],
-    "DrawCurves_1.this" : [
-      "DrawTexturedPolygonMesh_1.this"
-      ],
-    "DrawTexturedPolygonMesh_1.this" : [
-      "this"
-      ],
-    "FileBrowser_1.result" : [
-      "DrawTexturedPolygonMesh_1.filePath"
       ],
     "HairGuide_3.result" : [
       "AddGuide_1.guide"
@@ -820,7 +672,10 @@
       "AddGuide_2.guide"
       ],
     "HairMeshGenerator_1.mesh" : [
-      "DrawTexturedPolygonMesh_1.mesh"
+      "DrawColoredPolygonMesh_1.mesh"
+      ],
+    "DrawColoredPolygonMesh_1.this" : [
+      "this"
       ]
     },
   "bindingMetadata" : {
@@ -993,309 +848,6 @@ dfgEntry {
      handleLocal = DrawingHandle();
   handleLocal.clear();
   handle = handleLocal;
-}
-"
-      },
-    "TomSporer.TS_Hair.HairSystem.GenerateCurves" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiTooltip" : "Supported types:\n  this: HairSystem\n  result: Curves\n"
-        },
-      "title" : "GenerateCurves",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "this",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "TS::HairSystem"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
-            },
-          "name" : "result",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "Curves"
-          }
-        ],
-      "extDeps" : {
-        "TS_Hair" : "*"
-        },
-      "presetGUID" : "A1F7BC7F9007BFD82B02710DF1131010",
-      "code" : "require TS_Hair;
-
-dfgEntry {
-  result = this.generateCurves();
-}
-"
-      },
-    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawCurves" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.5.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
-        "uiTooltip" : "helper function to draw a curves object given a color + a single transform\n\nSupported types:\n  this: DrawingHandle\n  name: String\n  color: Color\n  specular: Color\n  specFactor: Float32\n  transform: Xfo\n  curves: Curves\n  instance: InlineInstance\n"
-        },
-      "title" : "DrawCurves",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "this",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "DrawingHandle"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "name",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "name" : "color",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0,
-              "g" : 1,
-              "b" : 0,
-              "a" : 1
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "name" : "specular",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0.2000000029802322,
-              "g" : 0.2000000029802322,
-              "b" : 0.2000000029802322,
-              "a" : 1
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiHardRange" : "(2, 1000)",
-            "uiRange" : "(2, 100)"
-            },
-          "name" : "specFactor",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Float32" : 16
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Float32"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "name" : "transform",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Xfo"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
-            },
-          "name" : "curves",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Curves"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "instance",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineInstance"
-          }
-        ],
-      "extDeps" : {
-        "InlineDrawing" : "*"
-        },
-      "presetGUID" : "2A74C12EA0FA19E009583E558FDAC2EE",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  this.drawCurves(name, color, specular, specFactor, transform, curves, instance);
-}
-"
-      },
-    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawTexturedPolygonMesh" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.5.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
-        "uiTooltip" : "helper function to draw a mesh given a color + a single transform\n\n Supported by DrawingHandle"
-        },
-      "title" : "DrawTexturedPolygonMesh",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "this",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "DrawingHandle"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "name",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "filePath",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "String"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "name" : "specular",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Color" : {
-              "r" : 0.2000000029802322,
-              "g" : 0.2000000029802322,
-              "b" : 0.2000000029802322,
-              "a" : 1
-              }
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiHardRange" : "(2, 1000)",
-            "uiRange" : "(2, 100)"
-            },
-          "name" : "specFactor",
-          "nodePortType" : "Out",
-          "defaultValues" : {
-            "Float32" : 16
-            },
-          "execPortType" : "In",
-          "typeSpec" : "Float32"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
-            },
-          "name" : "ambient",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Color"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
-            },
-          "name" : "transform",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Xfo"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
-            },
-          "name" : "mesh",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "PolygonMesh"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "wireFrame",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "doubleSided",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Boolean"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
-            },
-          "name" : "dummyResult",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "Vec3"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "instance",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "InlineInstance"
-          }
-        ],
-      "extDeps" : {
-        "InlineDrawing" : "*",
-        "FabricInterfaces" : "*"
-        },
-      "presetGUID" : "2422BED0AFC9A66EFC9086103DB69004",
-      "code" : "require InlineDrawing;
-
-dfgEntry {
-  if(this) this.drawTexturedPolygonMesh(name, filePath, specular, specFactor, ambient, transform, mesh, wireFrame, doubleSided, dummyResult, instance);
 }
 "
       },
@@ -2151,6 +1703,149 @@ dfgEntry {
 
 dfgEntry {
   result = this.generateMesh(curveIndex, inputCurves, radius, profile, segmentLength, cylinderSides, upvector);
+}
+"
+      },
+    "Fabric.Exts.InlineDrawing.DrawingHandle.DrawColoredPolygonMesh" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiDocUrl" : "http://docs.fabric-engine.com/FabricEngine/2.5.0/HTML/KLExtensionsGuide/InlineDrawing/DrawingHandle.html",
+        "uiTooltip" : "helper function to draw a mesh given a color + a single transform\n\n Supported by DrawingHandle"
+        },
+      "title" : "DrawColoredPolygonMesh",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "this",
+          "nodePortType" : "IO",
+          "execPortType" : "IO",
+          "typeSpec" : "DrawingHandle"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "name",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "String"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
+            },
+          "name" : "color",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 1,
+              "g" : 1,
+              "b" : 1,
+              "a" : 1
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Color"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 0\n  }"
+            },
+          "name" : "specular",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 0.2000000029802322,
+              "g" : 0.2000000029802322,
+              "b" : 0.2000000029802322,
+              "a" : 1
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Color"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiHardRange" : "(2, 1000)",
+            "uiRange" : "(2, 100)"
+            },
+          "name" : "specFactor",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 16
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 249,\n  \"g\" : 157,\n  \"b\" : 28\n  }"
+            },
+          "name" : "transform",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Xfo"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 51,\n  \"g\" : 1,\n  \"b\" : 106\n  }"
+            },
+          "name" : "mesh",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "PolygonMesh"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "wireFrame",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "doubleSided",
+          "nodePortType" : "Out",
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
+          "metadata" : {
+            "uiColor" : "{\n  \"r\" : 255,\n  \"g\" : 242,\n  \"b\" : 0\n  }"
+            },
+          "name" : "dummyResult",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "instance",
+          "nodePortType" : "In",
+          "execPortType" : "Out",
+          "typeSpec" : "InlineInstance"
+          }
+        ],
+      "extDeps" : {
+        "InlineDrawing" : "*",
+        "FabricInterfaces" : "*"
+        },
+      "presetGUID" : "07BA36E70EB4D3E11FFDD778474357C3",
+      "code" : "require InlineDrawing;
+
+dfgEntry {
+  if(this) this.drawColoredPolygonMesh(name, color, specular, specFactor, transform, mesh, wireFrame, doubleSided, dummyResult, instance);
 }
 "
       }

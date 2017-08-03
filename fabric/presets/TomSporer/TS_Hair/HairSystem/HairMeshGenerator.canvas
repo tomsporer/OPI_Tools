@@ -135,7 +135,7 @@
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":773.5,\"y\":287.5}"
+              "uiGraphPos" : "{\"x\":673.5,\"y\":283.0}"
               },
             "name" : "GenerateMesh_1",
             "ports" : [
@@ -166,6 +166,11 @@
                 },
               {
                 "objectType" : "InstPort",
+                "name" : "profile",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
                 "name" : "segmentLength",
                 "nodePortType" : "In"
                 },
@@ -186,7 +191,7 @@
                 }
               ],
             "executable" : "TomSporer.TS_Hair.HairSystem.GenerateMesh",
-            "presetGUID" : "313DBD6FD86D3F57B930CC6E444B9848"
+            "presetGUID" : "D69A18A2577A37EA4E444F664EFB97B2"
             }
           ],
         "connections" : {
@@ -195,9 +200,6 @@
             ],
           "hair" : [
             "GenerateMesh_1.this"
-            ],
-          "inputCurves" : [
-            "GenerateMesh_1.inputCurves"
             ],
           "GenerateMesh_1.result" : [
             "mesh"
