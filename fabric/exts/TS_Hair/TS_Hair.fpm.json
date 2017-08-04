@@ -1,6 +1,7 @@
 {
   "code": [
     "HairGuide.kl",
-    "HairSystem.kl"
+    "HairSystem.kl",
+    "HairGuideTool.kl"
   ]
 }

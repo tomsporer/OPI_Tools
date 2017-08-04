@@ -1,0 +1,35 @@
+require Manipulation;
+
+using namespace Tool;
+
+namespace TS
+{
+  /// \dfgPresetOmit
+  object HairGuideTool : BaseTool
+  {
+    HairGuide guides[];
+    Float32 radius;
+    Integer layer;
+    SphereShape gizmo;
+  };
+
+  HairGuideTool(HairSystem hair)
+  {
+    this.radius = 0.1;
+    this.gizmo = SphereShape(this.radius);
+    this.addChild('gizmo', this.gizmo);
+  }
+
+  HairGuideTool.updateValues!(HairSystem hair, Color color, Scalar radius, Integer layer)
+  {
+    this.guides = hair.guides;
+    this.gizmo.setColor(color);
+    if(this.radius != radius)
+    {
+      this.radius = radius;
+      this.gizmo.setRadius(this.radius);
+    }
+    this.layer = layer;
+  }
+
+}
