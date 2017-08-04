@@ -217,6 +217,49 @@ namespace TS
     return mesh;
   }
 
+  /// \dfgPresetDefault subDiv 10
+  /// \dfgPresetRange subDiv (5, 32)
+  resampleHairCurves(in Curves curves, in Integer subDiv, out Curves result)
+  {
+    result = Curves();
+    if(curves == null)
+      return;
+
+    Ref<ColorAttribute> curveColors = curves.getAttributes().getAttribute('vertexColors');
+    GeometryAttributes resultAttributes = result.getAttributes();
+    Ref<ColorAttribute> resultColors = resultAttributes.getOrCreateColorAttribute('vertexColors');
+
+    for(Size i=0;i<curves.curveCount();i++)
+    {
+      Curve curve = curves.getCurve(i);
+      Integer newCount = subDiv;
+
+      Vec3 points[];
+      if(curve.pointCount() > newCount)
+      {
+        points.resize(curve.pointCount());
+        for(Size j=0;j<points.size();j++)
+          points[j] = curve.getPointPosition(j);
+      }
+      else
+      {
+        points.resize(newCount);
+        for(Size j=0;j<points.size();j++)
+        {
+          Float32 p = Float32(j) / Float32(points.size()-1);
+          points[j] = curve.getPositionAtNormalizedParam(p);
+        }
+      }
+
+      Curve resultCurve = result.addNURBS(points, 2, curveForm_open);
+
+      // copy the vertex colors
+      Color c = curveColors.values[curve.getFirstPointIndex()];
+      for(Size j=0;j<resultCurve.pointCount();j++)
+        resultColors.values[resultCurve.getFirstPointIndex()+j] = c;
+    }
+  }
+
   drawHairSystem(io DrawingHandle handle, HairSystem hair)
   {
     if(handle == null || hair == null)
