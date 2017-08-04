@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.8644611835479736,\n    \"y\" : 0.2629619836807251,\n    \"z\" : -0.4282478988170624,\n    \"t\" : -6.592643260955811\n    },\n  \"row1\" : {\n    \"x\" : -4.559328772302251e-06,\n    \"y\" : 0.8520663976669312,\n    \"z\" : 0.5232807397842407,\n    \"t\" : 7.564590454101563\n    },\n  \"row2\" : {\n    \"x\" : 0.5025134086608887,\n    \"y\" : -0.4523591697216034,\n    \"z\" : 0.73670893907547,\n    \"t\" : 6.160471439361572\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.8542392253875732,\n    \"y\" : 0.2675176560878754,\n    \"z\" : -0.4455909132957459,\n    \"t\" : -6.497445106506348\n    },\n  \"row1\" : {\n    \"x\" : -5.185121153772343e-06,\n    \"y\" : 0.8572521805763245,\n    \"z\" : 0.5147403478622437,\n    \"t\" : 7.527925968170166\n    },\n  \"row2\" : {\n    \"x\" : 0.5197010040283203,\n    \"y\" : -0.4397136270999908,\n    \"z\" : 0.7324286103248596,\n    \"t\" : 6.190725803375244\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.7878367900848389\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.56404048204422\n  }",
     "timeline_simMode" : "0",
     "camera_focalDistance" : "11.63851737976074",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : -752.733154296875,\n  \"y\" : -122.4015960693359\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 582.748046875,\n  \"y\" : 79.99069213867188\n  }"
     },
   "title" : "",
   "ports" : [
@@ -205,7 +205,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":380.0,\"y\":229.5}"
+        "uiGraphPos" : "{\"x\":394.0,\"y\":234.49999995}"
         },
       "name" : "AddGuidesFromCurves_1",
       "ports" : [
@@ -350,7 +350,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-773.0,\"y\":209.0}"
+        "uiGraphPos" : "{\"x\":-793.0,\"y\":219.0}"
         },
       "name" : "EmptyCurves_1",
       "ports" : [
@@ -376,7 +376,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-535.5,\"y\":249.0}"
+        "uiGraphPos" : "{\"x\":-585.5,\"y\":189.0}"
         },
       "name" : "AddLinearCurve_1",
       "ports" : [
@@ -412,7 +412,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-860.0,\"y\":318.5}"
+        "uiGraphPos" : "{\"x\":-880.0,\"y\":328.5}"
         },
       "name" : "FillInterpolated_1",
       "ports" : [
@@ -470,7 +470,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-265.5,\"y\":255.5}"
+        "uiGraphPos" : "{\"x\":-315.5,\"y\":195.5}"
         },
       "name" : "AddLinearCurve_2",
       "ports" : [
@@ -506,7 +506,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-540.0,\"y\":406.5}"
+        "uiGraphPos" : "{\"x\":-560.0,\"y\":416.5}"
         },
       "name" : "FillInterpolated_2",
       "ports" : [
@@ -533,7 +533,7 @@
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
-              "x" : 1,
+              "x" : 1.700000047683716,
               "y" : 5,
               "z" : 0
               }
@@ -560,18 +560,6 @@
         ],
       "executable" : "Fabric.Core.Array.FillInterpolated",
       "presetGUID" : "D8D7CE7623346752225F003C62B17879"
-      },
-    {
-      "objectType" : "User",
-      "metadata" : {
-        "uiTitle" : "Create an input Curves object",
-        "uiGraphPos" : "{\"x\":-876.0,\"y\":165.0}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
-        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-        "uiGraphSize" : "{\"w\":797.5,\"h\":397.5}"
-        },
-      "name" : "backDrop_5",
-      "ports" : []
       },
     {
       "objectType" : "Inst",
@@ -652,7 +640,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":840.0,\"y\":377.5000035}"
+        "uiGraphPos" : "{\"x\":883.0,\"y\":321.499999222}"
         },
       "name" : "SetGuideColorsFromMesh_1",
       "ports" : [
@@ -773,7 +761,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":410.0,\"y\":572.5}"
+        "uiGraphPos" : "{\"x\":-556.0,\"y\":637.5}"
         },
       "name" : "CreateColoredMesh",
       "ports" : [
@@ -1904,6 +1892,18 @@
         ],
       "executable" : "TomSporer.TS_Hair.HairSystem.HairMeshGenerator",
       "presetGUID" : "B7B9A38EC5EE3523522E8B76BF07078E"
+      },
+    {
+      "objectType" : "User",
+      "metadata" : {
+        "uiTitle" : "This data should come from Maya!",
+        "uiGraphPos" : "{\"x\":-912.0,\"y\":131.0}",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiGraphSize" : "{\"w\":854.0,\"h\":645.5}"
+        },
+      "name" : "backDrop_6",
+      "ports" : []
       }
     ],
   "connections" : {
@@ -5238,11 +5238,11 @@ dfgEntry {
       },
     {
       "type" : "Scalar",
-      "value" : -0.02999999932944775
+      "value" : 0.2300000041723251
       },
     {
       "type" : "Scalar",
-      "value" : -0.4300000071525574
+      "value" : -2
       }
     ]
   }
