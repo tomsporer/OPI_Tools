@@ -1,0 +1,312 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "DeformGuides",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "hair",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "TS::HairSystem" : null
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "metadata" : {
+        "uiCombo" : "(\"perGuide\", \"perVertex\", \"both\")"
+        },
+      "name" : "mode",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer" : 0
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer"
+      }
+    ],
+  "blocks" : [
+    {
+      "objectType" : "ExecBlock",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":0.0,\"y\":0.0}"
+        },
+      "name" : "deformPerGuide",
+      "ports" : [
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "base",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "result",
+          "nodePortType" : "Out",
+          "outsidePortType" : "Out",
+          "typeSpec" : "Vec3[]"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "index",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "count",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          }
+        ],
+      "defaultExec" : {
+        "objectType" : "Graph",
+        "title" : "",
+        "ports" : [],
+        "fixedPorts" : [
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "base",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "outsidePortType" : "Out"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "index",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "count",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [],
+        "connections" : {}
+        }
+      },
+    {
+      "objectType" : "ExecBlock",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":0.0,\"y\":0.0}"
+        },
+      "name" : "deformPerVertex",
+      "ports" : [
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "base",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "pos",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "normal",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Vec3"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "color",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Color"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "vertexIdx",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "vertexRatio",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Scalar"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "vertexCount",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "guideIdx",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "guideCount",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "result",
+          "nodePortType" : "Out",
+          "outsidePortType" : "Out",
+          "typeSpec" : "Vec3"
+          }
+        ],
+      "defaultExec" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiGraphPan" : "{\n  \"x\" : 372.0,\n  \"y\" : -48.0\n  }"
+          },
+        "title" : "",
+        "ports" : [],
+        "fixedPorts" : [
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "base",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "pos",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "normal",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "color",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "vertexIdx",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "vertexRatio",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "vertexCount",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "guideIdx",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "guideCount",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "outsidePortType" : "Out"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [],
+        "connections" : {
+          "pos" : [
+            "result"
+            ]
+          }
+        }
+      }
+    ],
+  "extDeps" : {
+    "TS_Hair" : "*"
+    },
+  "presetGUID" : "DB7696377935DC51D52B090F9EEC5BA8",
+  "code" : "dfgEntry {
+  if(hair == null)
+    return;
+
+  if(mode == 0 || mode == 2) // per guide or both
+  {    
+    for(Size i=0;i<hair.guides.size();i++)
+    {
+      if(!hair.guides[i].isValid())
+        continue;
+      hair.guides[i].setPoints(dfgPullBlockPort('deformPerGuide.result', hair.guides[i], i, hair.guides.size()));
+    }
+  }
+  if(mode == 1 || mode == 2) // per vertex or both
+  {    
+    for(Size i=0;i<hair.guides.size();i++)
+    {
+      if(!hair.guides[i].isValid())
+        continue;
+      for(Size j=0;j<hair.guides[i].points.size();j++)
+      {
+        Float32 ratio = Float32(j) / Float32(hair.guides[i].points.size() - 1);
+        hair.guides[i].points[j] = dfgPullBlockPort('deformPerVertex.result', 
+          hair.guides[i], 
+          hair.guides[i].points[j],
+          hair.guides[i].normal,
+          hair.guides[i].color,
+          j,
+          ratio,
+          hair.guides[i].points.size(),
+          i, hair.guides.size());
+      }
+    }
+  }
+}
+"
+  }
