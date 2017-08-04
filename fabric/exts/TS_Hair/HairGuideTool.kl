@@ -1,0 +1,146 @@
+require Manipulation;
+
+using namespace Tool;
+
+namespace TS
+{
+  /// \dfgPresetOmit
+  object HairGuideTool : BaseTool
+  {
+    HairGuide guides[];
+    Float32 radius;
+    Integer layer;
+
+    SphereShape gizmo;
+    Box3 bounds[];
+
+    Vec3 planePoint;
+    Vec3 planeNormal;
+    Vec3 dragStart;
+  };
+
+  HairGuideTool(HairSystem hair)
+  {
+    this.radius = 0.1;
+    this.gizmo = SphereShape(this.radius);
+    this.addChild('gizmo', this.gizmo);
+    this.registerToRawEvents( true );
+  }
+
+  HairGuideTool.updateValues!(HairSystem hair, Color color, Scalar radius, Integer layer)
+  {
+    this.guides = hair.guides;
+    this.gizmo.setColor(color);
+    if(this.radius != radius)
+    {
+      this.radius = radius;
+      this.gizmo.setRadius(this.radius);
+    }
+    this.layer = layer;
+
+    this.gizmo.setVisible(false);
+  }
+
+  HairGuideTool.onRawEvent!( io Event event )
+  {
+    this.updateGuideBounds();
+
+    // report( "Raw event:" , event.describe(false) );
+    MouseEvent mouseEvent = event;
+    if(!mouseEvent)
+      return;
+
+    Ref<Viewport> viewport = mouseEvent.getViewport();
+    Ray ray = viewport.calcRayFromScreenPos(mouseEvent.pos);
+
+    if(mouseEvent.buttons == 0) // no button pressed
+    {
+      // figure out the closest point
+      Integer guideIndex = -1;
+      Integer vertexIndex = -1;
+      Float32 minDistance = SCALAR_INFINITE;
+
+      for(Size i=0;i<this.guides.size();i++)
+      {
+        if(this.layer >= 0 && this.guides[i].layer != this.layer)
+          continue;
+        if(!ray.intersectBoundingBox(this.bounds[i]))
+          continue;
+
+        for(Size j=0;j<this.guides[i].points.size();j++)
+        {
+          Float32 param;
+          Float32 distance = ray.distanceToPoint(this.guides[i].points[j], param);
+          if(distance < minDistance)
+          {
+            minDistance = distance;
+            guideIndex = i;
+            vertexIndex = j;
+          }
+        }
+      }
+
+      if(vertexIndex != -1)
+      {
+        Xfo xfo;
+        xfo.tr = this.guides[guideIndex].points[vertexIndex];
+        this.gizmo.setLocalTransform(xfo);
+        this.gizmo.setVisible(true);
+      }
+      else
+      {
+        this.gizmo.setVisible(false);
+      }
+    }
+    
+    if(mouseEvent.buttons & MouseButton_LeftButton)
+    {
+      if(!this.gizmo.isVisible())
+        return;
+
+      if(this.planeNormal.lengthSquared() == 0.0)
+      {
+        this.planePoint = this.gizmo.getLocalTransform().tr;
+        this.planeNormal = ray.direction;
+        this.dragStart = ray.intersectPlaneVec3(this.planePoint, this.planeNormal);
+        if(this.dragStart.x == -SCALAR_INFINITE)
+        {
+          this.gizmo.setVisible(0);
+          return;
+        }
+      }
+
+      Vec3 dragEnd = ray.intersectPlaneVec3(this.planePoint, this.planeNormal);
+      Vec3 travel = dragEnd - this.dragStart;
+
+      Xfo xfo = this.gizmo.getLocalTransform();
+      xfo.tr += travel;
+      this.gizmo.setLocalTransform(xfo);
+
+      this.dragStart = dragEnd;
+    }
+    else
+    {
+      this.planePoint = Vec3();
+      this.planeNormal = Vec3();
+    }
+  }
+
+  HairGuideTool.updateGuideBounds!()
+  {
+    if(this.bounds.size() == this.guides.size())
+      return;
+    this.bounds.resize(this.guides.size());
+    for(Size i=0;i<this.guides.size();i++)
+      this.computeGuideBounds(i);
+  }
+
+  HairGuideTool.computeGuideBounds!(Index idx)
+  {
+    this.bounds[idx] = Box3();
+    if(!this.guides[idx].isValid())
+      return;
+    for(Size i=0;i<this.guides[idx].points.size();i++)
+      this.bounds[idx].merge(this.guides[idx].points[i] * 1.1);
+  }
+}
