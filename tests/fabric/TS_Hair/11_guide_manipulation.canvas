@@ -2,14 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.972092866897583,\n    \"y\" : 0.1020299047231674,\n    \"z\" : -0.2109035849571228,\n    \"t\" : -1.499024510383606\n    },\n  \"row1\" : {\n    \"x\" : -2.912954869316309e-06,\n    \"y\" : 0.900183916091919,\n    \"z\" : 0.4354795515537262,\n    \"t\" : 7.040747165679932\n    },\n  \"row2\" : {\n    \"x\" : 0.234271228313446,\n    \"y\" : -0.4233551025390625,\n    \"z\" : 0.8751358389854431,\n    \"t\" : 7.181653022766113\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9876775145530701,\n    \"y\" : 0.06363851577043533,\n    \"z\" : -0.1422676742076874,\n    \"t\" : -1.258980512619019\n    },\n  \"row1\" : {\n    \"x\" : -4.026621809316566e-06,\n    \"y\" : 0.9128208160400391,\n    \"z\" : 0.4082973003387451,\n    \"t\" : 5.639298439025879\n    },\n  \"row2\" : {\n    \"x\" : 0.1558393687009811,\n    \"y\" : -0.4033041000366211,\n    \"z\" : 0.901673436164856,\n    \"t\" : 6.22001314163208\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
+    "uiGraphZoom" : "{\n  \"value\" : 0.7450792789459229\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "10.44724559783936",
+    "camera_focalDistance" : "6.38219165802002",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 340.0,\n  \"y\" : -116.0\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 152.9219360351563,\n  \"y\" : -160.8075866699219\n  }"
     },
   "title" : "",
   "ports" : [
@@ -754,7 +755,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":780.0,\"y\":277.5}"
+        "uiGraphPos" : "{\"x\":752.0,\"y\":299.5}"
         },
       "name" : "HairGuideTool",
       "ports" : [
@@ -786,7 +787,7 @@
           "name" : "radius",
           "nodePortType" : "In",
           "defaultValues" : {
-            "Float32" : 0.1000000014901161
+            "Float32" : 0.05000000074505806
             }
           },
         {
@@ -796,73 +797,22 @@
           "defaultValues" : {
             "SInt32" : -1
             }
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "editData",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "TS::HairGuideEditData" : {
+              "guideIndex" : [],
+              "vertexIndex" : [],
+              "position" : []
+              }
+            }
           }
         ],
-      "definition" : {
-        "objectType" : "Func",
-        "metadata" : {
-          "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
-          "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
-          },
-        "title" : "func",
-        "ports" : [
-          {
-            "objectType" : "ExecPort",
-            "name" : "exec",
-            "nodePortType" : "IO",
-            "execPortType" : "IO",
-            "typeSpec" : "Execute"
-            },
-          {
-            "objectType" : "ExecPort",
-            "name" : "hair",
-            "nodePortType" : "IO",
-            "execPortType" : "IO",
-            "typeSpec" : "TS::HairSystem"
-            },
-          {
-            "objectType" : "ExecPort",
-            "name" : "color",
-            "nodePortType" : "Out",
-            "execPortType" : "In",
-            "typeSpec" : "Color"
-            },
-          {
-            "objectType" : "ExecPort",
-            "name" : "radius",
-            "nodePortType" : "Out",
-            "execPortType" : "In",
-            "typeSpec" : "Float32"
-            },
-          {
-            "objectType" : "ExecPort",
-            "name" : "layer",
-            "nodePortType" : "Out",
-            "execPortType" : "In",
-            "typeSpec" : "SInt32"
-            }
-          ],
-        "nlsPorts" : [
-          {
-            "objectType" : "NLSPort",
-            "name" : "tool",
-            "nodePortType" : "IO",
-            "typeSpec" : "TS::HairGuideTool"
-            }
-          ],
-        "extDeps" : {
-          "TS_Hair" : "*"
-          },
-        "code" : "dfgEntry {
-  if(!tool)
-  {
-    tool = TS::HairGuideTool(hair);
-  }
-  
-  tool.updateValues(hair, color, radius, layer);
-}
-"
-        }
+      "executable" : "TomSporer.TS_Hair.HairSystem.HairGuideTool",
+      "presetGUID" : "B928AE9E426DA6F76BF3638D1B8BC949"
       }
     ],
   "connections" : {
@@ -1886,6 +1836,117 @@ dfgEntry {
       "code" : "
 dfgEntry {
 	result = outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
+}
+"
+      },
+    "TomSporer.TS_Hair.HairSystem.HairGuideTool" : {
+      "objectType" : "Func",
+      "metadata" : {
+        "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+        },
+      "title" : "HairGuideTool",
+      "ports" : [
+        {
+          "objectType" : "ExecPort",
+          "name" : "exec",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "Execute" : {}
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "Execute"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "hair",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "TS::HairSystem" : null
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "TS::HairSystem"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "color",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Color" : {
+              "r" : 1,
+              "g" : 0,
+              "b" : 0.01568627543747425,
+              "a" : 1
+              }
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Color"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "radius",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Float32" : 0.05000000074505806
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Float32"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "layer",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "SInt32" : -1
+            },
+          "execPortType" : "In",
+          "typeSpec" : "SInt32"
+          },
+        {
+          "objectType" : "ExecPort",
+          "name" : "editData",
+          "nodePortType" : "IO",
+          "defaultValues" : {
+            "TS::HairGuideEditData" : {
+              "guideIndex" : [],
+              "vertexIndex" : [],
+              "position" : []
+              }
+            },
+          "execPortType" : "IO",
+          "typeSpec" : "TS::HairGuideEditData"
+          }
+        ],
+      "nlsPorts" : [
+        {
+          "objectType" : "NLSPort",
+          "name" : "tool",
+          "nodePortType" : "IO",
+          "typeSpec" : "TS::HairGuideTool"
+          }
+        ],
+      "extDeps" : {
+        "TS_Hair" : "*"
+        },
+      "presetGUID" : "B928AE9E426DA6F76BF3638D1B8BC949",
+      "code" : "dfgEntry {
+  if(!tool)
+  {
+    tool = TS::HairGuideTool(hair, dfgBindingID + \".\" + dfgPortPath(\"editData\"));
+  }
+  
+  for(Size i=0;i<editData.guideIndex.size();i++)
+  {
+    Index guide = editData.guideIndex[i];
+    Index vertex = editData.vertexIndex[i];
+    if(guide >= hair.guides.size())
+      continue;
+    if(editData.vertexIndex[i] >= hair.guides[guide].points.size())
+      continue;
+    hair.guides[guide].points[vertex] = editData.position[i];
+  }
+  
+  tool.updateValues(hair, color, radius, layer);
 }
 "
       }

@@ -2,6 +2,7 @@
   "code": [
     "HairGuide.kl",
     "HairSystem.kl",
+    "HairGuideCommands.kl",
     "HairGuideTool.kl"
   ]
 }

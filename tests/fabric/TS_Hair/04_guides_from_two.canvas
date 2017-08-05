@@ -5,11 +5,12 @@
     "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9744177460670471,\n    \"y\" : 0.06001965701580048,\n    \"z\" : -0.2163801938295364,\n    \"t\" : -1.426366567611694\n    },\n  \"row1\" : {\n    \"x\" : -3.220366806999664e-06,\n    \"y\" : 0.9636055827140808,\n    \"z\" : 0.2672747075557709,\n    \"t\" : 4.725668430328369\n    },\n  \"row2\" : {\n    \"x\" : 0.2245417237281799,\n    \"y\" : -0.2604465484619141,\n    \"z\" : 0.9390038847923279,\n    \"t\" : 6.685288429260254\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
+    "uiGraphZoom" : "{\n  \"value\" : 0.8356450796127319\n  }",
     "timeline_simMode" : "0",
     "camera_focalDistance" : "9.127908706665039",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 362.0,\n  \"y\" : -150.0\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 452.8535461425781,\n  \"y\" : -70.18124389648438\n  }"
     },
   "title" : "",
   "ports" : [
@@ -101,7 +102,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-154.5,\"y\":145.5}"
+        "uiGraphPos" : "{\n  \"x\" : -154.5,\n  \"y\" : 145.5\n  }"
         },
       "name" : "HairGuide_1",
       "ports" : [
@@ -197,7 +198,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":416.5,\"y\":299.5}"
+        "uiGraphPos" : "{\"x\":415.0,\"y\":258.999999565}"
         },
       "name" : "AddGuidesFromGuides_1",
       "ports" : [
@@ -249,8 +250,8 @@
           "exec" : {
             "objectType" : "Graph",
             "metadata" : {
-              "uiGraphZoom" : "{\n  \"value\" : 1.0\n  }",
-              "uiGraphPan" : "{\n  \"x\" : 426.3068237304688,\n  \"y\" : -246.1634826660156\n  }"
+              "uiGraphZoom" : "{\n  \"value\" : 0.4369523525238037\n  }",
+              "uiGraphPan" : "{\n  \"x\" : 787.135878385091,\n  \"y\" : -24.59046545457505\n  }"
               },
             "title" : "",
             "ports" : [],
@@ -375,9 +376,9 @@
                     "nodePortType" : "In",
                     "defaultValues" : {
                       "Color" : {
-                        "r" : 1,
-                        "g" : 0.4392156898975372,
-                        "b" : 0.1803921610116959,
+                        "r" : 0,
+                        "g" : 1,
+                        "b" : 0,
                         "a" : 1
                         }
                       }
@@ -506,42 +507,6 @@
                   ],
                 "executable" : "Fabric.Core.Constants.Float32Array",
                 "presetGUID" : "9BAEB103B0AF589C442E44D03132EB30"
-                },
-              {
-                "objectType" : "Inst",
-                "metadata" : {
-                  "uiGraphPos" : "{\"x\":320.0,\"y\":703.0}"
-                  },
-                "name" : "Lerp_1",
-                "ports" : [
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "exec",
-                    "nodePortType" : "IO"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "this",
-                    "nodePortType" : "In"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "other",
-                    "nodePortType" : "In"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "t",
-                    "nodePortType" : "In"
-                    },
-                  {
-                    "objectType" : "InstPort",
-                    "name" : "result",
-                    "nodePortType" : "Out"
-                    }
-                  ],
-                "executable" : "Fabric.Exts.Math.Func.Lerp",
-                "presetGUID" : "12CF7203114B81451A5EEC920610EDA9"
                 }
               ],
             "connections" : {
@@ -552,14 +517,10 @@
                 "DecomposeHairGuide_2.value"
                 ],
               "ratio" : [
-                "Float32Array_1.element",
-                "Lerp_1.t"
+                "Float32Array_1.element"
                 ],
               "DecomposeHairGuide_1.points" : [
                 "LerpArray_1.this"
-                ],
-              "DecomposeHairGuide_1.color" : [
-                "Lerp_1.this"
                 ],
               "HairGuideFromArray_1.result" : [
                 "result"
@@ -567,17 +528,11 @@
               "DecomposeHairGuide_2.points" : [
                 "LerpArray_1.other"
                 ],
-              "DecomposeHairGuide_2.color" : [
-                "Lerp_1.other"
-                ],
               "LerpArray_1.result" : [
                 "HairGuideFromArray_1.points"
                 ],
               "Float32Array_1.array" : [
                 "LerpArray_1.t"
-                ],
-              "Lerp_1.result" : [
-                "HairGuideFromArray_1.color"
                 ]
               }
             }
@@ -589,7 +544,7 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":-154.5,\"y\":416.5}"
+        "uiGraphPos" : "{\n  \"x\" : -154.5,\n  \"y\" : 416.5\n  }"
         },
       "name" : "HairGuide_2",
       "ports" : [
@@ -1003,7 +958,7 @@ dfgEntry {
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
         },
-      "title" : "AddGuidesFromThree",
+      "title" : "AddGuidesFromGuides",
       "ports" : [
         {
           "objectType" : "ExecPort",
@@ -1585,68 +1540,6 @@ dfgEntry {
   array.resize(count);
   for(Size i=0;i<count;i++)
     array[i] = element;
-}
-"
-      },
-    "Fabric.Exts.Math.Func.Lerp" : {
-      "objectType" : "Func",
-      "metadata" : {
-        "uiNodeColor" : "{\n  \"r\" : 99,\n  \"g\" : 129,\n  \"b\" : 92\n  }",
-        "uiTooltip" : "Linearly interpolates a scalar value with another based on a blend (0.0 to 1.0)\n\n Supported by Float32,Float64,RGB,RGBA,ARGB,Color,Vec2,Vec3,Vec4,Quat,Xfo"
-        },
-      "title" : "Lerp",
-      "ports" : [
-        {
-          "objectType" : "ExecPort",
-          "name" : "exec",
-          "nodePortType" : "IO",
-          "execPortType" : "IO",
-          "typeSpec" : "Execute"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "this",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "$TYPE$"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "other",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "$TYPE$"
-          },
-        {
-          "objectType" : "ExecPort",
-          "metadata" : {
-            "uiRange" : "(0, 1)"
-            },
-          "name" : "t",
-          "nodePortType" : "Out",
-          "execPortType" : "In",
-          "typeSpec" : "Scalar"
-          },
-        {
-          "objectType" : "ExecPort",
-          "name" : "result",
-          "nodePortType" : "In",
-          "execPortType" : "Out",
-          "typeSpec" : "$TYPE$"
-          }
-        ],
-      "extDeps" : {
-        "Math" : "*"
-        },
-      "presetGUID" : "12CF7203114B81451A5EEC920610EDA9",
-      "tags" : [
-        "aka:LinearInterpolate",
-        "cat:Interpolate"
-        ],
-      "code" : "require Math;
-
-dfgEntry {
-  result = this.linearInterpolate(other, t);
 }
 "
       }

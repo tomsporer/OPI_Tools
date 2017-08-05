@@ -1,0 +1,87 @@
+require Manipulation;
+
+using namespace Tool;
+
+namespace TS
+{
+  struct HairGuideEditData
+  {
+    Index guideIndex[];
+    Index vertexIndex[];
+    Vec3 position[];
+  };
+
+  object HairGuideMovePointCommand : BaseScriptableCommand{
+  };
+
+  HairGuideMovePointCommand() {
+    this.declareArg( "guideEditData", HairGuideEditData, CommandArgFlag_IO, RTVal() );
+    this.declareArg( "movedGuideIndex", Index, CommandArgFlag_IN, RTVal() );
+    this.declareArg( "movedVertexIndex", Index, CommandArgFlag_IN, RTVal() );
+    this.declareArg( "movedPosition", Vec3, CommandArgFlag_IN, RTVal() );
+  }
+
+  Boolean HairGuideMovePointCommand.canUndo() {
+    return true;
+  }
+
+  Boolean HairGuideMovePointCommand.redoIt!() {
+    HairGuideEditData guideEditData = this.getArgValue( "guideEditData" );
+    
+    Index movedGuideIndex = this.getArgValue( "movedGuideIndex" );
+    Index movedVertexIndex = this.getArgValue( "movedVertexIndex" );
+    Vec3 pos = this.getArgValue( "movedPosition" );
+
+    guideEditData.guideIndex.push(movedGuideIndex);
+    guideEditData.vertexIndex.push(movedVertexIndex);
+    guideEditData.position.push(pos);
+
+    this.setArgValue( "guideEditData", RTVal(guideEditData) );
+    return true;
+  }
+
+  Boolean HairGuideMovePointCommand.doIt!( io String error ) {
+    return this.redoIt();
+  }
+
+  Boolean HairGuideMovePointCommand.undoIt!( ) {
+    HairGuideEditData guideEditData = this.getArgValue( "guideEditData" );
+    if(guideEditData.guideIndex.size() > 0)
+    {
+      Index i = guideEditData.position.size() - 1;
+      guideEditData.guideIndex.resize(i);
+      guideEditData.vertexIndex.resize(i);
+      guideEditData.position.resize(i);
+    }
+    this.setArgValue( "guideEditData", RTVal(guideEditData) );
+    return true;
+  }
+
+  HairGuideMovePointCommand.merge!( Command prevCmd ) {
+
+    HairGuideEditData guideEditData = this.getArgValue( "guideEditData" );
+    if(guideEditData.guideIndex.size() > 1)
+    {
+      Index i = guideEditData.position.size() - 1;
+      if(guideEditData.guideIndex[i-1] != guideEditData.guideIndex[i])
+        return;
+      if(guideEditData.vertexIndex[i-1] != guideEditData.vertexIndex[i])
+        return;
+      guideEditData.position[i-1] = guideEditData.position[i];
+      guideEditData.guideIndex.resize(i);
+      guideEditData.vertexIndex.resize(i);
+      guideEditData.position.resize(i);
+    }
+    this.setArgValue( "guideEditData", RTVal(guideEditData) );
+  }
+
+}
+
+namespace TS_Hair
+{
+  operator ExtDidLoad() {
+    // Register commands defined in this extension at extension loading time
+    Ref<CommandRegistry> commandRegistry = GetCommandRegistry();
+    commandRegistry.registerCommand( "MoveHairGuidePoint", TS::HairGuideMovePointCommand );
+  }
+}

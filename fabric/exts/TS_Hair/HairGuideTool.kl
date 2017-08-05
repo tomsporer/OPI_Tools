@@ -12,19 +12,27 @@ namespace TS
     Integer layer;
 
     SphereShape gizmo;
-    Box3 bounds[];
+    // Box3 bounds[];
 
     Vec3 planePoint;
     Vec3 planeNormal;
     Vec3 dragStart;
+
+    Index guideIndex;
+    Index vertexIndex;
+
+    String editDataPortPath;
+    SInt32 canMergeID;
   };
 
-  HairGuideTool(HairSystem hair)
+  HairGuideTool(HairSystem hair, String editDataPortPath)
   {
     this.radius = 0.1;
     this.gizmo = SphereShape(this.radius);
     this.addChild('gizmo', this.gizmo);
     this.registerToRawEvents( true );
+    this.editDataPortPath = editDataPortPath;
+    this.canMergeID = NoCanMergeID;
   }
 
   HairGuideTool.updateValues!(HairSystem hair, Color color, Scalar radius, Integer layer)
@@ -43,7 +51,7 @@ namespace TS
 
   HairGuideTool.onRawEvent!( io Event event )
   {
-    this.updateGuideBounds();
+    // this.updateGuideBounds();
 
     // report( "Raw event:" , event.describe(false) );
     MouseEvent mouseEvent = event;
@@ -55,6 +63,13 @@ namespace TS
 
     if(mouseEvent.buttons == 0) // no button pressed
     {
+      // if we had moved a point before, push the last command again
+      if(this.canMergeID != NoCanMergeID)
+      {
+        this.scheduleCommand(true /* editingFinished */);
+        this.canMergeID = NoCanMergeID;
+      }
+
       // figure out the closest point
       Integer guideIndex = -1;
       Integer vertexIndex = -1;
@@ -64,8 +79,8 @@ namespace TS
       {
         if(this.layer >= 0 && this.guides[i].layer != this.layer)
           continue;
-        if(!ray.intersectBoundingBox(this.bounds[i]))
-          continue;
+        // if(!ray.intersectBoundingBox(this.bounds[i]))
+        //   continue;
 
         for(Size j=0;j<this.guides[i].points.size();j++)
         {
@@ -84,6 +99,8 @@ namespace TS
       {
         Xfo xfo;
         xfo.tr = this.guides[guideIndex].points[vertexIndex];
+        this.guideIndex = guideIndex;
+        this.vertexIndex = vertexIndex;
         this.gizmo.setLocalTransform(xfo);
         this.gizmo.setVisible(true);
       }
@@ -117,6 +134,9 @@ namespace TS
       xfo.tr += travel;
       this.gizmo.setLocalTransform(xfo);
 
+      this.scheduleCommand(false /* editingFinished */);
+      // this.bounds[this.guideIndex].merge(xfo.tr);
+
       this.dragStart = dragEnd;
     }
     else
@@ -126,21 +146,57 @@ namespace TS
     }
   }
 
-  HairGuideTool.updateGuideBounds!()
+  private HairGuideTool.scheduleCommand!(Boolean editingFinished)
   {
-    if(this.bounds.size() == this.guides.size())
-      return;
-    this.bounds.resize(this.guides.size());
-    for(Size i=0;i<this.guides.size();i++)
-      this.computeGuideBounds(i);
+    if(this.canMergeID == NoCanMergeID)
+      this.canMergeID = GetCommandManager().getNewCanMergeID();
+
+    Vec3 pos = this.gizmo.getLocalTransform().tr;
+    if(!editingFinished)
+    {
+      if(this.guides[this.guideIndex].points[this.vertexIndex].almostEqual(pos))
+        return;
+    }
+
+    RTVal args[String];
+
+    // Ref<MoveEditCurvePointsXfoTarget> xfoTarget = this.movePointsTool.xfoTarget;
+    args["guideEditData"] = PathValue(this.editDataPortPath);
+    args["movedGuideIndex"] = this.guideIndex;
+    args["movedVertexIndex"] = this.vertexIndex;
+    args["movedPosition"] = pos;
+
+    Ref<CommandManager> commandManager = GetCommandManager();
+
+    HairGuideMovePointCommand command = commandManager.createCommand(
+      "MoveHairGuidePoint",
+      args,
+      false,
+      this.canMergeID );
+
+    if(!editingFinished)
+    {
+      command.blockLog();
+    }
+
+    commandManager.scheduleCommand( command );
   }
 
-  HairGuideTool.computeGuideBounds!(Index idx)
-  {
-    this.bounds[idx] = Box3();
-    if(!this.guides[idx].isValid())
-      return;
-    for(Size i=0;i<this.guides[idx].points.size();i++)
-      this.bounds[idx].merge(this.guides[idx].points[i] * 1.1);
-  }
+  // HairGuideTool.updateGuideBounds!()
+  // {
+  //   if(this.bounds.size() == this.guides.size())
+  //     return;
+  //   this.bounds.resize(this.guides.size());
+  //   for(Size i=0;i<this.guides.size();i++)
+  //     this.computeGuideBounds(i);
+  // }
+
+  // HairGuideTool.computeGuideBounds!(Index idx)
+  // {
+  //   this.bounds[idx] = Box3();
+  //   if(!this.guides[idx].isValid())
+  //     return;
+  //   for(Size i=0;i<this.guides[idx].points.size();i++)
+  //     this.bounds[idx].merge(this.guides[idx].points[i] * 1.1);
+  // }
 }

@@ -1,0 +1,111 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "HairGuideTool",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "hair",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "TS::HairSystem" : null
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "color",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Color" : {
+          "r" : 1,
+          "g" : 0,
+          "b" : 0.01568627543747425,
+          "a" : 1
+          }
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Color"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "radius",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Float32" : 0.05000000074505806
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Float32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "layer",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "SInt32" : -1
+        },
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "editData",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "TS::HairGuideEditData" : {
+          "guideIndex" : [],
+          "vertexIndex" : [],
+          "position" : []
+          }
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairGuideEditData"
+      }
+    ],
+  "nlsPorts" : [
+    {
+      "objectType" : "NLSPort",
+      "name" : "tool",
+      "nodePortType" : "IO",
+      "typeSpec" : "TS::HairGuideTool"
+      }
+    ],
+  "extDeps" : {
+    "TS_Hair" : "*"
+    },
+  "presetGUID" : "B928AE9E426DA6F76BF3638D1B8BC949",
+  "code" : "dfgEntry {
+  if(!tool)
+  {
+    tool = TS::HairGuideTool(hair, dfgBindingID + \".\" + dfgPortPath(\"editData\"));
+  }
+  
+  for(Size i=0;i<editData.guideIndex.size();i++)
+  {
+    Index guide = editData.guideIndex[i];
+    Index vertex = editData.vertexIndex[i];
+    if(guide >= hair.guides.size())
+      continue;
+    if(editData.vertexIndex[i] >= hair.guides[guide].points.size())
+      continue;
+    hair.guides[guide].points[vertex] = editData.position[i];
+  }
+  
+  tool.updateValues(hair, color, radius, layer);
+}
+"
+  }
