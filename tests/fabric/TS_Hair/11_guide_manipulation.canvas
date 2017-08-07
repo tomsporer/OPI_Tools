@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9876775145530701,\n    \"y\" : 0.06363851577043533,\n    \"z\" : -0.1422676742076874,\n    \"t\" : -1.258980512619019\n    },\n  \"row1\" : {\n    \"x\" : -4.026621809316566e-06,\n    \"y\" : 0.9128208160400391,\n    \"z\" : 0.4082973003387451,\n    \"t\" : 5.639298439025879\n    },\n  \"row2\" : {\n    \"x\" : 0.1558393687009811,\n    \"y\" : -0.4033041000366211,\n    \"z\" : 0.901673436164856,\n    \"t\" : 6.22001314163208\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.9989501237869263,\n    \"y\" : -0.0201029684394598,\n    \"z\" : 0.03856699541211128,\n    \"t\" : 0.1871800273656845\n    },\n  \"row1\" : {\n    \"x\" : -4.017309038317762e-06,\n    \"y\" : 0.8866952061653137,\n    \"z\" : 0.4622995555400848,\n    \"t\" : 6.435566902160645\n    },\n  \"row2\" : {\n    \"x\" : -0.04348826035857201,\n    \"y\" : -0.4618585705757141,\n    \"z\" : 0.885863184928894,\n    \"t\" : 6.15263032913208\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
     "uiGraphZoom" : "{\n  \"value\" : 0.7450792789459229\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "6.38219165802002",
+    "camera_focalDistance" : "6.633687496185303",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 152.9219360351563,\n  \"y\" : -160.8075866699219\n  }"
+    "uiGraphPan" : "{\n  \"x\" : 421.9219360351563,\n  \"y\" : -60.80758666992188\n  }"
     },
   "title" : "",
   "ports" : [
@@ -153,7 +153,7 @@
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
-              "x" : -1.100000023841858,
+              "x" : -1.200000047683716,
               "y" : 3,
               "z" : 0
               }
@@ -165,7 +165,7 @@
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
-              "x" : -3.299999952316284,
+              "x" : -2.899999856948853,
               "y" : 4,
               "z" : 0
               }
@@ -714,7 +714,7 @@
           "nodePortType" : "In",
           "defaultValues" : {
             "Vec3" : {
-              "x" : 2.5,
+              "x" : 2.200000047683716,
               "y" : 4.900000095367432,
               "z" : 0
               }
@@ -755,9 +755,9 @@
     {
       "objectType" : "Inst",
       "metadata" : {
-        "uiGraphPos" : "{\"x\":752.0,\"y\":299.5}"
+        "uiGraphPos" : "{\"x\":830.888848286,\"y\":324.539406078}"
         },
-      "name" : "HairGuideTool",
+      "name" : "HairGuideTool_1",
       "ports" : [
         {
           "objectType" : "InstPort",
@@ -771,31 +771,28 @@
           },
         {
           "objectType" : "InstPort",
-          "name" : "color",
+          "name" : "active",
           "nodePortType" : "In",
           "defaultValues" : {
-            "Color" : {
-              "r" : 1,
-              "g" : 0,
-              "b" : 0.01568627543747425,
-              "a" : 1
-              }
+            "Boolean" : true
             }
           },
         {
           "objectType" : "InstPort",
+          "name" : "color",
+          "nodePortType" : "In"
+          },
+        {
+          "objectType" : "InstPort",
           "name" : "radius",
-          "nodePortType" : "In",
-          "defaultValues" : {
-            "Float32" : 0.05000000074505806
-            }
+          "nodePortType" : "In"
           },
         {
           "objectType" : "InstPort",
           "name" : "layer",
           "nodePortType" : "In",
           "defaultValues" : {
-            "SInt32" : -1
+            "SInt32" : 1
             }
           },
         {
@@ -804,9 +801,68 @@
           "nodePortType" : "IO",
           "defaultValues" : {
             "TS::HairGuideEditData" : {
-              "guideIndex" : [],
-              "vertexIndex" : [],
-              "position" : []
+              "guideIndex" : [
+                11,
+                8,
+                5,
+                4,
+                4,
+                15,
+                14,
+                13
+                ],
+              "vertexIndex" : [
+                4,
+                4,
+                4,
+                3,
+                4,
+                4,
+                4,
+                4
+                ],
+              "positionOffset" : [
+                {
+                  "x" : -0.3787717223167419,
+                  "y" : 0.6668591499328613,
+                  "z" : -0.1441850662231445
+                  },
+                {
+                  "x" : 0.2453532814979553,
+                  "y" : -0.4159603118896484,
+                  "z" : 0.07115983963012695
+                  },
+                {
+                  "x" : -0.4445399045944214,
+                  "y" : 0.4527087211608887,
+                  "z" : -0.009816646575927734
+                  },
+                {
+                  "x" : -0.2498006224632263,
+                  "y" : -0.01038908958435059,
+                  "z" : 0.02641105651855469
+                  },
+                {
+                  "x" : -0.1960376501083374,
+                  "y" : -0.04265451431274414,
+                  "z" : 0.07099008560180664
+                  },
+                {
+                  "x" : 0.3266153335571289,
+                  "y" : 0.05619716644287109,
+                  "z" : 0.0168919563293457
+                  },
+                {
+                  "x" : 0.5271051526069641,
+                  "y" : 0.07249784469604492,
+                  "z" : 0.01373672485351563
+                  },
+                {
+                  "x" : 0.7426384687423706,
+                  "y" : 0.08612823486328125,
+                  "z" : -0.008283615112304688
+                  }
+                ]
               }
             }
           }
@@ -829,12 +885,12 @@
       "AddGuidesFromGuides_1.guideA"
       ],
     "AddGuidesFromGuides_1.hair" : [
-      "HairGuideTool.hair"
+      "HairGuideTool_1.hair"
       ],
     "HairGuide_2.result" : [
       "AddGuidesFromGuides_1.guideB"
       ],
-    "HairGuideTool.hair" : [
+    "HairGuideTool_1.hair" : [
       "DrawHairSystem_1.hair"
       ]
     },
@@ -1869,6 +1925,16 @@ dfgEntry {
           },
         {
           "objectType" : "ExecPort",
+          "name" : "active",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : true
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
           "name" : "color",
           "nodePortType" : "Out",
           "defaultValues" : {
@@ -1906,13 +1972,6 @@ dfgEntry {
           "objectType" : "ExecPort",
           "name" : "editData",
           "nodePortType" : "IO",
-          "defaultValues" : {
-            "TS::HairGuideEditData" : {
-              "guideIndex" : [],
-              "vertexIndex" : [],
-              "position" : []
-              }
-            },
           "execPortType" : "IO",
           "typeSpec" : "TS::HairGuideEditData"
           }
@@ -1943,10 +2002,11 @@ dfgEntry {
       continue;
     if(editData.vertexIndex[i] >= hair.guides[guide].points.size())
       continue;
-    hair.guides[guide].points[vertex] = editData.position[i];
+    hair.guides[guide].points[vertex] += editData.positionOffset[i];
   }
   
   tool.updateValues(hair, color, radius, layer);
+  tool.setActive(active);
 }
 "
       }

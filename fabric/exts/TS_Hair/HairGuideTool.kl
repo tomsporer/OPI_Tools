@@ -66,7 +66,7 @@ namespace TS
       // if we had moved a point before, push the last command again
       if(this.canMergeID != NoCanMergeID)
       {
-        this.scheduleCommand(true /* editingFinished */);
+        this.scheduleCommand(Vec3(0.0, 0.0, 0.0), true /* editingFinished */);
         this.canMergeID = NoCanMergeID;
       }
 
@@ -134,7 +134,7 @@ namespace TS
       xfo.tr += travel;
       this.gizmo.setLocalTransform(xfo);
 
-      this.scheduleCommand(false /* editingFinished */);
+      this.scheduleCommand(travel, false /* editingFinished */);
       // this.bounds[this.guideIndex].merge(xfo.tr);
 
       this.dragStart = dragEnd;
@@ -146,17 +146,13 @@ namespace TS
     }
   }
 
-  private HairGuideTool.scheduleCommand!(Boolean editingFinished)
+  private HairGuideTool.scheduleCommand!(Vec3 offsetPos, Boolean editingFinished)
   {
     if(this.canMergeID == NoCanMergeID)
       this.canMergeID = GetCommandManager().getNewCanMergeID();
 
-    Vec3 pos = this.gizmo.getLocalTransform().tr;
-    if(!editingFinished)
-    {
-      if(this.guides[this.guideIndex].points[this.vertexIndex].almostEqual(pos))
+    if(!editingFinished && offsetPos.almostEqual(Vec3(0, 0, 0)))
         return;
-    }
 
     RTVal args[String];
 
@@ -164,7 +160,7 @@ namespace TS
     args["guideEditData"] = PathValue(this.editDataPortPath);
     args["movedGuideIndex"] = this.guideIndex;
     args["movedVertexIndex"] = this.vertexIndex;
-    args["movedPosition"] = pos;
+    args["positionOffset"] = offsetPos;
 
     Ref<CommandManager> commandManager = GetCommandManager();
 

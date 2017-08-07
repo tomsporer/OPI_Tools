@@ -28,6 +28,16 @@
       },
     {
       "objectType" : "ExecPort",
+      "name" : "active",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : true
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "color",
       "nodePortType" : "Out",
       "defaultValues" : {
@@ -65,13 +75,6 @@
       "objectType" : "ExecPort",
       "name" : "editData",
       "nodePortType" : "IO",
-      "defaultValues" : {
-        "TS::HairGuideEditData" : {
-          "guideIndex" : [],
-          "vertexIndex" : [],
-          "position" : []
-          }
-        },
       "execPortType" : "IO",
       "typeSpec" : "TS::HairGuideEditData"
       }
@@ -102,10 +105,11 @@
       continue;
     if(editData.vertexIndex[i] >= hair.guides[guide].points.size())
       continue;
-    hair.guides[guide].points[vertex] = editData.position[i];
+    hair.guides[guide].points[vertex] += editData.positionOffset[i];
   }
   
   tool.updateValues(hair, color, radius, layer);
+  tool.setActive(active);
 }
 "
   }
