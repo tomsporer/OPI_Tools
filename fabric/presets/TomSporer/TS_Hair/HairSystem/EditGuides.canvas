@@ -105,9 +105,107 @@
             }
           ],
         "extDeps" : {},
-        "nodes" : [],
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":523.0,\"y\":300.0}"
+              },
+            "name" : "DecomposeHairGuide_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "value",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "points",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "normal",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "color",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "layer",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "TomSporer.TS_Hair.HairGuide.DecomposeHairGuide",
+            "presetGUID" : "9EBD529B3348263C5A27A4DB311735A9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1301.0,\"y\":322.0}"
+              },
+            "name" : "HairGuideFromArray_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "points",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "normal",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "color",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "layer",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "TomSporer.TS_Hair.HairGuide.HairGuideFromArray",
+            "presetGUID" : "19F75A92DC32001823F9799873AC196A"
+            }
+          ],
         "connections" : {
           "base" : [
+            "DecomposeHairGuide_1.value"
+            ],
+          "DecomposeHairGuide_1.points" : [
+            "HairGuideFromArray_1.points"
+            ],
+          "DecomposeHairGuide_1.normal" : [
+            "HairGuideFromArray_1.normal"
+            ],
+          "DecomposeHairGuide_1.color" : [
+            "HairGuideFromArray_1.color"
+            ],
+          "DecomposeHairGuide_1.layer" : [
+            "HairGuideFromArray_1.layer"
+            ],
+          "HairGuideFromArray_1.result" : [
             "result"
             ]
           }
