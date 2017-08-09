@@ -1,0 +1,181 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "CloneGuides",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "hair",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "TS::HairSystem" : null
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "layer",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer" : 1
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "indices",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer[]" : []
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer[]"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Integer[]" : []
+        },
+      "execPortType" : "Out",
+      "typeSpec" : "Integer[]"
+      }
+    ],
+  "blocks" : [
+    {
+      "objectType" : "ExecBlock",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":0.0,\"y\":0.0}"
+        },
+      "name" : "getNumberOfClones",
+      "ports" : [
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "guide",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "index",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "count",
+          "nodePortType" : "Out",
+          "outsidePortType" : "Out",
+          "typeSpec" : "Integer"
+          }
+        ],
+      "defaultExec" : {
+        "objectType" : "Graph",
+        "title" : "",
+        "ports" : [],
+        "fixedPorts" : [
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "guide",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "index",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "count",
+            "nodePortType" : "In",
+            "outsidePortType" : "Out"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":846.0,\"y\":399.0}"
+              },
+            "name" : "Integer_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "value",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Integer" : 1
+                  }
+                }
+              ],
+            "executable" : "Fabric.Core.Constants.Integer",
+            "presetGUID" : "70A8710A81C6715B65874101A33CC86E"
+            }
+          ],
+        "connections" : {
+          "Integer_1.value" : [
+            "count"
+            ]
+          }
+        }
+      }
+    ],
+  "extDeps" : {
+    "TS_Hair" : "*"
+    },
+  "presetGUID" : "A6CCFE23EC31CADD6B75ABC0AC589452",
+  "code" : "dfgEntry {
+  
+  Integer idxs[] = indices.clone();
+  if(idxs.size() == 0)
+  {
+    for(Size i=0;i<hair.guides.size();i++)
+    {
+      idxs.push(i);
+    }
+  }
+  
+  for(Size i=0;i<idxs.size();i++)
+  {
+    Index idx = idxs[i];
+    Integer count = dfgPullBlockPort('getNumberOfClones.count', hair.guides[idx], idx);
+    for(Integer j=0;j<count;j++)
+    {
+      result.push(hair.guides.size());
+      TS::HairGuide guide = hair.guides[idx].clone();
+      // if the layer is negative then keep the original layer
+      if(layer >= 0)
+        guide.layer = layer;
+      hair.addGuide(guide);
+    }
+  }
+  
+}
+"
+  }

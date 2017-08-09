@@ -1,0 +1,143 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "EditGuides",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "hair",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "TS::HairSystem" : null
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "indices",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer[]" : []
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer[]"
+      }
+    ],
+  "blocks" : [
+    {
+      "objectType" : "ExecBlock",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":0.0,\"y\":0.0}"
+        },
+      "name" : "edit",
+      "ports" : [
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "base",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "result",
+          "nodePortType" : "Out",
+          "outsidePortType" : "Out",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "index",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "count",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Integer"
+          }
+        ],
+      "defaultExec" : {
+        "objectType" : "Graph",
+        "title" : "",
+        "ports" : [],
+        "fixedPorts" : [
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "base",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "outsidePortType" : "Out"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "index",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "count",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [],
+        "connections" : {
+          "base" : [
+            "result"
+            ]
+          }
+        }
+      }
+    ],
+  "extDeps" : {
+    "TS_Hair" : "*"
+    },
+  "presetGUID" : "D0941F936623950F4179EB78CC7824A4",
+  "code" : "dfgEntry {
+  if(hair == null)
+    return;
+    
+  Integer idxs[] = indices.clone();
+  if(idxs.size() == 0)
+  {
+    for(Size i=0;i<hair.guides.size();i++)
+    {
+      idxs.push(i);
+    }
+  }
+
+  for(Size i=0;i<idxs.size();i++)
+  {
+    Integer idx = idxs[i];
+    if(!hair.guides[idx].isValid())
+      continue;
+    hair.guides[idx] = dfgPullBlockPort('edit.result', hair.guides[idx], idx, hair.guides.size());
+  }
+}
+"
+  }
