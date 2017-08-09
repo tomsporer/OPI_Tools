@@ -2,15 +2,15 @@
   "objectType" : "Graph",
   "metadata" : {
     "timeline_timerFps" : "60.0",
-    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.8542392253875732,\n    \"y\" : 0.2675176560878754,\n    \"z\" : -0.4455909132957459,\n    \"t\" : -6.497445106506348\n    },\n  \"row1\" : {\n    \"x\" : -5.185121153772343e-06,\n    \"y\" : 0.8572521805763245,\n    \"z\" : 0.5147403478622437,\n    \"t\" : 7.527925968170166\n    },\n  \"row2\" : {\n    \"x\" : 0.5197010040283203,\n    \"y\" : -0.4397136270999908,\n    \"z\" : 0.7324286103248596,\n    \"t\" : 6.190725803375244\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
+    "camera_mat44" : "{\n  \"row0\" : {\n    \"x\" : 0.2156196981668472,\n    \"y\" : -0.4165133237838745,\n    \"z\" : 0.8831521272659302,\n    \"t\" : 17.7286319732666\n    },\n  \"row1\" : {\n    \"x\" : -5.349038474378176e-06,\n    \"y\" : 0.9043493866920471,\n    \"z\" : 0.4265877902507782,\n    \"t\" : 11.50982570648193\n    },\n  \"row2\" : {\n    \"x\" : -0.9763857126235962,\n    \"y\" : -0.09198547154664993,\n    \"z\" : 0.1950281411409378,\n    \"t\" : 0.06620025634765625\n    },\n  \"row3\" : {\n    \"x\" : 0,\n    \"y\" : 0,\n    \"z\" : 0,\n    \"t\" : 1\n    }\n  }",
     "timeline_start" : "1",
     "timeline_loopMode" : "1",
-    "uiGraphZoom" : "{\n  \"value\" : 0.56404048204422\n  }",
+    "uiGraphZoom" : "{\n  \"value\" : 0.7523948550224304\n  }",
     "timeline_simMode" : "0",
-    "camera_focalDistance" : "11.63851737976074",
+    "camera_focalDistance" : "21.76165199279785",
     "timeline_current" : "1",
     "timeline_end" : "250",
-    "uiGraphPan" : "{\n  \"x\" : 582.748046875,\n  \"y\" : 79.99069213867188\n  }"
+    "uiGraphPan" : "{\n  \"x\" : -105.2239827032797,\n  \"y\" : 1.544915687022922\n  }"
     },
   "title" : "",
   "ports" : [
@@ -1755,6 +1755,14 @@
           "objectType" : "InstPort",
           "name" : "hair",
           "nodePortType" : "IO"
+          },
+        {
+          "objectType" : "InstPort",
+          "name" : "includeMasterGuides",
+          "nodePortType" : "In",
+          "defaultValues" : {
+            "Boolean" : true
+            }
           },
         {
           "objectType" : "InstPort",
@@ -4903,6 +4911,16 @@ dfgEntry {
           },
         {
           "objectType" : "ExecPort",
+          "name" : "includeMasterGuides",
+          "nodePortType" : "Out",
+          "defaultValues" : {
+            "Boolean" : false
+            },
+          "execPortType" : "In",
+          "typeSpec" : "Boolean"
+          },
+        {
+          "objectType" : "ExecPort",
           "name" : "inputCurves",
           "nodePortType" : "Out",
           "defaultValues" : {
@@ -5010,7 +5028,7 @@ dfgEntry {
               {
                 "objectType" : "Inst",
                 "metadata" : {
-                  "uiGraphPos" : "{\"x\":673.5,\"y\":283.0}"
+                  "uiGraphPos" : "{\"x\":1067.0,\"y\":300.0}"
                   },
                 "name" : "GenerateMesh_1",
                 "ports" : [
@@ -5047,7 +5065,10 @@ dfgEntry {
                   {
                     "objectType" : "InstPort",
                     "name" : "segmentLength",
-                    "nodePortType" : "In"
+                    "nodePortType" : "In",
+                    "defaultValues" : {
+                      "Scalar" : 1
+                      }
                     },
                   {
                     "objectType" : "InstPort",
@@ -5092,7 +5113,8 @@ dfgEntry {
   
   for(Size i=0;i<hair.guides.size();i++)
   {
-    meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair, inputCurves));
+    if(includeMasterGuides || hair.guides[i].layer!=0)
+      meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair, inputCurves));
   }
   
   Xfo xfos[](meshes.size());

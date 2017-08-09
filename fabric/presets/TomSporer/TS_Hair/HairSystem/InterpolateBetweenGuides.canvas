@@ -1,0 +1,1010 @@
+{
+  "objectType" : "Func",
+  "metadata" : {
+    "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
+    "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }"
+    },
+  "title" : "InterpolateBetweenGuides",
+  "ports" : [
+    {
+      "objectType" : "ExecPort",
+      "name" : "exec",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "Execute" : {}
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "Execute"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "hair",
+      "nodePortType" : "IO",
+      "defaultValues" : {
+        "TS::HairSystem" : null
+        },
+      "execPortType" : "IO",
+      "typeSpec" : "TS::HairSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "u",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "SInt32" : 4
+        },
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "v",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "SInt32" : 3
+        },
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "count",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "SInt32" : 1000
+        },
+      "execPortType" : "In",
+      "typeSpec" : "SInt32"
+      }
+    ],
+  "blocks" : [
+    {
+      "objectType" : "ExecBlock",
+      "metadata" : {
+        "uiGraphPos" : "{\"x\":0.0,\"y\":0.0}"
+        },
+      "name" : "addGuides",
+      "ports" : [
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "baseA",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "baseB",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "baseC",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "baseD",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "TS::HairGuide"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "index",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "SInt32"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "count",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "SInt32"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "ratio",
+          "nodePortType" : "In",
+          "outsidePortType" : "In",
+          "typeSpec" : "Float32"
+          },
+        {
+          "objectType" : "ExecBlockPort",
+          "name" : "result",
+          "nodePortType" : "Out",
+          "outsidePortType" : "Out",
+          "typeSpec" : "TS::HairGuide"
+          }
+        ],
+      "defaultExec" : {
+        "objectType" : "Graph",
+        "metadata" : {
+          "uiGraphZoom" : "{\n  \"value\" : 0.4094522893428803\n  }",
+          "uiGraphPan" : "{\n  \"x\" : 445.0762187261958,\n  \"y\" : 78.59295141111107\n  }"
+          },
+        "title" : "",
+        "ports" : [],
+        "fixedPorts" : [
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "baseA",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "baseB",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "baseC",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "baseD",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "index",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "count",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "ratio",
+            "nodePortType" : "Out",
+            "outsidePortType" : "In"
+            },
+          {
+            "objectType" : "ExecFixedPort",
+            "name" : "result",
+            "nodePortType" : "In",
+            "outsidePortType" : "Out"
+            }
+          ],
+        "extDeps" : {},
+        "nodes" : [
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":711.6926190763181,\"y\":-53.15956804909092}"
+              },
+            "name" : "DecomposeHairGuide_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "value",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "points",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "normal",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "color",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "layer",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "TomSporer.TS_Hair.HairGuide.DecomposeHairGuide",
+            "presetGUID" : "9EBD529B3348263C5A27A4DB311735A9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":3048.692619076318,\"y\":510.4493797049091}"
+              },
+            "name" : "HairGuideFromArray_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "points",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "normal",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "color",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Color" : {
+                    "r" : 1,
+                    "g" : 0.4392156898975372,
+                    "b" : 0.1803921610116959,
+                    "a" : 1
+                    }
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "layer",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Integer" : 1
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "TomSporer.TS_Hair.HairGuide.HairGuideFromArray",
+            "presetGUID" : "19F75A92DC32001823F9799873AC196A"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":711.6926190763181,\"y\":104.3404319509091}"
+              },
+            "name" : "DecomposeHairGuide_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "value",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "points",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "normal",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "color",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "layer",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "TomSporer.TS_Hair.HairGuide.DecomposeHairGuide",
+            "presetGUID" : "9EBD529B3348263C5A27A4DB311735A9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1548.692619076318,\"y\":92.34043195090908}"
+              },
+            "name" : "LerpArray_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "this",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "other",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "t",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar[]" : [
+                    0
+                    ]
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Func.LerpArray",
+            "presetGUID" : "18106EF6D37632C1481973598A9A886C"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1551.692619076318,\"y\":364.3404319509091}"
+              },
+            "name" : "Lerp_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "this",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "other",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "t",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Func.Lerp",
+            "presetGUID" : "12CF7203114B81451A5EEC920610EDA9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1126.159599056818,\"y\":250.8404319509091}"
+              },
+            "name" : "MathRandomScalar_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "seed",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Size" : 1240
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "index",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "min",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "max",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 1
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Random.MathRandomScalar",
+            "presetGUID" : "8B04222A0EC92E99BF4380FB5407AC2D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1363.692619076318,\"y\":228.8404319509091}"
+              },
+            "name" : "Float32Array_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "element",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "count",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "SInt32" : 1
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "array",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Core.Constants.Float32Array",
+            "presetGUID" : "9BAEB103B0AF589C442E44D03132EB30"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":706.1595990563181,\"y\":516.549355290909}"
+              },
+            "name" : "DecomposeHairGuide_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "value",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "points",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "normal",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "color",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "layer",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "TomSporer.TS_Hair.HairGuide.DecomposeHairGuide",
+            "presetGUID" : "9EBD529B3348263C5A27A4DB311735A9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":706.1595990563181,\"y\":674.049355290909}"
+              },
+            "name" : "DecomposeHairGuide_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "value",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "points",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "normal",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "color",
+                "nodePortType" : "Out"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "layer",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "TomSporer.TS_Hair.HairGuide.DecomposeHairGuide",
+            "presetGUID" : "9EBD529B3348263C5A27A4DB311735A9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1553.159599056318,\"y\":682.049355290909}"
+              },
+            "name" : "LerpArray_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "this",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "other",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "t",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar[]" : [
+                    0
+                    ]
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Func.LerpArray",
+            "presetGUID" : "18106EF6D37632C1481973598A9A886C"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1556.159599056318,\"y\":954.049355290909}"
+              },
+            "name" : "Lerp_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "this",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "other",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "t",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Func.Lerp",
+            "presetGUID" : "12CF7203114B81451A5EEC920610EDA9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1126.159599056818,\"y\":823.049355290909}"
+              },
+            "name" : "MathRandomScalar_2",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "seed",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Size" : 1202
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "index",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "min",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "max",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 1
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Random.MathRandomScalar",
+            "presetGUID" : "8B04222A0EC92E99BF4380FB5407AC2D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":1368.159599056318,\"y\":818.549355290909}"
+              },
+            "name" : "Float32Array_5",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "element",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "count",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "array",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Core.Constants.Float32Array",
+            "presetGUID" : "9BAEB103B0AF589C442E44D03132EB30"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":2547.884391536319,\"y\":373.9494102219091}"
+              },
+            "name" : "LerpArray_4",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "this",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "other",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "t",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar[]" : [
+                    0
+                    ]
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Func.LerpArray",
+            "presetGUID" : "18106EF6D37632C1481973598A9A886C"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":2550.884391536319,\"y\":645.9493797049091}"
+              },
+            "name" : "Lerp_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "this",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "other",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "t",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Func.Lerp",
+            "presetGUID" : "12CF7203114B81451A5EEC920610EDA9"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":2118.692619076318,\"y\":514.9493797049091}"
+              },
+            "name" : "MathRandomScalar_3",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "seed",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Size" : 1225
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "index",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "min",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "max",
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 1
+                  }
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "result",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Exts.Math.Random.MathRandomScalar",
+            "presetGUID" : "8B04222A0EC92E99BF4380FB5407AC2D"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiGraphPos" : "{\"x\":2362.884391536319,\"y\":510.4493797049091}"
+              },
+            "name" : "Float32Array_6",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "element",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "count",
+                "nodePortType" : "In"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "array",
+                "nodePortType" : "Out"
+                }
+              ],
+            "executable" : "Fabric.Core.Constants.Float32Array",
+            "presetGUID" : "9BAEB103B0AF589C442E44D03132EB30"
+            },
+          {
+            "objectType" : "Inst",
+            "metadata" : {
+              "uiComment" : "index",
+              "uiGraphPos" : "{\"x\":444.6926190763182,\"y\":272.8404319509091}",
+              "uiCommentExpanded" : "true"
+              },
+            "name" : "Integer_1",
+            "ports" : [
+              {
+                "objectType" : "InstPort",
+                "name" : "exec",
+                "nodePortType" : "IO"
+                },
+              {
+                "objectType" : "InstPort",
+                "name" : "value",
+                "nodePortType" : "In"
+                }
+              ],
+            "executable" : "Fabric.Core.Constants.Integer",
+            "presetGUID" : "70A8710A81C6715B65874101A33CC86E"
+            }
+          ],
+        "connections" : {
+          "baseA" : [
+            "DecomposeHairGuide_1.value"
+            ],
+          "baseB" : [
+            "DecomposeHairGuide_2.value"
+            ],
+          "baseC" : [
+            "DecomposeHairGuide_3.value"
+            ],
+          "baseD" : [
+            "DecomposeHairGuide_4.value"
+            ],
+          "index" : [
+            "Integer_1.value"
+            ],
+          "DecomposeHairGuide_1.points" : [
+            "LerpArray_1.this"
+            ],
+          "DecomposeHairGuide_1.color" : [
+            "Lerp_1.this"
+            ],
+          "HairGuideFromArray_1.result" : [
+            "result"
+            ],
+          "DecomposeHairGuide_2.points" : [
+            "LerpArray_1.other"
+            ],
+          "DecomposeHairGuide_2.color" : [
+            "Lerp_1.other"
+            ],
+          "LerpArray_1.result" : [
+            "LerpArray_4.this"
+            ],
+          "Lerp_1.result" : [
+            "Lerp_3.this"
+            ],
+          "MathRandomScalar_1.result" : [
+            "Lerp_1.t",
+            "Float32Array_4.element"
+            ],
+          "Float32Array_4.array" : [
+            "LerpArray_1.t"
+            ],
+          "DecomposeHairGuide_3.points" : [
+            "LerpArray_2.this"
+            ],
+          "DecomposeHairGuide_3.color" : [
+            "Lerp_2.this"
+            ],
+          "DecomposeHairGuide_4.points" : [
+            "LerpArray_2.other"
+            ],
+          "DecomposeHairGuide_4.color" : [
+            "Lerp_2.other"
+            ],
+          "LerpArray_2.result" : [
+            "LerpArray_4.other"
+            ],
+          "Lerp_2.result" : [
+            "Lerp_3.other"
+            ],
+          "MathRandomScalar_2.result" : [
+            "Lerp_2.t",
+            "Float32Array_5.element"
+            ],
+          "Float32Array_5.array" : [
+            "LerpArray_2.t"
+            ],
+          "LerpArray_4.result" : [
+            "HairGuideFromArray_1.points"
+            ],
+          "Lerp_3.result" : [
+            "HairGuideFromArray_1.color"
+            ],
+          "MathRandomScalar_3.result" : [
+            "Lerp_3.t",
+            "Float32Array_6.element"
+            ],
+          "Float32Array_6.array" : [
+            "LerpArray_4.t"
+            ],
+          "Integer_1.value" : [
+            "MathRandomScalar_1.index",
+            "MathRandomScalar_2.index",
+            "MathRandomScalar_3.index"
+            ]
+          }
+        }
+      }
+    ],
+  "extDeps" : {},
+  "presetGUID" : "7CFCE2126D715C7F7BF86FB6716E5468",
+  "code" : "require TS_Hair;
+
+dfgEntry {
+  for(Size i=0;i<count;i++)
+  {
+    for(Size j=0;j<v-1;j++)
+    {
+      for(Size k=0;k<u-1;k++)
+      {
+        Index idx = hair.guides.size();
+        Float32 ratio = 1.0;
+        if(count > 1)
+          ratio = Float32(i) / Float32(count-1);
+        Size n = k + u * j;
+        // report(n);
+        // report(n+1);
+        // report(n+u);
+        // report(n+u+1);
+        hair.addGuide(dfgPullBlockPort('addGuides.result', hair.guides[n], hair.guides[n+1], hair.guides[n+u], hair.guides[n+u+1], i, count, ratio));
+      }
+    }    
+  }
+}
+"
+  }

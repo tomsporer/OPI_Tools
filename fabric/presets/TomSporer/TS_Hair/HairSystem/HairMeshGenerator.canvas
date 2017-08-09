@@ -28,6 +28,16 @@
       },
     {
       "objectType" : "ExecPort",
+      "name" : "includeMasterGuides",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Boolean" : false
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Boolean"
+      },
+    {
+      "objectType" : "ExecPort",
       "name" : "inputCurves",
       "nodePortType" : "Out",
       "defaultValues" : {
@@ -135,7 +145,7 @@
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":673.5,\"y\":283.0}"
+              "uiGraphPos" : "{\"x\":1067.0,\"y\":300.0}"
               },
             "name" : "GenerateMesh_1",
             "ports" : [
@@ -172,7 +182,10 @@
               {
                 "objectType" : "InstPort",
                 "name" : "segmentLength",
-                "nodePortType" : "In"
+                "nodePortType" : "In",
+                "defaultValues" : {
+                  "Scalar" : 1
+                  }
                 },
               {
                 "objectType" : "InstPort",
@@ -217,7 +230,8 @@
   
   for(Size i=0;i<hair.guides.size();i++)
   {
-    meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair, inputCurves));
+    if(includeMasterGuides || hair.guides[i].layer!=0)
+      meshes.push(dfgPullBlockPort('genMeshPerCurve.mesh', i, hair.guides[i], hair, inputCurves));
   }
   
   Xfo xfos[](meshes.size());
