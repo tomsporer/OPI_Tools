@@ -17,7 +17,7 @@ namespace TS
   }
 
   // ! means that the method is mutable (can change content)
-  Index HairSystem.addGuide!(HairGuide guide)
+  Integer HairSystem.addGuide!(HairGuide guide)
   {
     if(this == null)
       return 0;
@@ -26,9 +26,9 @@ namespace TS
     return this.guides.size() - 1;
   }
 
-  Index[] HairSystem.addGuidesFromCurves!(Curves curves, Color color, Index layer)
+  Integer[] HairSystem.addGuidesFromCurves!(Curves curves, Color color, Index layer)
   {
-    Index result[];
+    Integer result[];
     if(this == null)
       return result;
     if(curves == null)

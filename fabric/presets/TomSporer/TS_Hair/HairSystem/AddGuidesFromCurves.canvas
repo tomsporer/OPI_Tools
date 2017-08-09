@@ -52,7 +52,7 @@
       "name" : "result",
       "nodePortType" : "In",
       "execPortType" : "Out",
-      "typeSpec" : "Index[]"
+      "typeSpec" : "Integer[]"
       }
     ],
   "extDeps" : {

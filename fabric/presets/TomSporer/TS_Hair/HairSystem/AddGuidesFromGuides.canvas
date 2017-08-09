@@ -131,6 +131,16 @@
         },
       "execPortType" : "In",
       "typeSpec" : "Size"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "result",
+      "nodePortType" : "In",
+      "defaultValues" : {
+        "Integer[]" : []
+        },
+      "execPortType" : "Out",
+      "typeSpec" : "Integer[]"
       }
     ],
   "blocks" : [
@@ -285,6 +295,7 @@ dfgEntry {
     if(count > 1)
       ratio = Float32(i) / Float32(count-1);
     hair.guides[idx] = dfgPullBlockPort('addGuide.result', guideA, guideB, guideC, guideD, i, count, ratio);
+    result.push(idx);
   }
 }
 "

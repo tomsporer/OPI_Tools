@@ -25,6 +25,16 @@
         },
       "execPortType" : "IO",
       "typeSpec" : "TS::HairSystem"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "indices",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer[]" : []
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer[]"
       }
     ],
   "blocks" : [
@@ -206,33 +216,43 @@
   if(hair == null)
     return;
 
-  Vec3 segments[];
-  for(Size i=0;i<hair.guides.size();i++)
+  Integer idxs[] = indices.clone();
+  if(idxs.size() == 0)
   {
-    if(!hair.guides[i].isValid())
-      continue;
-    segments.resize(hair.guides[i].points.size()-1);
-    for(Size j=1;j<hair.guides[i].points.size();j++)
+    for(Size i=0;i<hair.guides.size();i++)
     {
-      segments[j-1] = hair.guides[i].points[j] - hair.guides[i].points[j-1];
+      idxs.push(i);
+    }
+  }
+
+  Vec3 segments[];
+  for(Size i=0;i<idxs.size();i++)
+  {
+    Integer idx = idxs[i];
+    if(!hair.guides[idx].isValid())
+      continue;
+    segments.resize(hair.guides[idx].points.size()-1);
+    for(Size j=1;j<hair.guides[idx].points.size();j++)
+    {
+      segments[j-1] = hair.guides[idx].points[j] - hair.guides[idx].points[j-1];
     }
     for(Size j=0;j<segments.size();j++)
     {
-      Float32 ratio = Float32(j) / Float32(hair.guides[i].points.size() - 1);
+      Float32 ratio = Float32(j) / Float32(hair.guides[idx].points.size() - 1);
       segments[j] = dfgPullBlockPort('deformPerSegment.resultSegment', 
-        hair.guides[i], 
+        hair.guides[idx], 
         segments[j],
-        hair.guides[i].points[j+1],
-        hair.guides[i].normal,
-        hair.guides[i].color,
+        hair.guides[idx].points[j+1],
+        hair.guides[idx].normal,
+        hair.guides[idx].color,
         j,
         ratio,
-        hair.guides[i].points.size(),
-        i, hair.guides.size());
+        hair.guides[idx].points.size(),
+        idx, hair.guides.size());
     }
-    for(Size j=1;j<hair.guides[i].points.size();j++)
+    for(Size j=1;j<hair.guides[idx].points.size();j++)
     {
-      hair.guides[i].points[j] = hair.guides[i].points[j-1] + segments[j-1];
+      hair.guides[idx].points[j] = hair.guides[idx].points[j-1] + segments[j-1];
     }
   }
 }

@@ -38,6 +38,16 @@
         },
       "execPortType" : "In",
       "typeSpec" : "Integer"
+      },
+    {
+      "objectType" : "ExecPort",
+      "name" : "indices",
+      "nodePortType" : "Out",
+      "defaultValues" : {
+        "Integer[]" : []
+        },
+      "execPortType" : "In",
+      "typeSpec" : "Integer[]"
       }
     ],
   "blocks" : [
@@ -276,34 +286,45 @@
   "code" : "dfgEntry {
   if(hair == null)
     return;
+    
+  Integer idxs[] = indices.clone();
+  if(idxs.size() == 0)
+  {
+    for(Size i=0;i<hair.guides.size();i++)
+    {
+      idxs.push(i);
+    }
+  }
 
   if(mode == 0 || mode == 2) // per guide or both
   {    
-    for(Size i=0;i<hair.guides.size();i++)
+    for(Size i=0;i<idxs.size();i++)
     {
-      if(!hair.guides[i].isValid())
+      Integer idx = idxs[i];
+      if(!hair.guides[idx].isValid())
         continue;
-      hair.guides[i].setPoints(dfgPullBlockPort('deformPerGuide.result', hair.guides[i], i, hair.guides.size()));
+      hair.guides[idx].setPoints(dfgPullBlockPort('deformPerGuide.result', hair.guides[idx], idx, hair.guides.size()));
     }
   }
   if(mode == 1 || mode == 2) // per vertex or both
   {    
-    for(Size i=0;i<hair.guides.size();i++)
+    for(Size i=0;i<idxs.size();i++)
     {
-      if(!hair.guides[i].isValid())
+      Integer idx = idxs[i];
+      if(!hair.guides[idx].isValid())
         continue;
-      for(Size j=0;j<hair.guides[i].points.size();j++)
+      for(Size j=0;j<hair.guides[idx].points.size();j++)
       {
-        Float32 ratio = Float32(j) / Float32(hair.guides[i].points.size() - 1);
-        hair.guides[i].points[j] = dfgPullBlockPort('deformPerVertex.result', 
-          hair.guides[i], 
-          hair.guides[i].points[j],
-          hair.guides[i].normal,
-          hair.guides[i].color,
+        Float32 ratio = Float32(j) / Float32(hair.guides[idx].points.size() - 1);
+        hair.guides[idx].points[j] = dfgPullBlockPort('deformPerVertex.result', 
+          hair.guides[idx], 
+          hair.guides[idx].points[j],
+          hair.guides[idx].normal,
+          hair.guides[idx].color,
           j,
           ratio,
-          hair.guides[i].points.size(),
-          i, hair.guides.size());
+          hair.guides[idx].points.size(),
+          idx, hair.guides.size());
       }
     }
   }
