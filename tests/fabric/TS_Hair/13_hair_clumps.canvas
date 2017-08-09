@@ -1177,7 +1177,6 @@
             "ports" : [
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "upvector",
                 "nodePortType" : "Out",
                 "defaultValues" : {
@@ -1192,7 +1191,6 @@
                 },
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "profile",
                 "nodePortType" : "Out",
                 "defaultValues" : {
@@ -1203,7 +1201,6 @@
                 },
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "thicknessMax",
                 "nodePortType" : "Out",
                 "defaultValues" : {
@@ -1214,7 +1211,6 @@
                 },
               {
                 "objectType" : "ExecPort",
-                "metadata" : {},
                 "name" : "thicknessOffset",
                 "nodePortType" : "Out",
                 "defaultValues" : {
@@ -2297,7 +2293,7 @@
       "metadata" : {
         "uiTitle" : "Base Layer = Yellow Guide",
         "uiGraphPos" : "{\"x\":-940.5,\"y\":146.0}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 255,\n  \"g\" : 213,\n  \"b\" : 0\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":556.5,\"h\":463.0}"
         },
@@ -2309,7 +2305,7 @@
       "metadata" : {
         "uiTitle" : "First level of clones - orange guides",
         "uiGraphPos" : "{\"x\":-318.0,\"y\":255.5}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 255,\n  \"g\" : 136,\n  \"b\" : 0\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":674.0,\"h\":233.5}"
         },
@@ -2321,7 +2317,7 @@
       "metadata" : {
         "uiTitle" : "Third layer - red guides",
         "uiGraphPos" : "{\"x\":458.802307129,\"y\":206.666290283}",
-        "uiNodeColor" : "{\n  \"r\" : 121,\n  \"g\" : 134,\n  \"b\" : 143\n  }",
+        "uiNodeColor" : "{\n  \"r\" : 255,\n  \"g\" : 0,\n  \"b\" : 4\n  }",
         "uiTextColor" : "{\n  \"r\" : 20,\n  \"g\" : 20,\n  \"b\" : 20\n  }",
         "uiGraphSize" : "{\"w\":762.197692871,\"h\":348.333709717}"
         },
