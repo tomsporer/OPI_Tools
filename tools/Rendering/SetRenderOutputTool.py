@@ -257,6 +257,8 @@ class SetRenderOutputTool(DataBaseTool):
     filename = os.path.split(self.__filepath)[1]
     scenename = filename.rsplit(".", 1)[0]
     scenename = scenename.rsplit("_v", 1)[0]
+    while scenename[-1].isdigit() or scenename[-1] == "_":
+      scenename = scenename[:-1]
     defaultVersion = self.__versionFromPrefix
     jsonPath = self.__getJsonPath()
     readJson = JsonObject(jsonPath)

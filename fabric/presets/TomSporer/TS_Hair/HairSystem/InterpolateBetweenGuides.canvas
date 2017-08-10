@@ -125,8 +125,8 @@
       "defaultExec" : {
         "objectType" : "Graph",
         "metadata" : {
-          "uiGraphZoom" : "{\n  \"value\" : 0.4094522893428803\n  }",
-          "uiGraphPan" : "{\n  \"x\" : 445.0762187261958,\n  \"y\" : 78.59295141111107\n  }"
+          "uiGraphZoom" : "{\n  \"value\" : 0.6136921644210815\n  }",
+          "uiGraphPan" : "{\n  \"x\" : 256.4351501464844,\n  \"y\" : -26.96211242675781\n  }"
           },
         "title" : "",
         "ports" : [],
@@ -396,7 +396,7 @@
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":1126.159599056818,\"y\":250.8404319509091}"
+              "uiGraphPos" : "{\"x\":1033.0,\"y\":364.340422292}"
               },
             "name" : "MathRandomScalar_1",
             "ports" : [
@@ -443,7 +443,7 @@
           {
             "objectType" : "Inst",
             "metadata" : {
-              "uiGraphPos" : "{\"x\":1363.692619076318,\"y\":228.8404319509091}"
+              "uiGraphPos" : "{\"x\":1330.0,\"y\":320.340422543}"
               },
             "name" : "Float32Array_4",
             "ports" : [
@@ -632,84 +632,6 @@
               ],
             "executable" : "Fabric.Exts.Math.Func.Lerp",
             "presetGUID" : "12CF7203114B81451A5EEC920610EDA9"
-            },
-          {
-            "objectType" : "Inst",
-            "metadata" : {
-              "uiGraphPos" : "{\"x\":1126.159599056818,\"y\":823.049355290909}"
-              },
-            "name" : "MathRandomScalar_2",
-            "ports" : [
-              {
-                "objectType" : "InstPort",
-                "name" : "exec",
-                "nodePortType" : "IO"
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "seed",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "Size" : 1202
-                  }
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "index",
-                "nodePortType" : "In"
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "min",
-                "nodePortType" : "In"
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "max",
-                "nodePortType" : "In",
-                "defaultValues" : {
-                  "Scalar" : 1
-                  }
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "result",
-                "nodePortType" : "Out"
-                }
-              ],
-            "executable" : "Fabric.Exts.Math.Random.MathRandomScalar",
-            "presetGUID" : "8B04222A0EC92E99BF4380FB5407AC2D"
-            },
-          {
-            "objectType" : "Inst",
-            "metadata" : {
-              "uiGraphPos" : "{\"x\":1368.159599056318,\"y\":818.549355290909}"
-              },
-            "name" : "Float32Array_5",
-            "ports" : [
-              {
-                "objectType" : "InstPort",
-                "name" : "exec",
-                "nodePortType" : "IO"
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "element",
-                "nodePortType" : "In"
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "count",
-                "nodePortType" : "In"
-                },
-              {
-                "objectType" : "InstPort",
-                "name" : "array",
-                "nodePortType" : "Out"
-                }
-              ],
-            "executable" : "Fabric.Core.Constants.Float32Array",
-            "presetGUID" : "9BAEB103B0AF589C442E44D03132EB30"
             },
           {
             "objectType" : "Inst",
@@ -929,10 +851,12 @@
             ],
           "MathRandomScalar_1.result" : [
             "Lerp_1.t",
-            "Float32Array_4.element"
+            "Float32Array_4.element",
+            "Lerp_2.t"
             ],
           "Float32Array_4.array" : [
-            "LerpArray_1.t"
+            "LerpArray_1.t",
+            "LerpArray_2.t"
             ],
           "DecomposeHairGuide_3.points" : [
             "LerpArray_2.this"
@@ -952,13 +876,6 @@
           "Lerp_2.result" : [
             "Lerp_3.other"
             ],
-          "MathRandomScalar_2.result" : [
-            "Lerp_2.t",
-            "Float32Array_5.element"
-            ],
-          "Float32Array_5.array" : [
-            "LerpArray_2.t"
-            ],
           "LerpArray_4.result" : [
             "HairGuideFromArray_1.points"
             ],
@@ -974,7 +891,6 @@
             ],
           "Integer_1.value" : [
             "MathRandomScalar_1.index",
-            "MathRandomScalar_2.index",
             "MathRandomScalar_3.index"
             ]
           }
@@ -986,13 +902,13 @@
   "code" : "require TS_Hair;
 
 dfgEntry {
+  Integer idx = 0;
   for(Size i=0;i<count;i++)
   {
     for(Size j=0;j<v-1;j++)
     {
       for(Size k=0;k<u-1;k++)
       {
-        Index idx = hair.guides.size();
         Float32 ratio = 1.0;
         if(count > 1)
           ratio = Float32(i) / Float32(count-1);
@@ -1001,7 +917,8 @@ dfgEntry {
         // report(n+1);
         // report(n+u);
         // report(n+u+1);
-        hair.addGuide(dfgPullBlockPort('addGuides.result', hair.guides[n], hair.guides[n+1], hair.guides[n+u], hair.guides[n+u+1], i, count, ratio));
+        hair.addGuide(dfgPullBlockPort('addGuides.result', hair.guides[n], hair.guides[n+1], hair.guides[n+u], hair.guides[n+u+1], idx, count, ratio));
+        idx++;
       }
     }    
   }
