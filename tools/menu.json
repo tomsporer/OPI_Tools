@@ -6,6 +6,7 @@
     { "type": "menu", "folder": "Save_and_Load" },
     { "type": "separator" },
     { "type": "menu", "folder": "Edit" },
+    { "type": "menu", "folder": "Modeling" },
     { "type": "menu", "folder": "Rigging" },
     { "type": "menu", "folder": "Animation" },
     { "type": "separator" },
