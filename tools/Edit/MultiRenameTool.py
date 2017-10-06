@@ -37,9 +37,15 @@ class MultiRenameTool(Tool):
     replaceA = self.args.getValue("replaceA")
     replaceB = self.args.getValue("replaceB")
     addEnd = self.args.getValue("addEnd")
+    changeName = self.args.getValue("changeName")
+
     if arg.name == "changeName":
       self.args.get("newName").enabled = arg.value
-    elif not arg.name == "newName":
+      if arg.value:
+        self.args.get("newName").value = self.args.getValue("newName").replace("*", "")
+      else:
+        self.args.get("newName").value = addStart + "*" + addEnd
+    elif not arg.name == "newName" and changeName == False:
       self.args.get("newName").value = addStart + "*" + addEnd
 
 
