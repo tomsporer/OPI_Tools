@@ -23,9 +23,9 @@ class RigFindDuplicateNamesTool(Tool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
-    sel = cmds.ls(selection=True)
-    if len(sel) == 0:
-      sel = cmds.ls(dagObjects=True)
+    # sel = cmds.ls(selection=True)
+    # if len(sel) == 0:
+    sel = cmds.ls(dagObjects=True)
     objs = []
     for s in sel:
       objs.append(s.split("|")[-1])
