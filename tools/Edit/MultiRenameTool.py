@@ -31,6 +31,7 @@ class MultiRenameTool(Tool):
     self.args.add(name="changeName", type="bool", label="", value=False)
     self.args.add(name="newName", type="str", label="New Name", value="*", enabled=False)
     self.args.endRow()
+    self.args.add(name="number", type="bool", label="Renumber", value=True, enabled=False, hidden=True)
 
   def onValueChanged(self, arg):
     addStart = self.args.getValue("addStart")
@@ -41,6 +42,7 @@ class MultiRenameTool(Tool):
 
     if arg.name == "changeName":
       self.args.get("newName").enabled = arg.value
+      self.args.get("number").enabled = arg.value
       if arg.value:
         self.args.get("newName").value = self.args.getValue("newName").replace("*", "")
       else:
@@ -61,6 +63,18 @@ class MultiRenameTool(Tool):
     removeNamespace = self.args.getValue("removeNamespace")
     changeName = self.args.getValue("changeName")
     newName = self.args.getValue("newName")
+    newNameNumber = ""
+    for n in newName[::-1]:
+      if n.isdigit():
+        newNameNumber = n + newNameNumber
+      else:
+        break
+    if newNameNumber:
+      newName = newName.rstrip(newNameNumber)
+      newNameNumber = int(newNameNumber)
+    else:
+      newNameNumber = 0
+    number = self.args.getValue("number")
 
     sel = cmds.ls(selection=True)
     for s in sel:
@@ -70,8 +84,14 @@ class MultiRenameTool(Tool):
       else:
         oldNamespace += ":"
       oldName = s.split("|")[-1].split(":")[-1]
+
       if changeName:
-        cmds.rename(s, oldNamespace + newName)
+        if number and newNameNumber > 0:
+          rename = oldNamespace + newName + str(newNameNumber)
+        else:
+          rename = oldNamespace + newName
       else:
-        cmds.rename(s, oldNamespace + addStart + oldName.replace(replaceA, replaceB) + addEnd)
-      
+        rename = oldNamespace + addStart + oldName.replace(replaceA, replaceB) + addEnd
+
+      cmds.rename(s, rename)
+      newNameNumber += 1
