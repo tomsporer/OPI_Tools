@@ -77,14 +77,16 @@ else:
   os.environ['OPI_DATABASE_DIR'] = "E:\\PROJECTS"
   os.environ['REDSHIFT_INSTALLATION_ROOT'] = "\\\\192.168.1.10\\public\\zookeeper\\workgroups\\renderer"
 
-# find all subfolders with an opicfg file
-subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
-folderNames = []
-for subfolder in subfolders:
-  folderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
+# # find all subfolders with an opicfg file
+# subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
+# folderNames = []
+# for subfolder in subfolders:
+#   folderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
 
-if len(folderNames) == 0:
-  folderNames += ['']
+# if len(folderNames) == 0:
+#   folderNames += ['']
+
+folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen' ]
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 

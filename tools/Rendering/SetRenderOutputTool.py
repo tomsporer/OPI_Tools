@@ -141,15 +141,18 @@ class SetRenderOutputTool(DataBaseTool):
       self.__isRedshift = False
 
 
-    # check the project name
-    # if it is not specified, set it based on the project
-    try:
-      project = db.queryFromPath('Project', self.__filepath)
-      if not project:
-        raise OPIException('The scene is not in a valid project!')
-    except:
-      raise OPIException('The current scene is not part of a project.')
-    projectname = project.name
+    # # check the project name
+    # # if it is not specified, set it based on the project
+    # try:
+    #   project = db.queryFromPath('Project', self.__filepath)
+    #   if not project:
+    #     raise OPIException('The scene is not in a valid project!')
+    # except:
+    #   raise OPIException('The current scene is not part of a project.')
+    # projectname = project.name
+
+    project = cmds.workspace( q=True, sn=True )
+    projectname = os.path.split(project)[1]
     self.args.setValue('projectname', projectname)
 
 
@@ -158,8 +161,7 @@ class SetRenderOutputTool(DataBaseTool):
     # ----
     renderPrefix = str(cmds.getAttr("defaultRenderGlobals.imageFilePrefix"))
     renderPrefix = renderPrefix.replace("/", "\\")
-    project = self.__getProject()
-    projectPath = db.getPath(project.location)
+    projectPath = cmds.workspace( q=True, rootDirectory=True )
     if len(renderPrefix) == 0:
       renderpath = os.path.join(projectPath, "Render")
       renderfolder = ""
@@ -231,27 +233,13 @@ class SetRenderOutputTool(DataBaseTool):
 
 
   def __getJsonPath(self):
-    db = self.host.apis['db']
     
-    # # get from project:
-    # project = self.__getProject()
-    # projectPath = db.getPath(project.location)
-    # renderfolder = self.args.getValue("renderfolder")
-    # jsonPath = os.path.join(projectPath, "Render", renderfolder, "renderOutputInfo.json")
-
     # get from renderpath:
     renderpath = self.args.getValue("renderpath")
     jsonPath = os.path.join(renderpath, "renderOutputInfo.json")
 
     return jsonPath
 
-  def __getProject(self):
-    db = self.host.apis['db']
-    projectname = self.args.getValue('projectname')
-    project = db.queryOne('Project', name=projectname)
-    if not project:
-      raise OPIException('Project "%s" does not exist.' % projectname)
-    return project
 
   def __readJson(self):
     filename = os.path.split(self.__filepath)[1]
@@ -272,7 +260,6 @@ class SetRenderOutputTool(DataBaseTool):
 
   def executeMaya (self):
 
-    db = self.host.apis['db']
     maya = self.host.apis['maya']
     cmds = maya.cmds
     mel = maya.mel
@@ -301,10 +288,6 @@ class SetRenderOutputTool(DataBaseTool):
     # ----
 
 
-    # # Create Render Folder
-    # project = self.__getProject()
-    # render = db.getOrCreateNew('Render', project=project, name=renderfolder, version=int(version))
-    
 
     # ----
     # Set Render Output Settings
