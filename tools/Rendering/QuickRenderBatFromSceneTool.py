@@ -5,11 +5,11 @@
 
 import os
 import sys
+import json
 import subprocess
 
 from opi.tools.databasetool import DataBaseTool
 from opi.common.opiexception import OPIException
-from opi.storage.jsonobject import JsonObject
 
 
 
@@ -37,6 +37,17 @@ class QuickRenderBatFromSceneTool(DataBaseTool):
 \n\
 "
 
+    # Get environment variables from OPI cfg file
+    cfgFile = os.path.join(os.environ.get("OPI_LAUNCHER_DIR"), "configs", "maya.cfg")
+    with open(cfgFile, "r") as f:
+      j = json.load(f)
+      jEnv = j["environment"]
+      cfgEnvList = ["MAYA_MODULE_PATH", "MAYA_PLUG_IN_PATH", "MAYA_SCRIPT_PATH", "PYTHONPATH", "FABRIC_EXTS_PATH", "FABRIC_DFG_PATH"]
+      cfgEnvDict = {}
+      for env in cfgEnvList:
+        cfgEnvDict[env] = ";".join(jEnv[env]).replace("${", "%").replace("}", "%").replace("/", "\\")
+
+
     batEnvVariables = "\
 SET ADSKFLEX_LICENSE_FILE=@192.168.1.14;@192.168.1.21;@192.168.1.22\n\
 SET MAYA_VERSION=" + os.environ.get("MAYA_VERSION") + "\n\
@@ -51,16 +62,18 @@ SET REDSHIFT_SCRIPT_PATH=%REDSHIFT_COMMON_ROOT%\\scripts\n\
 SET REDSHIFT_XBMLANGPATH=%REDSHIFT_COMMON_ROOT%\\icons\n\
 SET REDSHIFT_RENDER_DESC_PATH=%REDSHIFT_COMMON_ROOT%\\rendererDesc\n\
 \n\
-SET OPI_PIPELINE_DIR=\\\\domain\\tomsporer\\PIPELINE\n\
+SET OPI_LAUNCHER_DIR=\\\\domain\\tomsporer\\PIPELINE\\OPI_Tools\\launchers\n\
 \n\
-SET MAYA_PLUG_IN_PATH=%REDSHIFT_PLUG_IN_PATH%\n\
-SET MAYA_SCRIPT_PATH=%REDSHIFT_SCRIPT_PATH%\n\
-SET MAYA_MODULE_PATH=%OPI_PIPELINE_DIR%\\FabricEngine-2.5.0-Windows-x86_64\\DCCIntegrations\\FabricMaya2017;%OPI_PIPELINE_DIR%\\OPI_Tools\\maya;%OPI_PIPELINE_DIR%\\opi\\dccs\\maya\n\
+SET MAYA_PLUG_IN_PATH=" + cfgEnvDict["MAYA_PLUG_IN_PATH"] + "\n\
+SET MAYA_SCRIPT_PATH=" + cfgEnvDict["MAYA_SCRIPT_PATH"] + "\n\
+SET MAYA_MODULE_PATH=" + cfgEnvDict["MAYA_MODULE_PATH"] + "\n\
 SET XBMLANGPATH=%REDSHIFT_XBMLANGPATH%\n\
 SET MAYA_RENDER_DESC_PATH=%REDSHIFT_RENDER_DESC_PATH%\n\
 \n\
 SET PATH=%REDSHIFT_PLUG_IN_PATH%;%REDSHIFT_CORE_PATH%\\bin\n\
-SET PYTHONPATH=%REDSHIFT_SCRIPT_PATH%\n\
+SET PYTHONPATH=" + cfgEnvDict["PYTHONPATH"] + "\n\
+SET FABRIC_EXTS_PATH=" + cfgEnvDict["FABRIC_EXTS_PATH"] + "\n\
+SET FABRIC_DFG_PATH=" + cfgEnvDict["FABRIC_DFG_PATH"] + "\n\
 \n\
 "
 
