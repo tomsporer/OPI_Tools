@@ -8,7 +8,7 @@ import maya.OpenMayaMPx
 import pymel
 import pymel.core
 
-def onSceneDefaults(userdata):
+def onNewScene(userdata):
 
   # set units
   maya.cmds.currentUnit(linear='cm', angle='deg', time='pal')
@@ -82,7 +82,8 @@ def renderSetupWarning(prefRenderSetup):
   return dialog
 
 def onSceneLoad(userdata):
-  onSceneDefaults(userdata)
+  # onNewScene(userdata)
+  maya.cmds.currentUnit(linear='cm', angle='deg')
   setProjectPath()
   checkForRenderSetupMismatch()
 
@@ -104,7 +105,7 @@ def initializePlugin(mobject):
   mplugin = maya.OpenMayaMPx.MFnPlugin(mobject)
 
   try:
-    globals()['ts_gOnSceneNewCallbackId'] = maya.OpenMaya.MSceneMessage.addCallback(maya.OpenMaya.MSceneMessage.kAfterNew, onSceneDefaults);
+    globals()['ts_gOnSceneNewCallbackId'] = maya.OpenMaya.MSceneMessage.addCallback(maya.OpenMaya.MSceneMessage.kAfterNew, onNewScene);
   except Exception as e:
     sys.stderr.write('Failed to register kAfterNew callback.')
     raise
