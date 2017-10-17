@@ -311,6 +311,7 @@ class SetRenderOutputTool(DataBaseTool):
     cmds.setAttr("defaultRenderGlobals.putFrameBeforeExt", True)
     cmds.setAttr("defaultRenderGlobals.periodInExt", True)
     cmds.setAttr("redshiftOptions.skipExistingFrames", skipExisting)
+    cmds.setAttr("defaultResolution.pixelAspect", 1)
 
     if changeRange:
       cmds.setAttr("defaultRenderGlobals.startFrame", int(startFrame))
