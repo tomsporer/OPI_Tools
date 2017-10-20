@@ -3,7 +3,7 @@
 
     { "type": "menu", "folder": "Projects" },
     { "type": "menu", "folder": "Rendering" },
-    { "type": "menu", "folder": "Save_and_Load" },
+    { "type": "menu", "folder": "File" },
     { "type": "separator" },
     { "type": "menu", "folder": "Edit" },
     { "type": "menu", "folder": "Modeling" },
