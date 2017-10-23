@@ -225,5 +225,6 @@ class ExportToAfterEffectsTool(Tool):
     with open(output, "w") as o:
       json.dump(MayaToAE, o, indent = 4)
 
+    print "# INFO: successfully exported json file to " + str(output)
 
     cmds.currentTime(currentTime)
