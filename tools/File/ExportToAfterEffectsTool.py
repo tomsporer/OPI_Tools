@@ -116,7 +116,7 @@ class ExportToAfterEffectsTool(Tool):
     def getOrientation(cam):
       roo = cmds.xform(cam, q=True, rotateOrder=True)
       cmds.xform(cam, preserve=True, roo="zyx") # We need to convert Maya's rotation order to After Effects' rotation order
-      rotation = cmds.xform(cam, q=True, rotation=True)
+      rotation = cmds.xform(cam, q=True, rotation=True, worldSpace=True)
       cmds.xform(cam, preserve=True, roo=roo)
       return rotation
 
