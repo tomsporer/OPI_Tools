@@ -13,7 +13,7 @@ class DuplicateToSelectionTool(Tool):
   ToolLabel = 'Duplicate to Selection...'
   ToolCommand = 'duplicatetoselectiontool'
   ToolDescription = 'Duplicate the last object in the selection to the selected objects'
-  ToolTooltip = 'Duplicate the last object in the selection to the selected objects'
+  ToolTooltip = 'Duplicate Object to Selection'
 
   def __init__(self, host):
     super (DuplicateToSelectionTool, self).__init__(host)
@@ -27,9 +27,14 @@ class DuplicateToSelectionTool(Tool):
     self.args.beginRow("Geometry Type")
     self.args.addStaticText("")
     self.args.endRow()
-    self.args.addSpacer(1)
     self.args.add(name="copy", type="bool", label="Copy", value=True)
     self.args.add(name="instance", type="bool", label="Instance", value=False)
+    self.args.addSpacer(1)
+    self.args.beginRow("Duplicate")
+    self.args.addStaticText("")
+    self.args.endRow()
+    self.args.add(name="duplFirst", type="bool", label="First in Selection", value=False)
+    self.args.add(name="duplLast", type="bool", label="Last in Selection", value=True)
     self.args.addSpacer(1)
     self.args.addSpacer(7,1)
     self.args.beginRow("Match Transforms")
@@ -43,7 +48,6 @@ class DuplicateToSelectionTool(Tool):
     self.args.beginRow("Hierarchy Options")
     self.args.addStaticText("")
     self.args.endRow()
-    self.args.addSpacer(1)
     self.args.add(name="replace", type="bool", label="Replace Targets", value=True)
     self.args.add(name="asChild", type="bool", label="Make Child of Targets", value=False)
     self.args.add(name="asParent", type="bool", label="Make Parent of Targets", value=False)
@@ -53,7 +57,6 @@ class DuplicateToSelectionTool(Tool):
     self.args.beginRow("Duplicate Options")
     self.args.addStaticText("")
     self.args.endRow()
-    self.args.addSpacer(1)
     self.args.add(name="duplInputGraph", type="bool", label="Duplicate input graph", value=False)
     self.args.add(name="duplInputConns", type="bool", label="Duplicate input connections", value=False)
     self.args.addSpacer(1)
@@ -65,6 +68,11 @@ class DuplicateToSelectionTool(Tool):
       self.args.get("instance").value = not arg.value
     elif arg.name == "instance":
       self.args.get("copy").value = not arg.value
+
+    if arg.name == "duplFirst":
+      self.args.get("duplLast").value = not arg.value
+    elif arg.name == "duplLast":
+      self.args.get("duplFirst").value = not arg.value
 
     if arg.name == "replace":
       self.args.get("asChild").value = False
@@ -106,11 +114,19 @@ class DuplicateToSelectionTool(Tool):
     duplInputGraph = self.args.getValue("duplInputGraph")
     duplInputConns = self.args.getValue("duplInputConns")
 
+    duplFirst = self.args.getValue("duplFirst")
+    duplLast = self.args.getValue("duplLast")
+
     delOriginal = self.args.getValue("delOriginal")
 
     sel = cmds.ls(selection=True)
-    targets = sel[:-1]
-    hero = sel[-1]
+
+    if duplFirst:
+      targets = sel[1:]
+      hero = sel[0]
+    if duplLast:
+      targets = sel[:-1]
+      hero = sel[-1]
 
 
     for target in targets:
@@ -127,7 +143,8 @@ class DuplicateToSelectionTool(Tool):
           cmds.parent(duplHero, target)
         else:
           tParent = cmds.listRelatives(target, parent=True, path=True)
-          if tParent:
+          duplParent = cmds.listRelatives(duplHero, parent=True, path=True)
+          if tParent and not tParent == duplParent:
             cmds.parent(duplHero, tParent)
           else:
             # Only parent to world if it not already is. Otherwise maya throws an error
