@@ -23,17 +23,16 @@ class RigFindDuplicateNamesTool(Tool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
-    # sel = cmds.ls(selection=True)
-    # if len(sel) == 0:
-    sel = cmds.ls(dagObjects=True)
+    # sel = cmds.ls(dagObjects=True)
+    sel = [d for d in cmds.ls() if "|" in d]
     objs = []
     for s in sel:
       objs.append(s.split("|")[-1])
 
     duplicates = {name : objs.count(name) for name in objs}
-    for dupl in duplicates.keys():
-      if duplicates[dupl] == 1:
-        duplicates.pop(dupl)
+    # for dupl in duplicates.keys():
+    #   if duplicates[dupl] == 1:
+    #     duplicates.pop(dupl)
 
     if duplicates.keys() != []:
       print "# INFO: Duplicate Names Found:"
