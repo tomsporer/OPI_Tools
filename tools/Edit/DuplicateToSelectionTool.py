@@ -49,6 +49,7 @@ class DuplicateToSelectionTool(Tool):
     self.args.addStaticText("")
     self.args.endRow()
     self.args.add(name="replace", type="bool", label="Replace Targets", value=True)
+    self.args.add(name="replaceHierarchy", type="bool", label="Replace Target Hierarchies", value=False)
     self.args.add(name="asChild", type="bool", label="Make Child of Targets", value=False)
     self.args.add(name="asParent", type="bool", label="Make Parent of Targets", value=False)
     self.args.add(name="noParenting", type="bool", label="None (don't change Hierarchy)", value=False)
@@ -74,22 +75,44 @@ class DuplicateToSelectionTool(Tool):
     elif arg.name == "duplLast":
       self.args.get("duplFirst").value = not arg.value
 
-    if arg.name == "replace":
-      self.args.get("asChild").value = False
-      self.args.get("asParent").value = False
-      self.args.get("noParenting").value = not arg.value
-    elif arg.name == "asChild":
-      self.args.get("replace").value = False
-      self.args.get("asParent").value = False
-      self.args.get("noParenting").value = not arg.value
-    elif arg.name == "asParent":
-      self.args.get("replace").value = False
-      self.args.get("asChild").value = False
-      self.args.get("noParenting").value = not arg.value
-    elif arg.name == "noParenting":
-      self.args.get("asChild").value = False
-      self.args.get("asParent").value = False
-      self.args.get("replace").value = not arg.value
+    # if arg.name == "replace":
+    #   self.args.get("replaceHierarchy").value = False
+    #   self.args.get("asChild").value = False
+    #   self.args.get("asParent").value = False
+    #   self.args.get("noParenting").value = not arg.value
+    # elif arg.name == "replaceHierarchy":
+    #   self.args.get("replace").value = False
+    #   self.args.get("asChild").value = False
+    #   self.args.get("asParent").value = False
+    #   self.args.get("noParenting").value = not arg.value
+    # elif arg.name == "asChild":
+    #   self.args.get("replace").value = False
+    #   self.args.get("replaceHierarchy").value = False
+    #   self.args.get("asParent").value = False
+    #   self.args.get("noParenting").value = not arg.value
+    # elif arg.name == "asParent":
+    #   self.args.get("replace").value = False
+    #   self.args.get("replaceHierarchy").value = False
+    #   self.args.get("asChild").value = False
+    #   self.args.get("noParenting").value = not arg.value
+    # elif arg.name == "noParenting":
+    #   self.args.get("replaceHierarchy").value = False
+    #   self.args.get("asChild").value = False
+    #   self.args.get("asParent").value = False
+    #   self.args.get("replace").value = not arg.value
+
+    hierOptions = ["replace", "replaceHierarchy", "asChild", "asParent", "noParenting"]
+    if arg.name in hierOptions:
+      if arg.value == True:
+        for hierOption in hierOptions:
+          if not hierOption == arg.name:
+            self.args.get(hierOption).value = False
+      else:
+        if arg.name == "noParenting":
+          self.args.get("replace").value = True
+        else:
+          self.args.get("noParenting").value = True
+          
 
     if arg.name == "duplInputGraph" and arg.value == True:
       self.args.get("duplInputConns").value = False
@@ -106,6 +129,7 @@ class DuplicateToSelectionTool(Tool):
     matchS = self.args.getValue("matchS")
 
     replace = self.args.getValue("replace")
+    replaceHierarchy = self.args.getValue("replaceHierarchy")
     asChild = self.args.getValue("asChild")
     asParent = self.args.getValue("asParent")
     noParenting = self.args.getValue("noParenting")
@@ -138,28 +162,36 @@ class DuplicateToSelectionTool(Tool):
       if matchT or matchR or matchS:
         cmds.matchTransform(duplHero, target, pos=matchT, rot=matchR, scl=matchS)
 
-      if not noParenting:
+      if noParenting:
+        pass
+      else:
         if asChild:
           cmds.parent(duplHero, target)
         else:
+          # Start reparenting duplicates and targets
           tParent = cmds.listRelatives(target, parent=True, path=True)
           duplParent = cmds.listRelatives(duplHero, parent=True, path=True)
+          # Only parent if it not already is.
           if tParent and not tParent == duplParent:
             cmds.parent(duplHero, tParent)
           else:
-            # Only parent to world if it not already is. Otherwise maya throws an error
+            # Only parent to world if it not already is.
             if cmds.listRelatives(duplHero, parent=True):
               cmds.parent(duplHero, world=True)
           if asParent:
             cmds.parent(target, duplHero)
 
+        # Delete targets when they get replaced
         if replace:
           tChildren = cmds.listRelatives(target, children=True, path=True, ni=True)
           tShape = cmds.listRelatives(target, shapes=True, path=True, ni=True)
-          for shape in tShape:
-            tChildren.remove(shape)
+          if tShape:
+            for shape in tShape:
+              tChildren.remove(shape)
           if tChildren:
             cmds.parent(tChildren, duplHero)
+          cmds.delete(target)
+        elif replaceHierarchy:
           cmds.delete(target)
 
     if delOriginal:
