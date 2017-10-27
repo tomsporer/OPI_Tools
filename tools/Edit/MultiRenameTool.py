@@ -77,6 +77,9 @@ class MultiRenameTool(Tool):
     number = self.args.getValue("number")
 
     sel = cmds.ls(selection=True)
+    #Sort selection by hierarchy so that we don't rename a parent before a child.
+    sel.sort(key=lambda obj: obj.count('|'), reverse=True)
+
     for s in sel:
       oldNamespace = cmds.ls(s, showNamespace=True)[1]
       if oldNamespace == ":" or removeNamespace:
