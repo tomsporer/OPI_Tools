@@ -107,17 +107,14 @@ class ExportToAfterEffectsTool(Tool):
     def getPosition(obj):
       return cmds.xform(obj, q=True, translation=True, worldSpace=True)
 
-    def getRotation(obj):
-      return cmds.xform(obj, q=True, rotation=True, worldSpace=True)
-
     def getScale(obj):
       return cmds.xform(obj, q=True, scale=True, worldSpace=True)
 
-    def getOrientation(cam):
-      roo = cmds.xform(cam, q=True, rotateOrder=True)
-      cmds.xform(cam, preserve=True, roo="zyx") # We need to convert Maya's rotation order to After Effects' rotation order
-      rotation = cmds.xform(cam, q=True, rotation=True, worldSpace=True)
-      cmds.xform(cam, preserve=True, roo=roo)
+    def getOrientation(obj):
+      roo = cmds.xform(obj, q=True, rotateOrder=True)
+      cmds.xform(obj, preserve=True, roo="zyx") # We need to convert Maya's rotation order to After Effects' rotation order
+      rotation = cmds.xform(obj, q=True, rotation=True, worldSpace=True)
+      cmds.xform(obj, preserve=True, roo=roo)
       return rotation
 
     def getFocalLength(camShape):
@@ -173,7 +170,7 @@ class ExportToAfterEffectsTool(Tool):
     for null in nullsToExport:
       nullData = {}
       nullData["position"] = getPosition(null)
-      nullData["rotation"] = getRotation(null)
+      nullData["rotation"] = getOrientation(null)
       nullData["scale"] = getScale(null)
       if locsAnimated:
         nullData["animation"] = {}
@@ -201,7 +198,7 @@ class ExportToAfterEffectsTool(Tool):
             nullAnim = nullsToAE[null]["animation"]
             nullAnim[str(frame + frameOffset)] = {
               "position": getPosition(null),
-              "rotation": getRotation(null),
+              "rotation": getOrientation(null),
               "scale": getScale(null)
             }
 
