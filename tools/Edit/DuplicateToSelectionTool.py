@@ -33,8 +33,8 @@ class DuplicateToSelectionTool(Tool):
     self.args.beginRow("Duplicate")
     self.args.addStaticText("")
     self.args.endRow()
-    self.args.add(name="duplFirst", type="bool", label="First in Selection", value=False)
-    self.args.add(name="duplLast", type="bool", label="Last in Selection", value=True)
+    self.args.add(name="duplFirst", type="bool", label="First in Selection", value=True)
+    self.args.add(name="duplLast", type="bool", label="Last in Selection", value=False)
     self.args.addSpacer(1)
     self.args.addSpacer(7,1)
     self.args.beginRow("Match Transforms")
@@ -171,20 +171,22 @@ class DuplicateToSelectionTool(Tool):
           # Start reparenting duplicates and targets
           tParent = cmds.listRelatives(target, parent=True, path=True)
           duplParent = cmds.listRelatives(duplHero, parent=True, path=True)
-          # Only parent if it not already is.
-          if tParent and not tParent == duplParent:
-            cmds.parent(duplHero, tParent)
-          else:
-            # Only parent to world if it not already is.
+          if not tParent:
+            # If the target has no parent, it's the world root.
             if cmds.listRelatives(duplHero, parent=True):
+              # Only parent to world if it not already is.
               cmds.parent(duplHero, world=True)
+          elif not tParent == duplParent:
+            # Only parent if the duplicate and target don't already have the same parent.
+            cmds.parent(duplHero, tParent)
+
           if asParent:
             cmds.parent(target, duplHero)
 
         # Delete targets when they get replaced
         if replace:
-          tChildren = cmds.listRelatives(target, children=True, path=True, ni=True)
-          tShape = cmds.listRelatives(target, shapes=True, path=True, ni=True)
+          tChildren = cmds.listRelatives(target, children=True, path=True)
+          tShape = cmds.listRelatives(target, shapes=True, path=True)
           if tShape:
             for shape in tShape:
               tChildren.remove(shape)
