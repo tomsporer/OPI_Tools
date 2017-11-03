@@ -222,13 +222,13 @@ class SetRenderOutputTool(DataBaseTool):
 
     sortedCameraKeys = sorted(cameraDict.keys())
 
-    if renderableCams == 1:
-      self.args.get("camera")._setCombo(sortedCameraKeys, renderableCam)
-    else:
-      self.args.setValue("changeCamera", True)
-      # self.args.get("changeCamera").enabled = False
-      self.args.get("camera").enabled = True
-      self.args.get("camera")._setCombo(sortedCameraKeys, sortedCameraKeys[0])
+    # if renderableCams == 1:
+    #   self.args.get("camera")._setCombo(sortedCameraKeys, renderableCam)
+    # else:
+    #   self.args.setValue("changeCamera", True)
+    #   # self.args.get("changeCamera").enabled = False
+    #   self.args.get("camera").enabled = True
+    #   self.args.get("camera")._setCombo(sortedCameraKeys, sortedCameraKeys[0])
     # ----
 
 
