@@ -22,11 +22,12 @@ class NewBottleOrProductTool(DataBaseTool):
 
   def initialize(self, **args):
 
-    self.args.add(name="bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone", optional=True, enabled=True)
+    self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE name LIKE 'Rotkaeppchen%' ORDER BY name DESC", enabled=True)
+    self.args.add(name="bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone WHERE project_id == ${project} ORDER BY name", optional=True, enabled=True)
     self.args.add(name="bottleNew", type="bool", value=False, label="new bottle")
-    self.args.add(name="brand", type="str", combo=["Rk", "Gm", "Mu"], value="Rk", optional=True, enabled=False)
+    self.args.add(name="brand", type="str", combo=["Rk", "Gm", "Mu", "JM", "MM", "Bl", "Sp"], value="Rk", optional=True, enabled=False)
     self.args.add(name="bottletype", type="str", expression="[A-Z]+[a-zA-Z0-9_]*", optional=True, enabled=False)
-    self.__row = self.args.beginRow("size")
+    self.args.beginRow("size")
     self.args.add(name="size", type="str", expression="[0-9]*", label="", optional=True, enabled=False)
     self.args.addStaticText("liters")
     self.args.endRow()
@@ -41,7 +42,7 @@ class NewBottleOrProductTool(DataBaseTool):
   def execute(self):
 
     db = self.host.apis['db']
-    project = db.queryOne("Project", name="Rotkaeppchen")
+    project = self.args.getValue("project")
     
     bottleNew = self.args.getValue("bottleNew")
     if bottleNew:
@@ -78,46 +79,15 @@ class NewBottleOrProductTool(DataBaseTool):
 
   def onValueChanged(self, arg):
 
+    db = self.host.apis['db']
+
     if arg.name == "bottleNew":
       self.args.get("bottle").enabled = not arg.value
       self.args.get("brand").enabled = arg.value
       self.args.get("bottletype").enabled = arg.value
       self.args.get("size").enabled = arg.value
-      # self.__row.hidden = not arg.value
-      # self.args.layout.refresh()
 
     if arg.name == "productNew":
       self.args.get("serialNumber").hidden = not arg.value
       self.args.get("flavor").hidden = not arg.value
-
-
-
-
-if __name__ == '__main__':
-
-  import os
-  import opi
-  from opi.client.database import DataBase as OpiDB
-  from opi.tools.host import Host as OPIHost
-  from opi.tools.workshop import WorkShop as OPIWorkShop
-  from opi.ui.Qt import QtWidgets, QtCore
-
-  path = os.path.split(os.path.abspath(__file__))[0]
-  path = os.path.split(path)[0]
-  path = os.path.split(path)[0]
-  path = os.path.split(path)[0]
-
-  dbRoot = "e:\\PROJECTS"
-  
-  templateRoot =  os.path.join(path, 'OPI_Tools', 'templates')
-  toolRoot =  os.path.join(path, 'OPI_Tools', 'tools')
-
-  db = OpiDB(dbRoot, templateRoot=templateRoot, rootSubFolders=['ROT_Rotkaeppchen'])
-
-  host = OPIHost('python', {'db': db, 'QtWidgets': QtWidgets, 'QtCore': QtCore})
-  workshop = OPIWorkShop(host, toolRoot)
-
-  tool = workshop.instantiate(cmd='newbottleorproduct')
-  tool.invokeWithUI()
-
 

@@ -29,8 +29,8 @@ class SaverTool(DataBaseTool):
     self.__ProjectsRoot = db.root
     self.args.addStaticText("\tSave Rotkaeppchen Scene \t \t \t")
     self.args.addSpacer(13)
-    self.args.add(name="project", label="Project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Rotkaeppchen'", enabled=False)
-    self.args.add(name="bottle", label="Bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone")
+    self.args.add(name="project", label="Project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE name LIKE 'Rotkaeppchen%' ORDER BY name DESC", enabled=True)
+    self.args.add(name="bottle", label="Bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone WHERE project_id == ${project} ORDER BY name")
     self.args.add(name="product", label="Product", type="instance", template="leveltwo", comboSqlQuery="SELECT * FROM leveltwo WHERE levelone_id == ${bottle} ORDER BY name")
     self.args.add(name="latestVersion", label="Latest Version", type="str", enabled=False)
     self.args.beginRow("New Version")
@@ -198,7 +198,7 @@ if __name__ == '__main__':
   templateRoot =  os.path.join(path, 'OPI_Tools', 'templates')
   toolRoot =  os.path.join(path, 'OPI_Tools', 'tools')
 
-  db = OpiDB(dbRoot, templateRoot=templateRoot, rootSubFolders=['ROT_Rotkaeppchen'])
+  db = OpiDB(dbRoot, templateRoot=templateRoot, rootSubFolders=['ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2'])
 
   host = OPIHost('python', {'db': db, 'QtWidgets': QtWidgets, 'QtCore': QtCore})
   workshop = OPIWorkShop(host, toolRoot)
