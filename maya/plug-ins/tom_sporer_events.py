@@ -90,17 +90,37 @@ def onSceneLoad(userdata):
 def onSceneSave(userdata):
   setProjectPath()
 
-def beforeSceneSave(userdata):
+  # Recover the last active render layer before saving the scene
   prefRenderSetup = cmds.optionVar(q="renderSetupEnable")
   # 1 = New Render Setup
   # 0 = Legacy Render Layers
   if prefRenderSetup == 1:
-    try:
-      cmds.editRenderLayerGlobals( currentRenderLayer="defaultRenderLayer" )
-      print "# INFO: set 'defaultRenderLayer' as current render layer before saving the scene"
-    except:
-      print "# WARNING: FAILED to set 'defaultRenderLayer' as current render layer before saving the scene!"
+    if curLayer != "defaultRenderLayer":
+      try:
+        cmds.editRenderLayerGlobals( currentRenderLayer=curLayer)
+        print "# INFO: set '%s' as current render layer after saving the scene" %(curLayer)
+      except:
+        print "# WARNING: FAILED to set '%s' as current render layer after saving the scene!" %(curLayer)
+
   
+  
+def beforeSceneSave(userdata):
+
+  # Set the 'defaultRenderLayer' as the current render layer before saving
+  prefRenderSetup = cmds.optionVar(q="renderSetupEnable")
+  # 1 = New Render Setup
+  # 0 = Legacy Render Layers  
+  if prefRenderSetup == 1:
+    global curLayer
+    curLayer = cmds.editRenderLayerGlobals(q=True, currentRenderLayer=True)
+    if curLayer != "defaultRenderLayer":
+      try:
+        cmds.editRenderLayerGlobals( currentRenderLayer="defaultRenderLayer" )
+        print "# INFO: set 'defaultRenderLayer' as current render layer before saving the scene"
+      except:
+        print "# WARNING: FAILED to set 'defaultRenderLayer' as current render layer before saving the scene!"
+  
+
 def initializePlugin(mobject):
   mplugin = maya.OpenMayaMPx.MFnPlugin(mobject)
 
