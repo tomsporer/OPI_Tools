@@ -50,8 +50,10 @@ class OpenerTool(DataBaseTool):
       queryScene = db.queryFromLocation("leveltwo_file", location=currentScenelocation)
 
       if queryScene != None:
+        cuurentProject = queryScene.project.name
         currentLevelone = queryScene.levelone.name
         currentLeveltwo = queryScene.leveltwo.name
+        self.args.get("project").value = cuurentProject
         self.args.get("bottle").value = currentLevelone
         self.args.get("product").value = currentLeveltwo
     # ----
