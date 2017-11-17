@@ -12,5 +12,5 @@
     }
   ],
   "filename": "Pointee_rsProxy_${name}_${frame}.rs",
-  "location": "PAY_Payback_App/Cache/rsProxy/${filename}"
+  "location": "PAY_Payback_Amex/Cache/rsProxy/${filename}"
 }

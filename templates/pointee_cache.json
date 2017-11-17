@@ -7,7 +7,7 @@
       "type": "str"
     },
     {
-      "name": "type",
+      "name": "shotnum",
       "type": "str"
     },
     {
@@ -15,6 +15,6 @@
       "type": "str"
     }
   ],
-  "filename": "${object}_${type}_${name}.abc",
-  "location": "PAY_Payback_App/Cache/alembic/${filename}"
+  "filename": "${object}_${shotnum}_${name}.abc",
+  "location": "PAY_Payback_Amex/Cache/alembic/${filename}"
 }

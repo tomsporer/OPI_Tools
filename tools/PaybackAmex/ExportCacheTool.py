@@ -24,15 +24,14 @@ class ExportCacheTool(DataBaseTool):
   def initialize(self, **args):
 
     db = self.host.apis['db']
-    self.__project = db.queryOne("project", name="Payback_App")
+    self.__project = db.queryOne("project", name="Payback_Amex")
     self.__projectPath = db.getPath(self.__project.location)
 
     self.args.addStaticText("\tExport Cache \t \t \t")
     self.args.addSpacer(13)
-    # self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Payback_App'", enabled=False, hidden=True)
     self.args.add(name="object", type="str", label="Pointee/Asset", combo=["Pointee", "Asset"], value="Pointee")
-    self.args.add(name="type", type="str", label="Pointee Type", combo=["Generic", "Special", "CenterJnt"], value="Generic", enabled=True)
-    self.args.add(name="matchWithPointee", type="instance", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE object == 'Pointee' AND type == 'Special' ORDER BY name", enabled=False, optional=True)
+    self.args.add(name="shotnum", type="str", label="Shot", combo=["sh010", "sh020", "sh030"], value="sh010", enabled=True)
+    self.args.add(name="matchWithPointee", type="str", combo=[], enabled=False, optional=True)
     self.args.add(name="name", type="str", label="Name", expression="[A-Za-z]+[A-Za-z0-9]*", value=None, enabled=True)
     self.args.addSpacer(10,0)
     self.args.beginRow("Frame Range")
@@ -56,26 +55,48 @@ class ExportCacheTool(DataBaseTool):
       raise OPIException("Nothing selected. Please select objects/sets and retry")
 
 
+  def fillMatchWithPointee(self):
+    db = self.host.apis['db']
+    shotnum = self.args.getValue("shotnum")
+    pCacheList = db.query("pointee_cache", sql="SELECT * FROM pointee_cache WHERE object == 'Pointee' AND shotnum == \'%s\' ORDER BY name" %(shotnum) )
+    pCacheDict = {}
+    for pCache in pCacheList:
+      pCacheDict[pCache.name] = pCache
+    if pCacheList:
+      pCacheKeys = sorted(pCacheDict.keys())
+      self.args.get("matchWithPointee")._setCombo(pCacheKeys, pCacheKeys[0])
+      self.args.get("name").value = pCacheDict[pCacheKeys[0]].name
+    else:
+      self.args.get("matchWithPointee")._setCombo([], None)
+      self.args.get("name").value = None
+
+    self._pointeeCacheDict = pCacheDict
+
+
   def onValueChanged(self, arg):
+    maya = self.host.apis['maya']
+    db = self.host.apis['db']
+
+
     if arg.name == "object":
       if arg.value == "Pointee":
-        self.args.get("type").enabled = True
         self.args.get("name").enabled = True
         self.args.get("matchWithPointee").enabled = False
-      else:
-        self.args.get("type").enabled = False
-        self.args.get("type").value = "Special"
-        self.args.get("name").enabled = False
+      elif arg.value == "Asset":
+        self.fillMatchWithPointee()
         self.args.get("matchWithPointee").enabled = True
-        self.args.get("name").value = self.args.getValue("matchWithPointee").name
+        self.args.get("name").enabled = False
+
+    if arg.name == "shotnum" and self.args.getValue("object") == "Asset":
+      self.fillMatchWithPointee()
 
     if arg.name == "name":
       QtWidgets = self.host.apis["QtWidgets"]
       cObject = self.args.getValue("object")
-      cType = self.args.getValue("type")
+      cShotnum = self.args.getValue("shotnum")
       cName = self.args.getValue("name")
 
-      filename = cObject + "_" + cType + "_" + cName + ".abc"
+      filename = cObject + "_" + cShotnum + "_" + cName + ".abc"
       filepath = os.path.join(self.__projectPath, "Cache", "alembic", filename)
 
       if os.path.exists(filepath):
@@ -83,7 +104,7 @@ class ExportCacheTool(DataBaseTool):
         msgBox.warning(None, "File already exists", "A Cache with that name already exists.\nIt will be overridden if you continue")
 
     if arg.name == "matchWithPointee":
-      self.args.get("name").value = arg.value.name
+      self.args.get("name").value = self._pointeeCacheDict[arg.value].name
 
 
 
@@ -106,14 +127,23 @@ class ExportCacheTool(DataBaseTool):
     selList = list(set(selList))
 
     cObject = self.args.getValue("object")
-    cType = self.args.getValue("type")
+    cShotnum = self.args.getValue("shotnum")
     if cObject == "Pointee":
       cName = self.args.getValue("name")
     if cObject == "Asset":
       cPointeeMatch = self.args.getValue("matchWithPointee")
-      cName = cPointeeMatch.name
-    filename = cObject + "_" + cType + "_" + cName + ".abc"
+      cName = self._pointeeCacheDict[cPointeeMatch].name
+    filename = cObject + "_" + cShotnum + "_" + cName + ".abc"
     filepath = os.path.join(self.__projectPath, "Cache", "alembic", filename).replace("\\\\", "/")
+
+
+    # if os.path.exists(filepath):
+    #   QtWidgets = self.host.apis["QtWidgets"]
+    #   msgBox = QtWidgets.QMessageBox
+    #   q = msgBox.question(None, "Override...", "The specified Cache already exists.\nOverride?", msgBox.StandardButton.Yes | msgBox.StandardButton.Cancel)
+    #   if q != msgBox.Yes:
+    #     self.invokeWithUI()
+
 
     abcExportString = ""
     abcExportString += "-frameRange %s %s" %(rangeStart, rangeEnd)
@@ -126,10 +156,10 @@ class ExportCacheTool(DataBaseTool):
     abcExportString += " -file "
     abcExportString += filepath
 
-    print abcExportString
+    print "# INFO: cache saved:   \"%s\"" %(filepath)
 
     cmds.AbcExport( j= abcExportString )
     if cObject == "Pointee":
-      db.getOrCreateNew("pointee_cache", object=cObject, type=cType, name=cName, createEmptyFile=False)
+      db.getOrCreateNew("pointee_cache", object=cObject, shotnum=cShotnum, name=cName, createEmptyFile=False)
     elif cObject == "Asset":
-      db.getOrCreateNew("asset_cache", object=cObject, type=cType, name=cName, createEmptyFile=False)
+      db.getOrCreateNew("pointee_asset", object=cObject, shotnum=cShotnum, name=cName, createEmptyFile=False)

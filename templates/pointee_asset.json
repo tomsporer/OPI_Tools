@@ -3,7 +3,7 @@
   "type": "File",
   "args": [
     {
-      "name": "type",
+      "name": "shotnum",
       "type": "str"
     },
     {
@@ -11,6 +11,6 @@
       "type": "str"
     }
   ],
-  "filename": "Asset_${type}_${name}.mb",
-  "location": "PAY_Payback_App/Models/ref/${filename}"
+  "filename": "Asset_${shotnum}_${name}.mb",
+  "location": "PAY_Payback_Amex/Models/ref/${filename}"
 }

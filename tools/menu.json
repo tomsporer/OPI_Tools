@@ -10,7 +10,7 @@
     { "type": "menu", "folder": "Rigging" },
     { "type": "menu", "folder": "Animation" },
     { "type": "separator" },
-    { "type": "menu", "folder": "PaybackApp"},
+    { "type": "menu", "folder": "PaybackAmex"},
     { "type": "menu", "folder": "Sekt" },
     { "type": "separator"},
   	{ "type": "tool", "module": "RefreshOpiDbTool.py"}

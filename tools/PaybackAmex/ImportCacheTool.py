@@ -24,15 +24,14 @@ class ImportCacheTool(DataBaseTool):
   def initialize(self, **args):
 
     db = self.host.apis['db']
-    self.__project = db.queryOne("project", name="Payback_App")
+    self.__project = db.queryOne("project", name="Payback_Amex")
     self.__projectPath = db.getPath(self.__project.location)
 
     self.args.addStaticText("\tImport Cache \t \t \t")
     self.args.addSpacer(13)
-    # self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE project.name == 'Payback_App'", enabled=False, hidden=True)
     self.args.add(name="object", type="str", label="Pointee/Asset", combo=["Pointee", "Asset"], value=args.get("object", "Pointee"))
-    self.args.add(name="type", type="str", label="Pointee Type", combo=["Generic", "Special", "CenterJnt"], value=args.get("type", "Generic"), enabled=True)
-    self.args.add(name="cache", type="instance", label="Cache", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE object == '${object}' AND type == '${type}' ORDER BY name", value=args.get("cache", None))
+    self.args.add(name="shotnum", type="str", label="Shot", combo=["sh010", "sh020", "sh030"], value=args.get("shotnum", "sh010"), enabled=True)
+    self.args.add(name="cache", type="instance", label="Cache", template="pointee_cache", comboSqlQuery="SELECT * FROM pointee_cache WHERE object == '${object}' AND shotnum == '${shotnum}' ORDER BY name", value=args.get("cache", None))
     self.args.add(name="importMode", type="str", label="Import mode", combo=["Merge", "Add under selection", "Add under root"], value=args.get("importMode", "Merge"), enabled=True)
 
     self.results.add(name="cacheNode", type="str")
@@ -47,13 +46,12 @@ class ImportCacheTool(DataBaseTool):
       self.args.get("importMode").enabled = False
 
 
-  def onValueChanged(self, arg):
-    if arg.name == "object":
-      if arg.value == "Pointee":
-        self.args.get("type").enabled = True
-      else:
-        self.args.get("type").enabled = False
-        self.args.get("type").value = "Special"
+  # def onValueChanged(self, arg):
+  #   if arg.name == "object":
+  #     if arg.value == "Pointee":
+  #       self.args.get("inclasset").enabled = True
+  #     else:
+  #       self.args.get("inclasset").enabled = False
 
 
   def executeMaya(self):

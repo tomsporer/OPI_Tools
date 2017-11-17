@@ -86,7 +86,7 @@ else:
 # if len(folderNames) == 0:
 #   folderNames += ['']
 
-folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2' ]
+folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2', 'PAY_Payback_Amex' ]
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 

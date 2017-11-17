@@ -25,7 +25,7 @@ class ExportRsProxyTool(DataBaseTool):
   def initialize(self, **args):
 
     db = self.host.apis['db']
-    self.__project = db.queryOne("project", name="Payback_App")
+    self.__project = db.queryOne("project", name="Payback_Amex")
     self.__projectPath = db.getPath(self.__project.location)
 
 
