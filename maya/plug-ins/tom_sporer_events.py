@@ -118,7 +118,13 @@ def beforeSceneSave(userdata):
         cmds.editRenderLayerGlobals( currentRenderLayer="defaultRenderLayer" )
         print "# INFO: set 'defaultRenderLayer' as current render layer before saving the scene"
       except:
-        print "# WARNING: FAILED to set 'defaultRenderLayer' as current render layer before saving the scene!"
+        # In Maya 2017 Update 3 switching the render layer throws an error, but in fact still switches the layer
+        # so we manually check if the default layer is active before printing an info or a warning
+        checkLayer = cmds.editRenderLayerGlobals(q=True, currentRenderLayer=True)
+        if checkLayer == "defaultRenderLayer":
+          print "# INFO: set 'defaultRenderLayer' as current render layer before saving the scene"
+        else: 
+          print "# WARNING: FAILED to set 'defaultRenderLayer' as current render layer before saving the scene!"
   
 
 def initializePlugin(mobject):
