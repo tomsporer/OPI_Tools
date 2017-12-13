@@ -25,7 +25,8 @@ class CreateProjectTool(DataBaseTool):
 
     self.args.add(name='shorthand', type='str', label="shorthand", optional=True, expression="[A-Z][A-Z][A-Z]")
     self.args.add(name='name', type='str', expression="[A-Z]+[a-zA-Z0-9_]*")
-    self.args.add(name="active", type="bool", label="Set Active Project", value="true")
+    self.args.add(name="active", type="bool", label="Set Active Project", value=args.get("active", True), enabled=args.get("active", True))
+
 
   def execute (self):
 
@@ -120,10 +121,10 @@ workspace -fr "teClipExports" "Time Editor/Clip Exports";
     #
     # XSI specific project files:
 
-    launchersPath = os.environ['OPI_LAUNCHER_DIR']
+    opiToolDir = os.environ['OPI_TOOL_DIR']
     xsiSystemFolder = os.path.join(projectPath, "system")
     os.mkdir(xsiSystemFolder)
-    shutil.copy(os.path.join(os.path.split(launchersPath)[0], "xsi", "dsprojectinfo"), xsiSystemFolder)
+    shutil.copy(os.path.join(os.path.split(opiToolDir)[0], "xsi", "dsprojectinfo"), xsiSystemFolder)
     # make system folder hidden:
     ctypes.windll.kernel32.SetFileAttributesW(unicode(xsiSystemFolder), 2)
 
@@ -137,4 +138,37 @@ workspace -fr "teClipExports" "Time Editor/Clip Exports";
       elif self.host.apis.has_key("xsi"):
         xsi = self.host.apis['xsi']
         xsi.ActiveProject = projectPath
+
+
+
+if __name__ == '__main__':
+
+  import os
+  import opi
+  from opi.client.database import DataBase as OpiDB
+  from opi.tools.host import Host as OPIHost
+  from opi.tools.workshop import WorkShop as OPIWorkShop
+  from opi.ui.Qt import QtWidgets, QtCore
+
+  filepath = os.path.abspath(__file__)
+
+  dbRoot = "e:\\projects"
+
+  path = os.path.split(filepath)[0]
+  path = os.path.split(path)[0]
+  os.environ["OPI_TOOL_DIR"] = path
+  path = os.path.split(path)[0]
+  path = os.path.split(path)[0]
+
+  
+  templateRoot =  os.path.join(path, 'OPI_Tools', 'templates')
+  toolRoot =  os.path.join(path, 'OPI_Tools', 'tools')
+
+  db = OpiDB(dbRoot, templateRoot=templateRoot, rootSubFolders=[''])
+
+  host = OPIHost('python', {'db': db, 'QtWidgets': QtWidgets, 'QtCore': QtCore})
+  workshop = OPIWorkShop(host, toolRoot)
+
+  tool = workshop.instantiate(cmd='createproject')
+  tool.invokeWithUI(active=False)
 
