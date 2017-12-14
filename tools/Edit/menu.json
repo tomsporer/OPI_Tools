@@ -1,0 +1,12 @@
+{
+  "items":[
+    { "type": "separator", "label": "Material"},
+    { "type": "tool", "module": "AssignMaterialFromObjectTool.py"},
+    { "type": "tool", "module": "MakeMaterialLocalTool.py" },
+    { "type": "separator", "label": "Rename"},
+    { "type": "tool", "module": "AutoUniqueRenameTool.py" },
+    { "type": "tool", "module": "MultiRenameTool.py"},
+    { "type": "separator"},
+    { "type": "tool", "module": "DuplicateToSelectionTool.py" }
+  ]
+}
