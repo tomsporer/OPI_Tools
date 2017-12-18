@@ -87,14 +87,14 @@ class SetRenderOutputTool(DataBaseTool):
     elif arg.name == "changePadding":
       self.args.get("padding").enabled = arg.value
     elif arg.name == "renderpath":
-      renderpath = arg.value.replace("/", "\\")
-      renderfolder = renderpath.split("Render\\")[-1]
-      if renderpath == renderfolder:
-        renderfolder = ""
-      self.args.setValue("renderfolder", renderfolder)
-      self.__readJson()
-
-
+      if arg.value != self.__prevRenderpath:
+        renderpath = arg.value.replace("/", "\\")
+        renderfolder = renderpath.split("Render\\")[-1]
+        if renderpath == renderfolder:
+          renderfolder = ""
+        self.args.setValue("renderfolder", renderfolder)
+        self.__readJson()
+        self.__prevRenderpath = arg.value
 
   def preexecute(self, **args):
 
@@ -189,6 +189,7 @@ class SetRenderOutputTool(DataBaseTool):
           renderpath = os.path.join(projectPath, "Render", renderpath)
 
     self.args.setValue("renderpath", renderpath)
+    self.__prevRenderpath = renderpath
     self.args.setValue("renderfolder", renderfolder)
 
     self.__readJson()
