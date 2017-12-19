@@ -27,14 +27,14 @@ class MakeMaterialLocalTool(Tool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
-    def getSGFromObject(obj):
-      shape = cmds.listRelatives(obj, children=True, shapes=True, path=True)[0]
+    def getSGFromShape(obj):
       mat = cmds.listConnections(shape, type="shadingEngine")[0]
       return mat
 
     sel = cmds.ls(selection=True)
     for s in sel:
-      sharedSG = getSGFromObject(s)
+      shape = cmds.listRelatives(s, children=True, shapes=True, path=True)[0]
+      sharedSG = getSGFromShape(shape)
       localSG = cmds.duplicate(sharedSG, upstreamNodes=True)[0]
       print localSG
-      cmds.sets(s, forceElement=localSG)
+      cmds.sets(shape, forceElement=localSG)
