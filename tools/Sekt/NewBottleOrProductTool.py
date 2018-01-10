@@ -22,10 +22,21 @@ class NewBottleOrProductTool(DataBaseTool):
 
   def initialize(self, **args):
 
+    self.__kuerzelDict = {
+      "Rotkaeppchen" : "Rk",
+      "Geldermann" : "Gm",
+      "Mumm" : "Mu",
+      "Jules Mumm" : "JM",
+      "MM Extra" : "MM",
+      "Blanchet" : "Bl",
+      "Spirituosen" : "Sp",
+      "Sprizzero" : "Ze"
+      }
+
     self.args.add(name="project", type="instance", template="project", comboSqlQuery="SELECT * FROM project WHERE name LIKE 'Rotkaeppchen%' ORDER BY name DESC", enabled=True)
     self.args.add(name="bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone WHERE project_id == ${project} ORDER BY name", optional=True, enabled=True)
     self.args.add(name="bottleNew", type="bool", value=False, label="new bottle")
-    self.args.add(name="brand", type="str", combo=["Rk", "Gm", "Mu", "JM", "MM", "Bl", "Sp"], value="Rk", optional=True, enabled=False)
+    self.args.add(name="brand", type="str", combo=sorted(self.__kuerzelDict.keys()), value=0, optional=True, enabled=False)
     self.args.add(name="bottletype", type="str", expression="[A-Z]+[a-zA-Z0-9_]*", optional=True, enabled=False)
     self.args.beginRow("size")
     self.args.add(name="size", type="str", expression="[0-9]*", label="", optional=True, enabled=False)
@@ -47,6 +58,7 @@ class NewBottleOrProductTool(DataBaseTool):
     bottleNew = self.args.getValue("bottleNew")
     if bottleNew:
       brand = self.args.getValue("brand")
+      brand = self.__kuerzelDict[brand]
       bottletype = self.args.getValue("bottletype")
       size = self.args.getValue("size")
       bottleName = brand + "_" + bottletype + "_" + size + "l"
