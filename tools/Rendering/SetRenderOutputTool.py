@@ -325,8 +325,15 @@ class SetRenderOutputTool(DataBaseTool):
       cmds.setAttr("defaultRenderGlobals.extensionPadding", int(padding))
 
     if changeResolution:
+      lockAspect = cmds.getAttr("defaultResolution.aspectLock")
+      cmds.setAttr("defaultResolution.aspectLock", False)
       cmds.setAttr("defaultResolution.width", int(resX))
       cmds.setAttr("defaultResolution.height", int(resY))
+      mel.eval('checkAspectLockHeight2 "defaultResolution"')
+      mel.eval('checkAspectLockWidth2 "defaultResolution"')
+      mel.eval('redshiftUpdatePixelAspectRatio')
+      mel.eval('redshiftUpdateResolution')
+      cmds.setAttr("defaultResolution.aspectLock", lockAspect)
 
     # Set renderable Camera
     if changeCamera:
