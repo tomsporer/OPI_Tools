@@ -329,10 +329,18 @@ class SetRenderOutputTool(DataBaseTool):
       cmds.setAttr("defaultResolution.aspectLock", False)
       cmds.setAttr("defaultResolution.width", int(resX))
       cmds.setAttr("defaultResolution.height", int(resY))
-      mel.eval('checkAspectLockHeight2 "defaultResolution"')
-      mel.eval('checkAspectLockWidth2 "defaultResolution"')
-      mel.eval('redshiftUpdatePixelAspectRatio')
-      mel.eval('redshiftUpdateResolution')
+      try:
+        mel.eval('checkAspectLockHeight2 "defaultResolution"')
+        mel.eval('checkAspectLockWidth2 "defaultResolution"')
+        mel.eval('redshiftUpdatePixelAspectRatio')
+        mel.eval('redshiftUpdateResolution')
+      except:
+        cmds.select('defaultResolution')
+        mel.eval('checkAspectLockHeight2 "defaultResolution"')
+        mel.eval('checkAspectLockWidth2 "defaultResolution"')
+        mel.eval('redshiftUpdatePixelAspectRatio')
+        mel.eval('redshiftUpdateResolution')
+      # cmds.setAttr("defaultResolution.pixelAspect", 1)
       cmds.setAttr("defaultResolution.aspectLock", lockAspect)
 
     # Set renderable Camera
