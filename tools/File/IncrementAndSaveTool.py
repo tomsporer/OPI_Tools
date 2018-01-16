@@ -27,7 +27,7 @@ class IncrementAndSaveTool(DataBaseTool):
 
     sceneFolder = os.path.split(scenePath)[0]
     sceneFile = os.path.split(scenePath)[1]
-    sceneFileName = os.path.splitext(sceneFile)[0]
+    sceneFileName, sceneFileExt = os.path.splitext(sceneFile)
 
     if sceneFileName[-1].isdigit() == True: # check if there is already a version number at the end and increment if true
       i = 1
@@ -43,7 +43,7 @@ class IncrementAndSaveTool(DataBaseTool):
       newFileVersion = "_01"
 
     savePath = os.path.join(sceneFolder, constantFileName + newFileVersion)
-    return savePath
+    return savePath + sceneFileExt
 
   def executeMaya(self):
 
@@ -51,7 +51,7 @@ class IncrementAndSaveTool(DataBaseTool):
     scenePath = maya.cmds.file(q = True, sceneName = True)
     savePath = self.increment(scenePath)
 
-    if os.path.exists(savePath + ".ma") == True or os.path.exists(savePath + ".mb") == True:
+    if os.path.exists(savePath) == True:
       QtWidgets = self.host.apis["QtWidgets"]
       msgBox = QtWidgets.QMessageBox
       q = msgBox.question(None, "Override...", "New Filename already exists.\nOverride?", msgBox.StandardButton.Yes | msgBox.StandardButton.Cancel)
@@ -63,3 +63,4 @@ class IncrementAndSaveTool(DataBaseTool):
     else:
       maya.cmds.file(rename = savePath)
       maya.cmds.file(save = True)
+      maya.mel.eval("addRecentFile(\"%s\", \"mayaAscii\");" %(savePath))
