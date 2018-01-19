@@ -1,0 +1,9 @@
+{
+  "items":[
+    { "type": "tool", "module": "SetRenderOutputTool.py" },
+    { "type": "tool", "module": "CreateRenderBatTool.py"},
+    { "type": "tool", "module": "OpenRenderFolderTool.py"},
+    { "type": "separator"},
+    { "type": "tool", "module": "QuickRenderBatFromSceneTool.py" }
+  ]
+}
