@@ -302,7 +302,7 @@ class SetRenderOutputTool(DataBaseTool):
       mel.eval('fillSelectedTabForCurrentRenderer;')
       # cmds.deleteUI("unifiedRenderGlobalsWindow")
         
-    renderfile = rendername + "_<renderlayer>_V" + str(version)
+    renderfile = rendername + "_<RenderLayer>_V" + str(version)
     if camsubfolder:
       renderpath = os.path.join(renderpath, "<Camera>")
     renderPrefix = os.path.join(renderpath, "V" + version, renderfile)
