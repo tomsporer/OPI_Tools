@@ -129,13 +129,12 @@ class SetRenderOutputTool(DataBaseTool):
     # check current render engine
     if renderEngine == "redshift":
       self.__isRedshift = True
-      try:
-        skipExisting = cmds.getAttr("redshiftOptions.skipExistingFrames")
-      except:
+      if not cmds.window("unifiedRenderGlobalsWindow", exists=True) or not cmds.objExists("redshiftOptions"):
         mel.eval('unifiedRenderGlobalsWindow;')
         mel.eval('fillSelectedTabForCurrentRenderer;')
-        cmds.deleteUI("unifiedRenderGlobalsWindow")
-        skipExisting = cmds.getAttr("redshiftOptions.skipExistingFrames")
+        cmds.evalDeferred("cmds.workspaceControl(\"unifiedRenderGlobalsWindow\", e=True, visible=False)")
+        # cmds.layout("unifiedRenderGlobalsWindow", e=True, visible=False)
+      skipExisting = cmds.getAttr("redshiftOptions.skipExistingFrames")
       self.args.setValue("skipExisting", skipExisting)
     else:
       self.__isRedshift = False
@@ -298,15 +297,11 @@ class SetRenderOutputTool(DataBaseTool):
     # ----
     if not self.__isRedshift:
       cmds.setAttr('defaultRenderGlobals.ren', 'redshift', type='string')
-      mel.eval('unifiedRenderGlobalsWindow;')
-      mel.eval('fillSelectedTabForCurrentRenderer;')
-      # cmds.deleteUI("unifiedRenderGlobalsWindow")
         
     renderfile = rendername + "_<RenderLayer>_V" + str(version)
     if camsubfolder:
       renderpath = os.path.join(renderpath, "<Camera>")
     renderPrefix = os.path.join(renderpath, "V" + version, renderfile)
-    # mel.eval('fillSelectedTabForCurrentRenderer;')
     cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
     cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
     cmds.setAttr("redshiftOptions.imageFormat", 1) # 1 = exr
@@ -315,7 +310,6 @@ class SetRenderOutputTool(DataBaseTool):
     cmds.setAttr("defaultRenderGlobals.putFrameBeforeExt", True)
     cmds.setAttr("defaultRenderGlobals.periodInExt", True)
     cmds.setAttr("redshiftOptions.skipExistingFrames", skipExisting)
-    cmds.setAttr("defaultResolution.pixelAspect", 1)
 
     if changeRange:
       cmds.setAttr("defaultRenderGlobals.startFrame", int(startFrame))
@@ -329,19 +323,23 @@ class SetRenderOutputTool(DataBaseTool):
       cmds.setAttr("defaultResolution.aspectLock", False)
       cmds.setAttr("defaultResolution.width", int(resX))
       cmds.setAttr("defaultResolution.height", int(resY))
-      try:
-        mel.eval('checkAspectLockHeight2 "defaultResolution"')
-        mel.eval('checkAspectLockWidth2 "defaultResolution"')
-        mel.eval('redshiftUpdatePixelAspectRatio')
-        mel.eval('redshiftUpdateResolution')
-      except:
-        cmds.select('defaultResolution')
-        mel.eval('checkAspectLockHeight2 "defaultResolution"')
-        mel.eval('checkAspectLockWidth2 "defaultResolution"')
-        mel.eval('redshiftUpdatePixelAspectRatio')
-        mel.eval('redshiftUpdateResolution')
-      # cmds.setAttr("defaultResolution.pixelAspect", 1)
+      if not mel.eval('exists checkAspectLockHeight2;'):
+        # We need a few commands that help with keeping the pixel aspect ratio at 1 and only adjusting the device aspect ratio (maya default is the other way around)
+        # Those commands do not exist until they are forced to load. Loading the defaultResolution node into the Attribute Editor can do that.
+        mel.eval('updateAE "defaultResolution"')
+        # Loading the defaultResolution node into the Attribute Editor takes some time. We need it to finish before continuing. 
+        # The command 'evalDeferred' does exactly this. It waits until all previous processes are done, then continues executing the next lines
+        cmds.evalDeferred("pass") 
+      mel.eval('checkAspectLockHeight2 "defaultResolution"')
+      mel.eval('checkAspectLockWidth2 "defaultResolution"')
+      mel.eval('redshiftUpdatePixelAspectRatio')
+      mel.eval('redshiftUpdateResolution')
       cmds.setAttr("defaultResolution.aspectLock", lockAspect)
+      cmds.evalDeferred("cmds.setAttr(\"defaultResolution.pixelAspect\", 1)")
+
+    # if delRenderGlobalsWindow:
+    #   cmds.deleteUI("unifiedRenderGlobalsWindow")
+
 
     # Set renderable Camera
     if changeCamera:
