@@ -132,8 +132,9 @@ class SetRenderOutputTool(DataBaseTool):
       if not cmds.window("unifiedRenderGlobalsWindow", exists=True) or not cmds.objExists("redshiftOptions"):
         mel.eval('unifiedRenderGlobalsWindow;')
         mel.eval('fillSelectedTabForCurrentRenderer;')
-        cmds.evalDeferred("cmds.workspaceControl(\"unifiedRenderGlobalsWindow\", e=True, visible=False)")
-        # cmds.layout("unifiedRenderGlobalsWindow", e=True, visible=False)
+        cmds.evalDeferred("pass")
+        # cmds.workspaceControl("unifiedRenderGlobalsWindow", e=True, visible=False)
+        cmds.layout("unifiedRenderGlobalsWindow", e=True, visible=False)
       skipExisting = cmds.getAttr("redshiftOptions.skipExistingFrames")
       self.args.setValue("skipExisting", skipExisting)
     else:
