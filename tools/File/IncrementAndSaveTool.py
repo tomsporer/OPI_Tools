@@ -62,5 +62,6 @@ class IncrementAndSaveTool(DataBaseTool):
         print "User Aborted. Scene NOT saved."
     else:
       maya.cmds.file(rename = savePath)
+      print savePath
       maya.cmds.file(save = True)
-      maya.mel.eval("addRecentFile(\"%s\", \"mayaAscii\");" %(savePath))
+      maya.mel.eval("addRecentFile(\"%s\", \"mayaAscii\");" %(savePath.replace("\\", "/")))
