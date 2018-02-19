@@ -35,7 +35,8 @@ class RigFindDuplicateNamesTool(Tool):
     #     duplicates.pop(dupl)
 
     if duplicates.keys() != []:
-      print "# INFO: Duplicate Names Found:"
+      numDupls = len(duplicates.keys())
+      print "# INFO: %s Duplicate Names Found:" %numDupls
       print duplicates
       dialogDupls = ""
       for dupl in duplicates.keys():
