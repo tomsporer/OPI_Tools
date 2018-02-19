@@ -10,7 +10,7 @@ from opi.common.opiexception import OPIException
 class AssignMaterialFromObjectTool(Tool):
 
   ToolName = 'AssignMaterialFromObject'
-  ToolLabel = 'Assign Material from Object'
+  ToolLabel = 'Assign Material from Object ( A <- B )'
   ToolCommand = 'assignmaterialfromobject'
   ToolDescription = 'Assign Material from last selected Object to selection'
   ToolTooltip = 'Assign Material from last selected Object to selection'
