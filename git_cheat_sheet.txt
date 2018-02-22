@@ -25,3 +25,7 @@ Das Ziel ist origin (in diesem fall git.com)
 Der Branch ist master (der Zweig der Aenderungen)
 
 git push origin master
+
+Neuen branch erstellen
+
+git checkout -b [branchname]
