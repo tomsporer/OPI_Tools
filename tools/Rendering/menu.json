@@ -4,6 +4,7 @@
     { "type": "tool", "module": "CreateRenderBatTool.py"},
     { "type": "tool", "module": "OpenRenderFolderTool.py"},
     { "type": "separator"},
-    { "type": "tool", "module": "QuickRenderBatFromSceneTool.py" }
+    { "type": "tool", "module": "QuickRenderBatFromSceneTool.py" },
+    { "type": "tool", "module": "InstallRedshiftVersionTool.py" }
   ]
 }

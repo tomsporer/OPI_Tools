@@ -75,7 +75,6 @@ if launchersPath.lower().find('pipeline') == -1:
 else:
   # os.environ['OPI_DATABASE_DIR'] = "\\\\192.168.1.10\\tomsporer\\PROJECTS"
   os.environ['OPI_DATABASE_DIR'] = "E:\\PROJECTS"
-  os.environ['REDSHIFT_INSTALLATION_ROOT'] = "\\\\domain\\public\\zookeeper\\workgroups\\renderer"
 
 # # find all subfolders with an opicfg file
 # subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
