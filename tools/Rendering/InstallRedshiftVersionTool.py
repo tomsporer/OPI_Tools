@@ -26,7 +26,6 @@ class InstallRedshiftVersionTool(DataBaseTool):
 
   def initialize(self, **args):
     self.__RedshiftInstallRoot = "\\\\domain\\tomsporer\\PIPELINE\\ThirdParty\\RedShift"
-    # self.__RedshiftInstallRoot = "C:\\Dominic\\PIPELINE_localCopy\\ThirdParty\\RedShift"
     self.args.add(name="rsZipFile", type="file", label="RedShift Zip", filefilter="*.zip", mustexist=True)
 
   def preexecute(self):

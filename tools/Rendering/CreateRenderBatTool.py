@@ -7,10 +7,10 @@ import os
 import sys
 import json
 import subprocess
+from collections import OrderedDict
 
 from opi.tools.databasetool import DataBaseTool
 from opi.common.opiexception import OPIException
-from opi.storage.jsonobject import JsonObject
 
 
 
@@ -46,47 +46,57 @@ class CreateRenderBatTool(DataBaseTool):
 @echo starting render for " + str(numScenes) + " scenes\n\
 @echo.\n\
 \n\
+SET MAYA_VERSION=" + os.environ.get("MAYA_VERSION") + "\n\
+SET OPI_LAUNCHER_DIR=\\\\domain\\tomsporer\\PIPELINE\\OPI_Tools\\launchers\n\
+SET MAYA_LOCATION=" + os.environ.get("MAYA_LOCATION") + "\n\
+\n\
 "
 
     # Get environment variables from OPI cfg file
     cfgFile = os.path.join(os.environ.get("OPI_LAUNCHER_DIR"), "configs", "maya.cfg")
     with open(cfgFile, "r") as f:
-      j = json.load(f)
+      j = json.load(f, object_pairs_hook=OrderedDict)
       jEnv = j["environment"]
-      cfgEnvList = ["MAYA_MODULE_PATH", "MAYA_PLUG_IN_PATH", "MAYA_SCRIPT_PATH", "PYTHONPATH", "FABRIC_EXTS_PATH", "FABRIC_DFG_PATH"]
-      cfgEnvDict = {}
-      for env in cfgEnvList:
-        cfgEnvDict[env] = ";".join(jEnv[env]).replace("${", "%").replace("}", "%").replace("/", "\\")
+      # cfgEnvList = ["MAYA_MODULE_PATH", "MAYA_PLUG_IN_PATH", "MAYA_SCRIPT_PATH", "PYTHONPATH", "FABRIC_EXTS_PATH", "FABRIC_DFG_PATH"]
+      # cfgEnvDict = {}
+      # for env in cfgEnvList:
+      #   cfgEnvDict[env] = ";".join(jEnv[env]).replace("${", "%").replace("}", "%").replace("/", "\\")
+
+    # copy all environment variables from the cfg file to the bat file
+    batEnvVariables = ""
+    for env in jEnv.keys():
+      value = ";".join(jEnv[env]).replace("${", "%").replace("}", "%").replace("/", "\\")
+      batEnvVariables += "SET %s=%s\n" %(env, value)
+    batEnvVariables += "\n"
 
 
-    batEnvVariables = "\
-SET ADSKFLEX_LICENSE_FILE=@192.168.1.14;@192.168.1.21;@192.168.1.22\n\
-SET MAYA_VERSION=" + os.environ.get("MAYA_VERSION") + "\n\
-SET REDSHIFT_VERSION=" + os.environ.get("REDSHIFT_VERSION") + "\n\
-SET REDSHIFT_INSTALLATION_ROOT=" + os.environ.get("REDSHIFT_INSTALLATION_ROOT") + "\n\
-SET REDSHIFT_ROOT=%REDSHIFT_INSTALLATION_ROOT%\\RedShift\n\
-SET REDSHIFT_CORE_PATH=%REDSHIFT_ROOT%\\%REDSHIFT_VERSION%\\Redshift\n\
-SET REDSHIFT_COREDATAPATH=%REDSHIFT_CORE_PATH%\n\
-SET REDSHIFT_COMMON_ROOT=%REDSHIFT_CORE_PATH%\\Plugins\\Maya\\Common\n\
-SET REDSHIFT_PLUG_IN_PATH=%REDSHIFT_CORE_PATH%\\Plugins\\Maya\\%MAYA_VERSION%\\nt-x86-64\n\
-SET REDSHIFT_SCRIPT_PATH=%REDSHIFT_COMMON_ROOT%\\scripts\n\
-SET REDSHIFT_XBMLANGPATH=%REDSHIFT_COMMON_ROOT%\\icons\n\
-SET REDSHIFT_RENDER_DESC_PATH=%REDSHIFT_COMMON_ROOT%\\rendererDesc\n\
-\n\
-SET OPI_LAUNCHER_DIR=\\\\domain\\tomsporer\\PIPELINE\\OPI_Tools\\launchers\n\
-\n\
-SET MAYA_PLUG_IN_PATH=" + cfgEnvDict["MAYA_PLUG_IN_PATH"] + "\n\
-SET MAYA_SCRIPT_PATH=" + cfgEnvDict["MAYA_SCRIPT_PATH"] + "\n\
-SET MAYA_MODULE_PATH=" + cfgEnvDict["MAYA_MODULE_PATH"] + "\n\
-SET XBMLANGPATH=%REDSHIFT_XBMLANGPATH%\n\
-SET MAYA_RENDER_DESC_PATH=%REDSHIFT_RENDER_DESC_PATH%\n\
-\n\
-SET PATH=%REDSHIFT_PLUG_IN_PATH%;%REDSHIFT_CORE_PATH%\\bin\n\
-SET PYTHONPATH=" + cfgEnvDict["PYTHONPATH"] + "\n\
-SET FABRIC_EXTS_PATH=" + cfgEnvDict["FABRIC_EXTS_PATH"] + "\n\
-SET FABRIC_DFG_PATH=" + cfgEnvDict["FABRIC_DFG_PATH"] + "\n\
-\n\
-"
+#     batEnvVariables = "\
+# SET ADSKFLEX_LICENSE_FILE=@192.168.1.14;@192.168.1.21;@192.168.1.22\n\
+# SET peregrinel_LICENSE=39554@192.168.1.16\n\
+# SET REDSHIFT_VERSION=" + os.environ.get("RS_VERSION") + "\n\
+# SET REDSHIFT_INSTALLATION_ROOT=" + os.environ.get("REDSHIFT_INSTALLATION_ROOT") + "\n\
+# SET REDSHIFT_ROOT=%REDSHIFT_INSTALLATION_ROOT%\\RedShift\n\
+# SET REDSHIFT_CORE_PATH=%REDSHIFT_ROOT%\\%REDSHIFT_VERSION%\\Redshift\n\
+# SET REDSHIFT_COREDATAPATH=%REDSHIFT_CORE_PATH%\n\
+# SET REDSHIFT_COMMON_ROOT=%REDSHIFT_CORE_PATH%\\Plugins\\Maya\\Common\n\
+# SET REDSHIFT_PLUG_IN_PATH=%REDSHIFT_CORE_PATH%\\Plugins\\Maya\\%MAYA_VERSION%\\nt-x86-64\n\
+# SET REDSHIFT_SCRIPT_PATH=%REDSHIFT_COMMON_ROOT%\\scripts\n\
+# SET REDSHIFT_XBMLANGPATH=%REDSHIFT_COMMON_ROOT%\\icons\n\
+# SET REDSHIFT_RENDER_DESC_PATH=%REDSHIFT_COMMON_ROOT%\\rendererDesc\n\
+# \n\
+# \n\
+# SET MAYA_PLUG_IN_PATH=" + cfgEnvDict["MAYA_PLUG_IN_PATH"] + "\n\
+# SET MAYA_SCRIPT_PATH=" + cfgEnvDict["MAYA_SCRIPT_PATH"] + "\n\
+# SET MAYA_MODULE_PATH=" + cfgEnvDict["MAYA_MODULE_PATH"] + "\n\
+# SET XBMLANGPATH=%REDSHIFT_XBMLANGPATH%\n\
+# SET MAYA_RENDER_DESC_PATH=%REDSHIFT_RENDER_DESC_PATH%\n\
+# \n\
+# SET PATH=%REDSHIFT_PLUG_IN_PATH%;%REDSHIFT_CORE_PATH%\\bin\n\
+# SET PYTHONPATH=" + cfgEnvDict["PYTHONPATH"] + "\n\
+# SET FABRIC_EXTS_PATH=" + cfgEnvDict["FABRIC_EXTS_PATH"] + "\n\
+# SET FABRIC_DFG_PATH=" + cfgEnvDict["FABRIC_DFG_PATH"] + "\n\
+# \n\
+# "
 
     batBody = ""
 
