@@ -112,9 +112,10 @@ class ExportToAfterEffectsTool(Tool):
 
     def getOrientation(obj):
       roo = cmds.xform(obj, q=True, rotateOrder=True)
-      cmds.xform(obj, preserve=True, roo="zyx") # We need to convert Maya's rotation order to After Effects' rotation order
+      ra = cmds.xform(obj, q=True, rotateAxis=True)
+      cmds.xform(obj, preserve=True, roo="zyx", ra=[0,0,0]) # We need to convert Maya's rotation order to After Effects' rotation order
       rotation = cmds.xform(obj, q=True, rotation=True, worldSpace=True)
-      cmds.xform(obj, preserve=True, roo=roo)
+      cmds.xform(obj, preserve=True, roo=roo, ra=ra)
       return rotation
 
     def getFocalLength(camShape):
