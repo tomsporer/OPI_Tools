@@ -33,7 +33,10 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.add(name='projectname', label='project', type='str', enabled=False)
     self.args.add(name="renderpath", type="folder", label="render path", value="", enabled=True, expression="[a-zA-Z0-9_/]*")
     self.args.add(name="renderfolder", type="str", label="renderfolder(hidden)", value="", hidden=True)
-    self.args.add(name="rendername", type="str", label="render name", value="")
+    self.args.beginRow("render name")
+    self.args.add(name="rendername", type="str", label="", value="")
+    self.args.addButton("takeSceneName", "<<")
+    self.args.endRow()
     self.args.beginRow("version")
     self.args.add(name="version", label="", type="str", expression='[0-9]+[0-9]*')
     self.args.addButton("plusOne", "+1")
@@ -67,6 +70,9 @@ class SetRenderOutputTool(DataBaseTool):
       version = self.args.getValue("version")
       versionPlus = str(int(version) + 1).rjust(2,"0")
       self.args.setValue("version", versionPlus)
+    elif button == "takeSceneName":
+      self.args.setValue("rendername", self.__scenename)
+
 
   def onValueChanged(self, arg):
 
@@ -107,6 +113,8 @@ class SetRenderOutputTool(DataBaseTool):
     # get current scene data and set default values
     # ----
     self.__filepath = cmds.file(q=True, sn=True)
+    self.__filename = os.path.split(self.__filepath)[1]
+    self.__scenename = self.__filename.rsplit(".", 1)[0]
     rangeIn = cmds.getAttr("defaultRenderGlobals.startFrame")
     rangeOut = cmds.getAttr("defaultRenderGlobals.endFrame")
     self.args.setValue("in", rangeIn)
@@ -243,8 +251,8 @@ class SetRenderOutputTool(DataBaseTool):
 
 
   def __readJson(self):
-    filename = os.path.split(self.__filepath)[1]
-    scenename = filename.rsplit(".", 1)[0]
+    filename = self.__filename
+    scenename = self.__scenename
     # scenename = scenename.rsplit("_v", 1)[0]
     # scenename = scenename.rsplit("_V", 1)[0]
     while scenename[-1].isdigit() or scenename[-1] == "_":
