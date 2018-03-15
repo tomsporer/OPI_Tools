@@ -52,6 +52,7 @@ class DuplicateToSelectionTool(Tool):
     self.args.add(name="replaceHierarchy", type="bool", label="Replace Target Hierarchies", value=False)
     self.args.add(name="asChild", type="bool", label="Make Child of Targets", value=False)
     self.args.add(name="asParent", type="bool", label="Make Parent of Targets", value=False)
+    self.args.add(name="asSibling", type="bool", label="Make Sibling of Targets", value=False)
     self.args.add(name="noParenting", type="bool", label="None (don't change Hierarchy)", value=False)
     self.args.addSpacer(1)
     self.args.addSpacer(7,1)
@@ -101,7 +102,7 @@ class DuplicateToSelectionTool(Tool):
     #   self.args.get("asParent").value = False
     #   self.args.get("replace").value = not arg.value
 
-    hierOptions = ["replace", "replaceHierarchy", "asChild", "asParent", "noParenting"]
+    hierOptions = ["replace", "replaceHierarchy", "asChild", "asParent", "asSibling", "noParenting"]
     if arg.name in hierOptions:
       if arg.value == True:
         for hierOption in hierOptions:
@@ -132,6 +133,7 @@ class DuplicateToSelectionTool(Tool):
     replaceHierarchy = self.args.getValue("replaceHierarchy")
     asChild = self.args.getValue("asChild")
     asParent = self.args.getValue("asParent")
+    asSibling = self.args.getValue("asSibling")
     noParenting = self.args.getValue("noParenting")
 
     instance = self.args.getValue("instance")
