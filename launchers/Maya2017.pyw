@@ -85,9 +85,16 @@ else:
 # if len(folderNames) == 0:
 #   folderNames += ['']
 
-folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2', 'PAY_Payback_Amex' ]
+folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2', 'FRI_Fritt_TV'] # 'PAY_Payback_Amex'
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
+
+# fileText = {"ROT_Rotkaeppchen_2":["3D", "Render"]}
+# fileText = fileText.replace('${projectName}', projName)
+# fileText = fileText.replace('\n', '')
+# fileText = fileText.replace(' ', '')
+# os.environ['OPI_DATABASE_EXLUDESUBFOLDERSSUBFOLDERS'] = fileText
+# os.environ['OPI_DATABASE_EXLUDESUBFOLDERSSUBFOLDERS'] = ""
 
 # import the opi launcher modules
 from opi.launchers.environment import Environment

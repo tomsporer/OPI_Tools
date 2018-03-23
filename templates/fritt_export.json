@@ -1,0 +1,28 @@
+{
+  "name": "Fritt_Export",
+  "type": "File",
+  "args": [
+    {
+      "name": "object",
+      "type": "str"
+    },
+    {
+      "name": "shot",
+      "type": "str"
+    },
+    {
+      "name": "name",
+      "type": "str"
+    },
+    {
+      "name": "film",
+      "type": "str"
+    },
+    {
+      "name": "fileext",
+      "type": "str"
+    }
+  ],
+  "filename": "${object}_${shot}_${name}_${film}.${fileext}",
+  "location": "FRI_Fritt_TV/3D/Film_${film}/${shot}/Cache/${name}/${filename}"
+}

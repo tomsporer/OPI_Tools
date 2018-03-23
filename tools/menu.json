@@ -10,6 +10,7 @@
     { "type": "menu", "folder": "Rigging" },
     { "type": "menu", "folder": "Animation" },
     { "type": "separator" },
+    { "type": "menu", "folder": "Fritt"},
     { "type": "menu", "folder": "PaybackAmex"},
     { "type": "menu", "folder": "Sekt" },
     { "type": "separator"},
