@@ -250,7 +250,7 @@ class exportForCachingTool(DataBaseTool):
     # --------------------
     sceneName = cmds.file(q=True, sceneName=True, shortName=True).rsplit(".")[0]
     wContent = "Plugin=MayaBatch\n\
-Comment=\n\
+Comment=" + exportName + "\n\
 Priority=90\n\
 Department=FRI_Fritt_TV\n\
 Frames=1\n\
