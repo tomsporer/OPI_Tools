@@ -25,6 +25,7 @@ class importFrittCacheTool(DataBaseTool):
   def initialize(self, **args):
 
     db = self.host.apis['db']
+    self.__dbRoot = db.root
     self.__project = db.queryOne("project", name="Fritt_TV")
     self.__projectPath = db.getPath(self.__project.location)
     self.__frittRoot = self.__projectPath
@@ -35,7 +36,7 @@ class importFrittCacheTool(DataBaseTool):
     self.__flavsThree = ["Wildberry"]
     self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango"]
 
-    flavsList = sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis)
+    flavsList = ["- Please select -"] + sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis)
 
     self.args.addStaticText("\tImport Cache \t \t \t")
     self.args.addSpacer(13)
@@ -77,7 +78,9 @@ class importFrittCacheTool(DataBaseTool):
     # Get shot from scene path
     currentSceneFolder = self.__currentSceneFolder
     frittRoot = self.__frittRoot
-    shotlistPath = os.path.join(frittRoot, "3D", "Film_" + film, "shotlist.json")
+    dbRoot = self.__dbRoot
+    # shotlistPath = os.path.join(frittRoot, "3D", "Film_" + film, "shotlist.json")
+    shotlistPath = os.path.join(dbRoot, "FRI_Fritt_" + film, "3D", "shotlist.json")
 
     frittShots = ["- Please select -"]
     shot = "- Please select -"
@@ -177,7 +180,9 @@ class importFrittCacheTool(DataBaseTool):
     # Get reference file path and import
     # --------------------
     charFlav = self.args.getValue("charFlav")
-    if charFlav in self.__flavsOne:
+    if charFlav == "- Please select -":
+      raise OPIException("Please select a character from the list")
+    elif charFlav in self.__flavsOne:
       charRefDir = os.path.join(self.__frittRoot, "3D", "REFERENCE", "ONE")
     elif charFlav in self.__flavsTwo:
       charRefDir = os.path.join(self.__frittRoot, "3D", "REFERENCE", "TWO")

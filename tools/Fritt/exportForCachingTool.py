@@ -29,13 +29,14 @@ class exportForCachingTool(DataBaseTool):
   def initialize(self, **args):
 
     db = self.host.apis['db']
+    self.__dbRoot = db.root
     self.__project = db.queryOne("project", name="Fritt_TV")
     self.__projectPath = db.getPath(self.__project.location)
     self.__frittRoot = self.__projectPath
     self.__newName = False
     self.args.addStaticText("\tExport for Caching \t \t \t")
     self.args.addSpacer(13)
-    self.args.add(name="object", type="str", label="Character/Asset", combo=["Char", "Asset"], value="Char")
+    self.args.add(name="object", type="str", label="Character/Asset", combo=["Char"], value="Char") # ["Char", "Asset"]
     self.args.add(name="film", type="str", label="Film", combo=[], value=None, enabled=True)
     self.args.add(name="shot", type="str", label="Shot", combo=[], value=None, enabled=True)
     self.args.beginRow("Name")
@@ -81,11 +82,14 @@ class exportForCachingTool(DataBaseTool):
     # --------------------
     # Get film from scene path
     # --------------------
-    frittFilms = ["- Please select -", "Frittmania", "Lecker", "StripeClub", "SuperStattSuess", "Wettkauen"]
+    ws = cmds.workspace( q=True, sn=True )
+    wsFilm = os.path.split(ws)[1]
+    frittFilms = ["- Please select -", "Frittmania", "Wettkauen"] # , "Lecker", "SuperStattSuess", "StripeClub"
     self.__currentScene = currentScene = cmds.file(q=True, sceneName=True)
+    self.__currentSceneExt = currentSceneExt = os.path.splitext(currentScene)[1][1:]
     self.__currentSceneFolder = currentSceneFolder = os.path.split(currentScene)[0]
     for frittFilm in frittFilms:
-      if frittFilm in currentSceneFolder:
+      if frittFilm in wsFilm:
         film = frittFilm
         break
     else:
@@ -106,7 +110,9 @@ class exportForCachingTool(DataBaseTool):
     # Get shot from scene path
     currentSceneFolder = self.__currentSceneFolder
     frittRoot = self.__frittRoot
-    shotlistPath = os.path.join(frittRoot, "3D", "Film_" + film, "shotlist.json")
+    dbRoot = self.__dbRoot
+    # shotlistPath = os.path.join(frittRoot, "3D", "Film_" + film, "shotlist.json")
+    shotlistPath = os.path.join(dbRoot, "FRI_Fritt_" + film, "3D", "shotlist.json")
 
     frittShots = ["- Please select -"]
     shot = "- Please select -"
@@ -131,13 +137,13 @@ class exportForCachingTool(DataBaseTool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
     charOrAss = self.args.getValue("object")
-    # Get name from selection
-    sel = cmds.ls(selection=True)[0]
     fCacheList = db.query("fritt_export", sql="SELECT * FROM fritt_export WHERE object == \'%s\' AND shot == \'%s\' AND film == \'%s\' ORDER BY name" %(charOrAss, shot, film) )
     nameList = ["- Please select -"]
     for fCache in fCacheList:
       nameList += [fCache.name]
     nameList = sorted(list(set(nameList)))
+    # # Get name from selection
+    # sel = cmds.ls(selection=True)[0]
     # fCacheDict = {}
     # for fCache in fCacheList:
     #   name = fCache.name
@@ -196,6 +202,7 @@ class exportForCachingTool(DataBaseTool):
     # collect values and variables
     # --------------------
     frittRoot = self.__frittRoot
+    dbRoot = self.__dbRoot
     charOrAss = self.args.getValue("object")
     if charOrAss == "Character":
       charOrAss = "Char"
@@ -214,17 +221,26 @@ class exportForCachingTool(DataBaseTool):
     if shot == "- Please select -":
       raise OPIException("Please select a shot from the list")
 
+    currentSceneExt = self.__currentSceneExt
+    if currentSceneExt == "mb":
+      currentSceneType = "mayaBinary"
+    elif currentSceneExt == "ma":
+      currentSceneType = "mayaAscii"
 
     # --------------------
     # export selection
     # --------------------
 
-    exportDir = os.path.join(frittRoot, "3D", "Film_" + film, shot, "Cache", exportName)
+    # exportDir = os.path.join(frittRoot, "3D", "Film_" + film, shot, "Cache", exportName)
+    # exportDir = os.path.join(dbRoot, "FRI_Fritt_" + film, "3D", shot, "Cache", exportName)
+    exportDir = os.path.join(dbRoot, "FRI_Fritt_" + film, "Cache", shot, exportName)
     exportFileName = "_".join([charOrAss, shot, exportName, film])
-    exportPath = os.path.join(exportDir, exportFileName + ".mb")
+    exportPath = os.path.join(exportDir, exportFileName + "." + currentSceneExt)
     force = not self.__newName
-    exportFile = cmds.file(exportPath, force=force, exportSelected=True, constraints=True, constructionHistory=True, expressions=True, channels=True, shader=True, preserveReferences=True, type="mayaBinary")
-    db.getOrCreateNew("fritt_export", object=charOrAss, shot=shot, name=exportName, film=film, fileext="mb", createEmptyFile=False)
+    if not os.path.exists(exportDir):
+      os.makedirs(exportDir)
+    exportFile = cmds.file(exportPath, force=force, exportSelected=True, constraints=True, constructionHistory=True, expressions=True, channels=True, shader=True, preserveReferences=True, type=currentSceneType)
+    db.getOrCreateNew("fritt_export", object=charOrAss, shot=shot, name=exportName, film=film, fileext=currentSceneExt, createEmptyFile=False)
 
     print "# INFO: exported   \"%s\"" %(exportFile)
 

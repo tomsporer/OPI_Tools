@@ -76,16 +76,19 @@ else:
   # os.environ['OPI_DATABASE_DIR'] = "\\\\192.168.1.10\\tomsporer\\PROJECTS"
   os.environ['OPI_DATABASE_DIR'] = "E:\\PROJECTS"
 
-# # find all subfolders with an opicfg file
-# subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
-# folderNames = []
-# for subfolder in subfolders:
-#   folderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
+# find all subfolders with an opicfg file
+subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
+allFolderNames = []
+for subfolder in subfolders:
+  allFolderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
 
 # if len(folderNames) == 0:
 #   folderNames += ['']
 
-folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2', 'FRI_Fritt_TV'] # 'PAY_Payback_Amex'
+folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2'] # 'PAY_Payback_Amex'
+for folderName in allFolderNames:
+  if folderName.startswith("FRI_Fritt"):
+    folderNames += [folderName]
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
