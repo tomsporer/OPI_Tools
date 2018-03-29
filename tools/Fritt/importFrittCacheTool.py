@@ -53,7 +53,11 @@ class importFrittCacheTool(DataBaseTool):
     # --------------------
     # Get film from scene path
     # --------------------
-    frittFilms = ["- Please select -", "Frittmania", "Lecker", "StripeClub", "SuperStattSuess", "Wettkauen"]
+    frittFilms = ["- Please select -"] #, "Frittmania", "Wettkauen" , "Lecker", "SuperStattSuess", "StripeClub"
+    opiProjects = os.getenv("OPI_DATABASE_SUBFOLDERS").split(";")
+    for opiProject in opiProjects:
+      if opiProject.startswith("FRI_Fritt"):
+        frittFilms += [opiProject.replace("FRI_Fritt_", "")]
     self.__currentScene = currentScene = cmds.file(q=True, sceneName=True)
     self.__currentSceneFolder = currentSceneFolder = os.path.split(currentScene)[0]
     for frittFilm in frittFilms:

@@ -25,7 +25,6 @@ class updateCachesTool(DataBaseTool):
 
     self.args.addStaticText("\tUpdate Caches \t")
     self.args.addSpacer(13)
-    self.args.add(name="updateAll", type="bool", label="All", value=True)
 
 
   def preexecute(self):
@@ -67,12 +66,18 @@ class updateCachesTool(DataBaseTool):
           abcDict[abcName] = [abcNode] + [abcFile] + nodeOut
           abcPlus = increment(abcFile)
 
-    for abc in sorted(abcDict.keys()):
-      lastVersion = os.path.splitext(abcDict[abc][1])[0][-3:]
-      self.args.beginRow(abc)
-      self.args.add(name=abc, label="", type="bool", value=True)
-      self.args.addStaticText("update to v%s" %(lastVersion))
-      self.args.endRow()
+    if len(abcDict.keys()) == 0:
+      # dialog = cmds.confirmDialog(title="No Updates Found.", message="All Caches are up to date.\n\nNo updates needed.", button=["Ok"], defaultButton="Ok", cancelButton="Ok", dismissString="Ok")
+      self.args.addStaticText("No updates needed.")
+    else:
+      if len(abcDict.keys()) > 0:
+        self.args.add(name="updateAll", type="bool", label="All", value=True)
+      for abc in sorted(abcDict.keys()):
+        lastVersion = os.path.splitext(abcDict[abc][1])[0][-3:]
+        self.args.beginRow(abc)
+        self.args.add(name=abc, label="", type="bool", value=True)
+        self.args.addStaticText("update to v%s" %(lastVersion))
+        self.args.endRow()
 
     self.__abcDict = abcDict
 

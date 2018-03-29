@@ -84,7 +84,11 @@ class exportForCachingTool(DataBaseTool):
     # --------------------
     ws = cmds.workspace( q=True, sn=True )
     wsFilm = os.path.split(ws)[1]
-    frittFilms = ["- Please select -", "Frittmania", "Wettkauen"] # , "Lecker", "SuperStattSuess", "StripeClub"
+    frittFilms = ["- Please select -"] #, "Frittmania", "Wettkauen" , "Lecker", "SuperStattSuess", "StripeClub"
+    opiProjects = os.getenv("OPI_DATABASE_SUBFOLDERS").split(";")
+    for opiProject in opiProjects:
+      if opiProject.startswith("FRI_Fritt"):
+        frittFilms += [opiProject.replace("FRI_Fritt_", "")]
     self.__currentScene = currentScene = cmds.file(q=True, sceneName=True)
     self.__currentSceneExt = currentSceneExt = os.path.splitext(currentScene)[1][1:]
     self.__currentSceneFolder = currentSceneFolder = os.path.split(currentScene)[0]
@@ -270,6 +274,7 @@ Comment=" + exportName + "\n\
 Priority=90\n\
 Department=FRI_Fritt_TV\n\
 Frames=1\n\
+BatchName=Fritt_Cache_Export\n\
 Name=" + sceneName + " [Script Job]"
 
     wPath = os.path.join(localAppData, "Thinkbox", "Deadline10", "temp", "maya_deadline_info.job")
