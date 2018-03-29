@@ -28,6 +28,13 @@ class exportForCachingTool(DataBaseTool):
 
   def initialize(self, **args):
 
+    self.__flavsOne = ["Strawberry"]
+    self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry"]
+    self.__flavsThree = ["Wildberry"]
+    self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango"]
+
+    self.__flavsList = sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis)
+
     db = self.host.apis['db']
     self.__dbRoot = db.root
     self.__project = db.queryOne("project", name="Fritt_TV")
@@ -51,7 +58,6 @@ class exportForCachingTool(DataBaseTool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
-
     # --------------------
     # check selection
     # --------------------
@@ -60,6 +66,7 @@ class exportForCachingTool(DataBaseTool):
       raise OPIException("Nothing selected. Please select a character and retry")
     else:
       sel = sel[0]
+
       # check for "gChar" group for the character
       if "gChar" not in sel:
         par = cmds.listRelatives(sel, parent=True)
@@ -67,10 +74,26 @@ class exportForCachingTool(DataBaseTool):
           sel = par[0]
           if "gChar" in sel:
             cmds.select(sel)
+
+            # get flavor from selection
+            for flav in self.__flavsList:
+              if flav in sel:
+                self.__flavor = flav
+                break
+              elif cmds.referenceQuery(sel, isNodeReferenced=True):
+                refPath = cmds.referenceQuery(sel, filename=True)
+                refFile = os.path.split(refPath)[1]
+                if flav in refFile:
+                  self.__flavor = flav
+                  break
+            else:
+              self.__flavor = None
+
             break
           par = cmds.listRelatives(sel, parent=True)
         else:
           raise OPIException("Couldn't find the character's top group \"gChar\" in selection")
+          
       # check if selection is a child reference of another reference
       if cmds.referenceQuery(sel, isNodeReferenced=True):
         refNode = cmds.referenceQuery(sel, referenceNode=True)
@@ -231,6 +254,7 @@ class exportForCachingTool(DataBaseTool):
     elif currentSceneExt == "ma":
       currentSceneType = "mayaAscii"
 
+
     # --------------------
     # export selection
     # --------------------
@@ -247,6 +271,17 @@ class exportForCachingTool(DataBaseTool):
     db.getOrCreateNew("fritt_export", object=charOrAss, shot=shot, name=exportName, film=film, fileext=currentSceneExt, createEmptyFile=False)
 
     print "# INFO: exported   \"%s\"" %(exportFile)
+
+
+    # --------------------
+    # write info json file
+    # --------------------
+    jsonFile = os.path.join(exportDir, exportFileName + ".json")
+    flavor = self.__flavor
+    charInfo = {}
+    charInfo["flavor"] = flavor
+    with open(jsonFile, "w") as t:
+      json.dump(charInfo, t, indent=4)
 
 
     # --------------------

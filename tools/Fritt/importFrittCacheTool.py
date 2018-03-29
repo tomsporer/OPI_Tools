@@ -40,10 +40,10 @@ class importFrittCacheTool(DataBaseTool):
 
     self.args.addStaticText("\tImport Cache \t \t \t")
     self.args.addSpacer(13)
-    self.args.add(name="charFlav", type="str", label="Character", combo=flavsList, value=flavsList[0])
     self.args.add(name="film", type="str", label="Film", combo=[], value=None, enabled=True)
     self.args.add(name="shot", type="str", label="Shot", combo=[], value=None, enabled=True)
     self.args.add(name="name", type="str", label="Cache", combo=[], value=None, enabled=True)
+    self.args.add(name="charFlav", type="str", label="Flavor", combo=flavsList, value=flavsList[0])
 
 
   def preexecute(self):
@@ -135,8 +135,21 @@ class importFrittCacheTool(DataBaseTool):
       shot = arg.value
       film = self.args.getValue("film")
       self.fillNameList(film, shot)
-    elif arg.name == "object":
-      film = self.args.getValue("film")
+    elif arg.name == "name":
+      # read info json file
+      fCacheDict = self.__fCacheDict
+      name = self.args.getValue("name")
+      fCache = fCacheDict[name]
+      fCachePath = db.getPath(fCache.location)
+      jsonPath = os.path.splitext(fCachePath)[0] + ".json"
+      if os.path.exists(jsonPath):
+        with open(jsonPath, 'r') as j:
+          charInfo = json.load(j)
+        try:
+          flav = charInfo["flavor"]
+          self.args.setValue("charFlav", flav)
+        except:
+          pass
 
 
 
