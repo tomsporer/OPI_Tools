@@ -41,7 +41,10 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.add(name="version", label="", type="str", expression='[0-9]+[0-9]*')
     self.args.addButton("plusOne", "+1")
     self.args.endRow()
-    self.args.add(name="camsubfolder", label="Camera subfolder", type="bool", value=False)
+    self.args.beginRow("Camera subfolder")
+    self.args.add(name="camsubfolderBefore", label="Before version", type="bool", value=False)
+    self.args.add(name="camsubfolderAfter", label="After version", type="bool", value=False)
+    self.args.endRow()
     self.args.addSpacer(5,1)
     self.args.beginRow("camera")
     self.args.add(name="changeCamera", label="", type="bool", value=False)
@@ -76,7 +79,12 @@ class SetRenderOutputTool(DataBaseTool):
 
   def onValueChanged(self, arg):
 
-    if arg.name == "changeRange":
+
+    if arg.name == "camsubfolderBefore" and arg.value == True:
+      self.args.setValue("camsubfolderAfter", False)
+    elif arg.name == "camsubfolderAfter" and arg.value == True:
+      self.args.setValue("camsubfolderBefore", False)
+    elif arg.name == "changeRange":
       self.args.get("in").enabled = arg.value
       self.args.get("out").enabled = arg.value
     elif arg.name == "in":
@@ -167,6 +175,23 @@ class SetRenderOutputTool(DataBaseTool):
     # ----
     # check and read saved renderOutputInfo
     # ----
+
+    def checkVersionFolder(path):
+      pathHead, pathTail = os.path.split(path)
+      if re.match("[vV]+[0-9][0-9]", pathTail):
+        self.__versionFromPrefix = pathTail[1:]
+        return True
+      else:
+        return False
+
+    def checkCameraFolder(path):
+      pathHead, pathTail = os.path.split(path)
+      if pathTail == "<Camera>":
+        return True
+      else:
+        return False
+
+
     renderPrefix = str(cmds.getAttr("defaultRenderGlobals.imageFilePrefix"))
     renderPrefix = renderPrefix.replace("/", "\\")
     projectPath = cmds.workspace( q=True, rootDirectory=True )
@@ -175,16 +200,38 @@ class SetRenderOutputTool(DataBaseTool):
       renderfolder = ""
     else:
       renderpath = os.path.split(renderPrefix)[0] # rip off filename
-      # check if folder at end is a versioning folder
-      renderpathTail = os.path.split(renderpath)[1]
-      if re.match("[vV]+[0-9][0-9]", renderpathTail):
-        self.__versionFromPrefix = renderpathTail[1:]
-        renderpath = os.path.split(renderpath)[0] # rip off versioning folder
+      # check if folder at end is a version or camera folder
+
+      if checkVersionFolder(renderpath):
+        renderpath = os.path.split(renderpath)[0]
+        if checkCameraFolder(renderpath):
+          renderpath = os.path.split(renderpath)[0]
+          self.args.setValue("camsubfolderBefore", True)
+      elif checkCameraFolder(renderpath):
+        renderpath = os.path.split(renderpath)[0]
+        self.args.setValue("camsubfolderAfter", True)
+        if checkVersionFolder(renderpath):
+          renderpath = os.path.split(renderpath)[0]
+        else:
+          self.__versionFromPrefix = "01" # default
       else:
         self.__versionFromPrefix = "01" # default
-      if os.path.split(renderpath)[1] == "<Camera>":
-        renderpath = os.path.split(renderpath)[0] # rip off camera folder
-        self.args.setValue("camsubfolder", True)
+                
+          
+      # renderpathTail = os.path.split(renderpath)[1]
+      # if re.match("[vV]+[0-9][0-9]", renderpathTail):
+      #   self.__versionFromPrefix = renderpathTail[1:]
+      #   renderpath = os.path.split(renderpath)[0] # rip off versioning folder
+      #   if os.path.split(renderpath)[1] == "<Camera>":
+      #     self.args.setValue("camsubfolderBefore", True)
+      # elif renderpathTail == "<Camera>":
+
+      # else:
+      #   self.__versionFromPrefix = "01" # default
+      # if os.path.split(renderpath)[1] == "<Camera>":
+      #   renderpath = os.path.split(renderpath)[0] # rip off camera folder
+      #   self.args.setValue("camsubfolder", True)
+
       if renderPrefix[1] == ":":
         renderfolder = renderpath.split("Render\\")[-1]
         if renderpath == renderfolder:
@@ -285,7 +332,9 @@ class SetRenderOutputTool(DataBaseTool):
     rendername = self.args.getValue('rendername')
     version = self.args.getValue('version')
     version = version.rjust(2, '0')
-    camsubfolder = self.args.getValue("camsubfolder")
+    # camsubfolder = self.args.getValue("camsubfolder")
+    camsubfolderBefore = self.args.getValue("camsubfolderBefore")
+    camsubfolderAfter = self.args.getValue("camsubfolderAfter")
     changeCamera = self.args.getValue("changeCamera")
     camera = self.args.getValue("camera")
     changeRange = self.args.getValue("changeRange")
@@ -308,9 +357,12 @@ class SetRenderOutputTool(DataBaseTool):
       cmds.setAttr('defaultRenderGlobals.ren', 'redshift', type='string')
         
     renderfile = rendername + "_<RenderLayer>_V" + str(version)
-    if camsubfolder:
+    if camsubfolderBefore:
       renderpath = os.path.join(renderpath, "<Camera>")
-    renderPrefix = os.path.join(renderpath, "V" + version, renderfile)
+    renderpath = os.path.join(renderpath, "V" + version)
+    if camsubfolderAfter:
+      renderpath = os.path.join(renderpath, "<Camera>")
+    renderPrefix = os.path.join(renderpath, renderfile)
     cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
     cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
     cmds.setAttr("redshiftOptions.imageFormat", 1) # 1 = exr
