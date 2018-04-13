@@ -33,6 +33,7 @@ class OpenerTool(DataBaseTool):
     self.args.add(name="bottle", label="Bottle", type="instance", template="levelone", comboSqlQuery="SELECT * FROM levelone WHERE project_id == ${project} ORDER BY name")
     self.args.add(name="product", label="Product", type="instance", template="leveltwo", comboSqlQuery="SELECT * FROM leveltwo WHERE levelone_id == ${bottle} ORDER BY name")
     self.args.add(name="versionlist", label="version", type="str", combo=[])
+    self.args.add(name="filedate", label="Date", type="str", value="", enabled=False)
 
 
   def preexecute(self):
@@ -64,7 +65,7 @@ class OpenerTool(DataBaseTool):
   def execute(self):
 
     version = self.args.getValue("versionlist")
-    pathToOpen = self.__versionlistCombo[str(version)]
+    pathToOpen = self.__versionlistCombo[str(version)][0]
 
     print "Opening " + str(pathToOpen)
 
@@ -91,13 +92,17 @@ class OpenerTool(DataBaseTool):
     # ----
 
     version = self.args.getValue("versionlist")
-    pathToOpen = self.__versionlistCombo[str(version)]
+    pathToOpen = self.__versionlistCombo[str(version)][0]
     cmds.file(pathToOpen, open=True)
 
 
   def onValueChanged(self, arg):
     if arg.name == "project" or arg.name == "bottle" or arg.name == "product":
       self.fillVersionList()
+    elif arg.name == "versionlist":
+      fileVersion = self.args.getValue("versionlist")
+      cTime = self.__versionlistCombo[fileVersion][1]
+      self.args.setValue("filedate", cTime)
 
 
   def fillVersionList(self):
@@ -126,20 +131,40 @@ class OpenerTool(DataBaseTool):
         if os.path.isfile(jsonPath):
           readJson = JsonObject(jsonPath)
           try:
-            if readJson.comment.text == "":
-              fileComment = "  -  " + readJson.comment.user
-            else:
-              fileComment = "  -  " + readJson.comment.user + " - " + readJson.comment.text
+            cText = readJson.comment.text
+            if cText:
+              cText = "  -  " + cText
           except:
+            cText = ""
+          try:
+            cUser = readJson.comment.user
+            if cUser:
+              cUser = "  -  " + cUser
+          except:
+            cUser = ""
+          try:
+            cTime = readJson.comment.time
+          except:
+            cTime = ""
+          if cText or cUser or cTime:
+            fileComment = cUser + cText
+          else:
             fileComment = ""
-        else:
-          fileComment = ""
-        vlc[fileName + "v" + str(k.version) + fileComment] = pathToOpen 
+        #     if readJson.comment.text == "":
+        #       fileComment = "  -  " + readJson.comment.user
+        #     else:
+        #       fileComment = "  -  " + readJson.comment.user + " - " + readJson.comment.text
+        #   except:
+        #     fileComment = ""
+        # else:
+        #   fileComment = ""
+        vlc[fileName + "v" + str(k.version) + fileComment] = [pathToOpen, cTime]
     # ----
 
     if len(vlc.keys()) > 0:
       sortedVlcKeys = sorted(vlc.keys(), reverse=True)
       self.args.get("versionlist")._setCombo(sortedVlcKeys, sortedVlcKeys[0])
+      self.args.get("filedate").value = vlc[sortedVlcKeys[0]][1]
     else:
       self.args.get("versionlist")._setCombo([], None)
 
