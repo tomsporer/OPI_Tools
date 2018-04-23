@@ -320,7 +320,7 @@ Name=" + sceneName + " [Script Job]"
     # write Deadline Plugin File
     # --------------------
     wContent = "ScriptJob=True\n\
-Version=2017\n\
+Version=2018\n\
 Build=64bit\n\
 ProjectPath=E:/PROJECTS/FRI_Fritt_TV\n\
 ScriptFilename=autoExportCache.py\n\
