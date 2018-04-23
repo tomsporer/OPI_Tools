@@ -79,6 +79,8 @@ class IncrementAndSaveTool(DataBaseTool):
     sceneDir, sceneFile = os.path.split(scenePath)
     incrSceneFile = self.increment(sceneFile)
     savePath = os.path.join(sceneDir, incrSceneFile)
+    saveTypes = {"ma":"mayaAscii", "mb":"mayaBinary"}
+    saveType = saveTypes[savePath[-2:]]
 
     if os.path.exists(savePath) == True:
       QtWidgets = self.host.apis["QtWidgets"]
@@ -93,4 +95,4 @@ class IncrementAndSaveTool(DataBaseTool):
       maya.cmds.file(rename = savePath)
       print savePath
       maya.cmds.file(save = True)
-      maya.mel.eval("addRecentFile(\"%s\", \"mayaAscii\");" %(savePath.replace("\\", "/")))
+      maya.mel.eval("addRecentFile(\"%s\", \"%s\");" %(savePath.replace("\\", "/"), saveType))
