@@ -44,6 +44,7 @@ class importFrittCacheTool(DataBaseTool):
     self.args.add(name="shot", type="str", label="Shot", combo=[], value=None, enabled=True)
     self.args.add(name="name", type="str", label="Cache", combo=[], value=None, enabled=True)
     self.args.add(name="charFlav", type="str", label="Flavor", combo=flavsList, value=flavsList[0])
+    self.args.add(name="version", type="str", label="Version", combo="", value="")
 
 
   def preexecute(self):
@@ -122,43 +123,8 @@ class importFrittCacheTool(DataBaseTool):
     self.__fCacheDict = fCacheDict
 
 
-  def onValueChanged(self, arg):
-    maya = self.host.apis['maya']
+  def fillVersionList(self):
     db = self.host.apis['db']
-
-    if arg.name == "film":
-      film = arg.value
-      self.fillShotList(film)
-      shot = self.args.getValue("shot")
-      self.fillNameList(film, shot)
-    elif arg.name == "shot":
-      shot = arg.value
-      film = self.args.getValue("film")
-      self.fillNameList(film, shot)
-    elif arg.name == "name":
-      # read info json file
-      fCacheDict = self.__fCacheDict
-      name = self.args.getValue("name")
-      fCache = fCacheDict[name]
-      fCachePath = db.getPath(fCache.location)
-      jsonPath = os.path.splitext(fCachePath)[0] + ".json"
-      if os.path.exists(jsonPath):
-        with open(jsonPath, 'r') as j:
-          charInfo = json.load(j)
-        try:
-          flav = charInfo["flavor"]
-          self.args.setValue("charFlav", flav)
-        except:
-          pass
-
-
-
-  def executeMaya(self):
-    maya = self.host.apis['maya']
-    db = self.host.apis['db']
-    cmds = maya.cmds
-    mel = maya.mel
-
 
     def increment(scenePath):
       sceneFolder, sceneFile = os.path.split(scenePath)
@@ -182,15 +148,66 @@ class importFrittCacheTool(DataBaseTool):
     # --------------------
     fCacheDict = self.__fCacheDict
     name = self.args.getValue("name")
-    fCache = fCacheDict[name]
-    fCachePath = db.getPath(fCache.location)
-    abcPath = os.path.splitext(fCachePath)[0] + "_v001.abc"
-    if not os.path.exists(abcPath):
-      raise OPIException("Oops, there's no cache file that matches your arguments")
-    incrPath = increment(abcPath)
-    while os.path.exists(incrPath):
-      abcPath = incrPath
-      incrPath = increment(abcPath)
+    if not name == "- Please select -":
+      fCache = fCacheDict[name]
+      fCachePath = db.getPath(fCache.location)
+      abcPath = os.path.splitext(fCachePath)[0] + "_v001.abc"
+      versionDict = {}
+      if not os.path.exists(abcPath):
+        versionDict["- Cache Missing! -"] = ""
+        # raise OPIException("Oops, there's no cache file that matches your arguments")
+      else:
+        v = "001"
+        versionDict[v] = abcPath
+        incrPath = increment(abcPath)
+        while os.path.exists(incrPath):
+          v = str(int(v) + 1).rjust(3, "0")
+          abcPath = incrPath
+          versionDict[v] = abcPath
+          incrPath = increment(abcPath)
+
+      self.__versionDict = versionDict
+
+      versionList = list(reversed(sorted(versionDict.keys())))
+      self.args.get("version")._setCombo(versionList, versionList[0])
+
+
+  def onValueChanged(self, arg):
+    maya = self.host.apis['maya']
+    db = self.host.apis['db']
+
+    if arg.name == "film":
+      film = arg.value
+      self.fillShotList(film)
+      shot = self.args.getValue("shot")
+      self.fillNameList(film, shot)
+    elif arg.name == "shot":
+      shot = arg.value
+      film = self.args.getValue("film")
+      self.fillNameList(film, shot)
+    elif arg.name == "name":
+      self.fillVersionList()
+      # read info json file
+      fCacheDict = self.__fCacheDict
+      name = self.args.getValue("name")
+      fCache = fCacheDict[name]
+      fCachePath = db.getPath(fCache.location)
+      jsonPath = os.path.splitext(fCachePath)[0] + ".json"
+      if os.path.exists(jsonPath):
+        with open(jsonPath, 'r') as j:
+          charInfo = json.load(j)
+        try:
+          flav = charInfo["flavor"]
+          self.args.setValue("charFlav", flav)
+        except:
+          pass
+
+
+  def executeMaya(self):
+    maya = self.host.apis['maya']
+    db = self.host.apis['db']
+    cmds = maya.cmds
+    mel = maya.mel
 
 
     # --------------------
@@ -222,6 +239,8 @@ class importFrittCacheTool(DataBaseTool):
     # --------------------
     # Import abc cache
     # --------------------
+    version = self.args.getValue("version")
+    abcPath = self.__versionDict[version]
     abcImportString = "AbcImport -mode import -connect \""
     abcImportString += refShapes[0]
     if len(refShapes) > 1:
