@@ -1,0 +1,332 @@
+[
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [], 
+            "isolateSelected": false, 
+            "name": "Beatuy_Collection", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*gGeo", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "enabled", 
+                  "localRender": false, 
+                  "name": "enabled", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "rsAov_Depth_col", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "RedshiftAOV", 
+                "pattern": "", 
+                "staticSelection": "rsAov_Depth", 
+                "typeFilter": 8
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Beauty", 
+      "renderable": true
+    }
+  }, 
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [
+              {
+                "materialOverride": {
+                  "attribute": "", 
+                  "connectionStr": "BlackFrittSet.message", 
+                  "localRender": false, 
+                  "name": "BlackFrittSet1", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cBg", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "materialOverride": {
+                  "attribute": "", 
+                  "connectionStr": "WhiteFrittSet.message", 
+                  "localRender": false, 
+                  "name": "WhiteFrittSet1", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cChars", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*gGeo", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "materialOverride": {
+                  "attribute": "", 
+                  "connectionStr": "whiteFrittCutoutSet.message", 
+                  "localRender": false, 
+                  "name": "whiteFrittCutoutSet1", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cPackStanze", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*PackEnds_HighRes", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Matte", 
+      "renderable": false
+    }
+  }, 
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Bool", 
+                          "value": false
+                        }, 
+                        "attribute": "primaryVisibility", 
+                        "localRender": false, 
+                        "name": "primaryVisibility", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "name": "cMatte_shapes", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "*", 
+                      "staticSelection": "", 
+                      "typeFilter": 2
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cMatte", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*Arms*, ::*Legs*, ::*_Lash_*", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "keyable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "visibility", 
+                  "localRender": false, 
+                  "name": "visibility", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cPacks", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*Pack_HighRes", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Label", 
+      "renderable": false
+    }
+  }, 
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "keyable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "visibility", 
+                  "localRender": false, 
+                  "name": "visibility7", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cPacks1", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*Pack_Mask", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "keyable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "matteEnable", 
+                  "localRender": false, 
+                  "name": "matteEnable", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cMatte1", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*rsMatteLabelMask", 
+                "staticSelection": "", 
+                "typeFilter": 5
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Label_Mask", 
+      "renderable": false
+    }
+  }, 
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [
+              {
+                "materialOverride": {
+                  "attribute": "", 
+                  "connectionStr": "ambSet.message", 
+                  "localRender": false, 
+                  "name": "ambSet1", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "AmbOcc", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "AOC", 
+      "renderable": false
+    }
+  }
+]
