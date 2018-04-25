@@ -15,19 +15,16 @@ import os
 import sys
 
 
-__version__ = "2.0.0b6"
-__encoding__ = sys.getfilesystemencoding()
+__version__ = "2.3.3"
 
 _resource = None
 
-PATH = unicode(os.path.abspath(__file__), __encoding__)
+
+PATH = os.path.abspath(__file__)
 DIRNAME = os.path.dirname(PATH)
 PACKAGES_PATH = os.path.join(DIRNAME, "packages")
 RESOURCE_PATH = os.path.join(DIRNAME, "resource")
 HELP_URL = "http://www.studiolibrary.com"
-
-
-LIBRARY_WIDGET_CLASS = None
 
 
 def setup(path):
@@ -56,6 +53,19 @@ from studiolibrary.librarywidget import LibraryWidget
 from studiolibrary.main import main
 
 
+# Wrapping the following functions for convenience
+app = studioqt.app
+
+
+def version():
+    """
+    Return the current version of the Studio Library
+
+    :rtype: str
+    """
+    return __version__
+
+
 def resource():
     """
     Return a resource object for getting content from the resource folder.
@@ -68,40 +78,3 @@ def resource():
         _resource = studioqt.Resource(RESOURCE_PATH)
 
     return _resource
-
-
-def version():
-    """
-    Return the current version of the Studio Library
-
-    :rtype: str
-    """
-    return __version__
-
-
-def loadFromCommand():
-    """
-    Triggered when the Studio Library is loaded from the command line.
-
-    :rtype: None
-    """
-    from optparse import OptionParser
-
-    parser = OptionParser()
-    parser.add_option("-r", "--root", dest="root",
-                      help="", metavar="ROOT")
-    parser.add_option("-n", "--name", dest="name",
-                      help="", metavar="NAME")
-    parser.add_option("-v", "--version", dest="version",
-                      help="", metavar="VERSION")
-    (options, args) = parser.parse_args()
-
-    name = options.name
-    main(name=name)
-
-
-from studiolibrary import config
-
-
-if __name__ == "__main__":
-    loadFromCommand()

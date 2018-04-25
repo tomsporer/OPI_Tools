@@ -20,6 +20,8 @@ import studiolibrary
 import mutils
 import studioqt
 
+from studiolibrarymaya.main import main
+
 
 __encoding__ = sys.getfilesystemencoding()
 
@@ -28,7 +30,7 @@ DIRNAME = os.path.dirname(PATH).replace('\\', '/')
 RESOURCE_DIRNAME = DIRNAME + "/resource"
 
 DEFAULT_FILE_TYPE = "mayaBinary"
-SETTINGS_PATH = studiolibrary.localPath("ItemSettings.json")
+SETTINGS_PATH = studiolibrary.localPath("LibraryItem.json")
 
 _resource = None
 _settings = None
@@ -49,14 +51,12 @@ def saveSettings(data):
     Save the given dict to the local location of the SETTING_PATH.
 
     :type data: dict
-    :rtype: dict
+    :rtype: None
     """
     global _settings
     _settings = None
 
-    data_ = readSettings()
-    data_.update(data)
-    return studiolibrary.saveJson(SETTINGS_PATH, data_)
+    studiolibrary.updateJson(SETTINGS_PATH, data)
 
 
 def settings():
@@ -110,20 +110,12 @@ def resource():
     return _resource
 
 
-def setup():
+def registerItems():
     """
-    Called by the studiolibrary config file to register the items.
-
-    :rtype: None
+    The following items are registered on import at the bottom of each file.
+    
+    :rtype: None 
     """
-    try:
-        import studiolibrarymaya.mayalibrarywidget
-        # Enable the Maya closed event
-        enableMayaClosedEvent()
-    except ImportError, e:
-        logging.exception(e)
-
-    # The following items are registered on import.
     from studiolibrarymaya import animitem
     from studiolibrarymaya import poseitem
     from studiolibrarymaya import mirroritem
@@ -133,6 +125,8 @@ def setup():
 def enableMayaClosedEvent():
     """
     Create a Maya script job to trigger on the event "quitApplication".
+
+    Enable the Maya closed event to save the library settings on close
 
     :rtype: None
     """

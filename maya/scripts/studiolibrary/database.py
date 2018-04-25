@@ -31,8 +31,8 @@ class Database(QtCore.QObject):
 
     databaseChanged = QtCore.Signal()
 
-    def __init__(self, path):
-        QtCore.QObject.__init__(self)
+    def __init__(self, path, *args):
+        QtCore.QObject.__init__(self, *args)
 
         self._path = path
         self._mtime = None
@@ -148,34 +148,63 @@ class Database(QtCore.QObject):
         """
         return studiolibrary.normPath(path)
 
-    def searchReplace(self, old, new, count=-1):
+    def find(self, keys=None):
         """
-        Replace the old value with the new value in the database.
+        Return all the data for the given keys.
 
-        :type old: str
-        :type new: str
-        :type count: int
-
-        :rtype: None
+        :type keys: list[str]
+        :rtype: dict
         """
-        path = self.path()
+        data = self.read()
 
-        data = studiolibrary.read(path)
-        data = data.replace(old, new, count)
+        if keys:
+            keys = self.normPaths(keys)
+            results = {key: data[key] for key in keys if key in data}
+        else:
+            results = data
 
-        studiolibrary.write(path, data)
+        return results
 
-    def readJson(self):
+    def dataFromColumn(self, column, keys=None, sort=True, split=""):
         """
-        Return the data from the database as a valid dict object.
+        Return the data in the given column for the given keys.
+
+        :type column: str
+        :type keys: list[str]
+        :type sort: bool
+        :type split: str
+        :rtype: list[str]
+        """
+        data = self.find(keys)
+        results = []
+
+        for item in data.values():
+
+            text = item.get(column)
+
+            if text and split:
+                results.extend(text.split(split))
+            elif text:
+                results.append(text)
+
+        results = list(set(results))
+
+        if sort:
+            results = sorted(results)
+
+        return results
+
+    def read(self):
+        """
+        Read the database from disc and return a dict object.
 
         :rtype: dict
         """
         return studiolibrary.readJson(self.path())
 
-    def saveJson(self, data):
+    def save(self, data):
         """
-        Write the given dict object to disc.
+        Write the given dict object to the database on disc.
 
         :type data: dict
         :rtype: None
@@ -187,21 +216,21 @@ class Database(QtCore.QObject):
         Update the database with the given data.
 
         :type data: dict
-        :rtype: None
+        :rtype: dict
         """
-        data_ = self.readJson()
-        data_.update(data)
-        self.saveJson(data_)
+        return studiolibrary.updateJson(self.path(), data)
 
-    def insert(self, key, data):
+    def replace(self, old, new, count=-1):
         """
-        Insert the given data at the given key.
+        Replace the old value with the new value in the database.
 
-        :type key: str
-        :type data: dict
-        :rtype: None
+        :type old: str
+        :type new: str
+        :type count: int
+
+        :rtype: dict
         """
-        self.updateMultiple([key], data)
+        return studiolibrary.replaceJson(self.path(), old, new, count)
 
     def updateMultiple(self, keys, data):
         """
@@ -211,8 +240,7 @@ class Database(QtCore.QObject):
         :type data: dict
         :rtype: None
         """
-        data_ = self.readJson()
-
+        data_ = self.read()
         keys = self.normPaths(keys)
 
         for key in keys:
@@ -221,16 +249,26 @@ class Database(QtCore.QObject):
             else:
                 data_[key] = data
 
-        self.saveJson(data_)
+        self.save(data_)
 
-    def delete(self, key):
+    def updateItems(self, items, data):
         """
-        Delete the given key in the JSON path.
-
-        :type key: str
+        Update the given items in the database with the given data.
+        
+        :type items: list[studiolibrary.LibraryItem]
+        :type data: dict
+        
         :rtype: None
         """
-        self.deleteMultiple([key])
+        keys = [item.id() for item in items]
+
+        self.updateMultiple(keys, data)
+
+        # Update the item data
+        for item in items:
+            for column in data:
+                item.setText(column, data[column])
+                item.updateData()
 
     def deleteMultiple(self, keys):
         """
@@ -239,7 +277,7 @@ class Database(QtCore.QObject):
         :type keys: list[str]
         :rtype: None
         """
-        data = self.readJson()
+        data = self.read()
 
         keys = self.normPaths(keys)
 
@@ -247,38 +285,54 @@ class Database(QtCore.QObject):
             if key in data:
                 del data[key]
 
-        self.saveJson(data)
+        self.save(data)
+
+    def addPath(self, path, data=None):
+        """
+        Add the given path and data to the database.    
+    
+        :type path: str
+        :type data: dict or None
+        :rtype: None 
+        """
+        data = data or {}
+        self.updateMultiple([path], data)
+
+    def removePath(self, path):
+        """
+        Remove the given path from the database.
+
+        :type path: str
+        :rtype: None
+        """
+        self.deleteMultiple([path])
 
     def renamePath(self, src, dst):
         """
-        Rename the given path in the db to the given dst path.
+        Rename the given path in the database to the given dst path.
 
         :type src: str
         :type dst: str
         :rtype: None
         """
-        src = '"' + self.normPath(src) + '"'
-        dst = '"' + self.normPath(dst) + '"'
+        src = self.normPath(src)
+        dst = self.normPath(dst)
 
-        self.searchReplace(src, dst)
+        src1 = '"' + src + '"'
+        dst2 = '"' + dst + '"'
 
-    def renameFolder(self, src, dst):
-        """
-        Rename the given source directory in the db to the given destination.
+        # Replace paths that match exactly the given src and dst strings
+        self.replace(src1, dst2)
 
-        :type src: str
-        :type dst: str
-        :rtype: None
-        """
-        dst = '"' + self.normPath(dst)
-        src = '"' + self.normPath(src)
+        src2 = '"' + src
+        dst2 = '"' + dst
 
         # Add a slash as a suffix for better directory matching
-        if not src.endswith("/"):
-            src += "/"
+        if not src2.endswith("/"):
+            src2 += "/"
 
-        if not dst.endswith("/"):
-            dst += "/"
+        if not dst2.endswith("/"):
+            dst2 += "/"
 
-        # Replace all values that start with the src value with the dst value
-        self.searchReplace(src, dst)
+        # Replace all paths that start with the src path with the dst path
+        self.replace(src2, dst2)

@@ -11,43 +11,57 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 """
-#
 # mirrortable.py
+
 import mutils
 
 # Example 1:
-# Create mirror table from objects
+# Create a MirrorTable instance from the given objects
 mt = mutils.MirrorTable.fromObjects(objects, "_l_", "_r_", MirrorPlane.YZ)
 
 # Example 2:
-# Create mirror table from selected objects
+# Create a MirrorTable instance from the selected objects
 objects = maya.cmds.ls(selection=True)
 mt = mutils.MirrorTable.fromObjects(objects, "_l_", "_r_", MirrorPlane.YZ)
 
 # Example 3:
-# Save to file
-path = "/tmp/test.mt"
+# Save the MirrorTable to the given JSON path
+path = "/tmp/mirrortable.json"
 mt.save(path)
 
 # Example 4:
-# Load from file
-path = "/tmp/test.mt"
+# Create a MirrorTable instance from the given JSON path
+path = "/tmp/mirrortable.json"
 mt = mutils.MirrorTable.fromPath(path)
 
-# load to objects from file
+# Example 5:
+# Mirror all the objects from file
 mt.load()
 
-# load to selected objects
+# Example 6:
+# Mirror only the selected objects
 objects = maya.cmds.ls(selection=True) or []
 mt.load(objects=objects)
 
-# loat to namespaces
+# Example 7:
+# Mirror all objects from file to the given namespaces
 mt.load(namespaces=["character1", "character2"])
 
-# load to specified objects
-mt.load(objects=["Character1:Hand_L", "Character1:Finger_L"])
-mt.leftToRight()
-mt.rightToLeft()
+# Example 8:
+# Mirror only the given objects
+mt.load(objects=["character1:Hand_L", "character1:Finger_L"])
+
+# Example 9:
+# Mirror all objects from left to right
+mt.load(option=mutils.MirrorOption.LeftToRight)
+
+# Example 10:
+# Mirror all objects from right to left
+mt.load(option=mutils.MirrorOption.RightToLeft)
+
+# Example 11:
+# Mirror only the current pose
+mt.load(animation=False)
 """
 
 import re
@@ -65,8 +79,8 @@ __all__ = ["MirrorTable", "MirrorPlane", "MirrorOption", "Axis"]
 logger = logging.getLogger(__name__)
 
 
-RE_LEFT_SIDE = "Lf|lt_|_lt|lf_|_lf|_l_|_L|L_|left|Left|\|l_|:l_|^l_|_l$|:L|^L"
-RE_RIGHT_SIDE = "Rt|rt_|_rt|_r_|_R|R_|right|Right|\|r_|:r_|^r_|_r$|:R|^R"
+RE_LEFT_SIDE = "Left|left|Lf|lt_|_lt|lf_|_lf|_l_|_L|L_|:l_|^l_|_l$|:L|^L"
+RE_RIGHT_SIDE = "Right|right|Rt|rt_|_rt|_r_|_R|R_|:r_|^r_|_r$|:R|^R"
 
 VALID_NODE_TYPES = ["joint", "transform"]
 
@@ -79,8 +93,8 @@ class MirrorPlane:
 
 class MirrorOption:
     Swap = 0
-    RightToLeft = 1
-    LeftToRight = 2
+    LeftToRight = 1
+    RightToLeft = 2
 
 
 class MirrorTable(mutils.SelectionSet):
@@ -140,31 +154,39 @@ class MirrorTable(mutils.SelectionSet):
         """
         return MirrorTable.findSide(objects, RE_RIGHT_SIDE)
 
-    @staticmethod
-    def findSide(objects, reSide):
+    @classmethod
+    def findSide(cls, objects, reSides):
         """
-        Return the naming convention for the given names.
+        Return the naming convention for the given object names.
         
         :type objects: list[str]
-        :type reSide: str
+        :type reSides: str or list[str]
         :rtype: str
         """
-        reSide = re.compile(reSide)
+        if isinstance(reSides, basestring):
+            reSides = reSides.split("|")
+
+        # Compile the list of regular expressions into a re.object
+        reSides = [re.compile(side) for side in reSides]
+
         for obj in objects:
             obj = obj.split("|")[-1]
             obj = obj.split(":")[-1]
 
-            m = reSide.search(obj)
-            if m:
-                side = m.group()
+            for reSide in reSides:
 
-                if obj.startswith(side):
-                    side += "*"
+                m = reSide.search(obj)
+                if m:
+                    side = m.group()
 
-                if obj.endswith(side):
-                    side = "*" + side
+                    if obj.startswith(side):
+                        side += "*"
 
-                return side
+                    if obj.endswith(side):
+                        side = "*" + side
+
+                    return side
+
         return ""
 
     @staticmethod
@@ -651,7 +673,11 @@ class MirrorTable(mutils.SelectionSet):
         maya.cmds.setFocus("MayaWindow")
 
         if not foundObject:
-            raise mutils.NoMatchFoundError("No objects match when loading data")
+
+            text = "No objects match when loading data. " \
+                   "Turn on debug mode to see more details."
+
+            raise mutils.NoMatchFoundError(text)
 
     def transferStatic(self, srcObj, dstObj, mirrorAxis=None, attrs=None, option=MirrorOption.Swap):
         """
@@ -762,10 +788,10 @@ class MirrorTable(mutils.SelectionSet):
         if option == MirrorOption.Swap:
             return True
 
-        elif option == MirrorOption.RightToLeft and self.isLeftSide(obj):
+        elif option == MirrorOption.LeftToRight and self.isLeftSide(obj):
             return False
 
-        elif option == MirrorOption.LeftToRight and self.isRightSide(obj):
+        elif option == MirrorOption.RightToLeft and self.isRightSide(obj):
             return False
 
         else:

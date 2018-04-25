@@ -175,7 +175,7 @@ class AnimItem(baseitem.BaseItem):
             )
 
         except Exception, e:
-            studioqt.MessageBox.critical(None, "Item Error", str(e))
+            self.showErrorDialog("Item Error", str(e))
             raise
 
     def load(
@@ -246,25 +246,25 @@ class AnimItem(baseitem.BaseItem):
     def save(
         self,
         objects,
-        path=None,
+        path="",
         contents=None,
-        iconPath=None,
-        fileType=None,
+        iconPath="",
+        fileType="",
         startFrame=None,
         endFrame=None,
         bakeConnected=False,
-        description=None,
+        description="",
     ):
         """
-        :type path: path
-        :type objects: list or None
+        :type path: str
+        :type objects: list[str] or None
         :type contents: list[str] or None
-        :type iconPath: str or None
+        :type iconPath: str
         :type startFrame: int or None
         :type endFrame: int or None
-        :type fileType: str or None
+        :type fileType: str
         :type bakeConnected: bool
-        :type description: str or None
+        :type description: str
 
         :rtype: None
         """
@@ -277,8 +277,13 @@ class AnimItem(baseitem.BaseItem):
         tempPath = tempDir.path() + "/transfer.anim"
 
         t = self.transferClass().fromObjects(objects)
-        t.save(tempPath, time=[startFrame, endFrame], fileType=fileType,
-               bakeConnected=bakeConnected, description=description)
+        t.setMetadata("description", description)
+        t.save(
+            tempPath,
+            fileType=fileType,
+            time=[startFrame, endFrame],
+            bakeConnected=bakeConnected,
+        )
 
         if iconPath:
             contents.append(iconPath)
@@ -433,8 +438,12 @@ class AnimCreateWidget(basecreatewidget.BaseCreateWidget):
             self.ui.fileTypeComboBox.setCurrentIndex(fileTypeIndex)
 
     def settings(self):
-
-        settings = super(AnimPreviewWidget, self).settings()
+        """
+        Overriding this method to add support for saving the byFrame and type.
+        
+        :rtype: dict 
+        """
+        settings = super(AnimCreateWidget, self).settings()
 
         settings["byFrame"] = self.byFrame()
         settings["fileType"] = self.fileType()
@@ -487,18 +496,18 @@ class AnimCreateWidget(basecreatewidget.BaseCreateWidget):
 
         :rtype: None
         """
-        msg = 'To help speed up the playblast you can set the "by frame" to a number greater ' \
-              'than 1. For example if the "by frame" is set to 2 it will playblast every second ' \
-              'frame.'
+        text = 'To help speed up the playblast you can set the "by frame" ' \
+               'to a number greater than 1. For example if the "by frame" ' \
+               'is set to 2 it will playblast every second frame.'
 
         if self.duration() > 100 and self.byFrame() == 1:
 
             buttons = QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel
 
             result = studioqt.MessageBox.question(
-                self,
+                self.libraryWidget(),
                 title="Anim Item Tip",
-                message=msg,
+                text=text,
                 buttons=buttons,
                 enableDontShowCheckBox=True,
             )
@@ -546,9 +555,9 @@ class AnimCreateWidget(basecreatewidget.BaseCreateWidget):
                 captured=self._thumbnailCaptured,
             )
 
-        except Exception, msg:
+        except Exception, e:
             title = "Error while capturing thumbnail"
-            QtWidgets.QMessageBox.critical(None, title, str(msg))
+            QtWidgets.QMessageBox.critical(self.libraryWidget(), title, str(e))
             raise
 
     def validateFrameRange(self):
@@ -608,10 +617,8 @@ class AnimPreviewWidget(basepreviewwidget.BasePreviewWidget):
 
         self.connect(self.ui.currentTime, QtCore.SIGNAL("stateChanged(int)"), self.saveSettings)
         self.connect(self.ui.helpCheckBox, QtCore.SIGNAL('stateChanged(int)'), self.showHelpImage)
-        self.connect(self.ui.connectCheckBox, QtCore.SIGNAL('stateChanged(int)'),
-                     self.connectChanged)
-        self.connect(self.ui.option, QtCore.SIGNAL('currentIndexChanged(const QString&)'),
-                     self.optionChanged)
+        self.connect(self.ui.connectCheckBox, QtCore.SIGNAL('stateChanged(int)'), self.connectChanged)
+        self.connect(self.ui.option, QtCore.SIGNAL('currentIndexChanged(const QString&)'), self.optionChanged)
 
     def createSequenceWidget(self):
         """
@@ -670,6 +677,7 @@ class AnimPreviewWidget(basepreviewwidget.BasePreviewWidget):
             self.ui.helpImage.show()
         else:
             self.ui.helpImage.hide()
+
         if save:
             self.saveSettings()
 

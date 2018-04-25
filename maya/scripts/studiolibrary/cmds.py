@@ -13,6 +13,7 @@
 
 import os
 import json
+import ctypes
 import shutil
 import urllib2
 import logging
@@ -27,41 +28,54 @@ from datetime import datetime
 __all__ = [
     "user",
     "walk",
-    "isMaya",
     "isMac",
+    "isMaya",
     "isLinux",
     "isWindows",
-    "logScreen",
-    "timeAgo",
     "read",
     "write",
+    "update",
     "saveJson",
     "readJson",
     "updateJson",
-    "listPaths",
-    "findPaths",
+    "replaceJson",
+    "relPath",
+    "absPath",
+    "realPath",
+    "normPath",
     "copyPath",
     "movePath",
-    "normPath",
+    "movePaths",
+    "listPaths",
+    "findPaths",
     "splitPath",
+    "localPath",
     "removePath",
     "renamePath",
-    "localPath",
     "formatPath",
-    "moveContents",
+    "generateUniquePath",
+    "MovePathError",
+    "RenamePathError",
+    "timeAgo",
+    "sendEvent",
+    "showInFolder",
     "Direction",
     "stringToList",
     "listToString",
-    "generateUniquePath",
-    "PathRenameError",
     "registerItem",
     "itemClasses",
     "itemExtensions",
     "itemFromPath",
     "itemsFromPaths",
     "itemsFromUrls",
+    "itemClassFromPath",
+    "isValidItemPath",
     "findItems",
     "findItemsInFolders",
+    "IGNORE_PATHS",
+    "ANALYTICS_ID",
+    "ANALYTICS_ENABLED",
+    "SHOW_IN_FOLDER_CMD",
 ]
 
 
@@ -71,19 +85,40 @@ logger = logging.getLogger(__name__)
 _itemClasses = collections.OrderedDict()
 
 
-class PathRenameError(IOError):
+IGNORE_PATHS = ["/."]  # Ignore all paths the start with a "."
+ANALYTICS_ID = "UA-50172384-1"
+ANALYTICS_ENABLED = True
+SHOW_IN_FOLDER_CMD = None
+
+
+class PathError(IOError):
     """
+    Exception that supports unicode escape characters.
     """
+    def __init__(self, msg):
+        """
+        :type: str or unicode 
+        """
+        msg = unicode(msg).encode('unicode_escape')
+        super(PathError, self).__init__(msg)
+        self._msg = msg
+
+    def __unicode__(self):
+        """
+        Return the decoded message using 'unicode_escape'
+        
+        :rtype: unicode 
+        """
+        msg = unicode(self._msg).decode('unicode_escape')
+        return msg
 
 
-class StudioLibraryError(Exception):
+class MovePathError(PathError):
     """"""
-    pass
 
 
-class StudioLibraryValidateError(StudioLibraryError):
+class RenamePathError(PathError):
     """"""
-    pass
 
 
 class Direction:
@@ -113,7 +148,7 @@ def itemClasses():
 
 def itemExtensions():
     """
-    Register the given item class to the given extension.
+    Return all the registered item extensions.
 
     :rtype: list[str]
     """
@@ -127,7 +162,7 @@ def itemExtensions():
 
 def clearItemClasses():
     """
-    Remove all registered item class.
+    Remove all registered item classes.
 
     :rtype: None
     """
@@ -142,20 +177,11 @@ def itemFromPath(path, **kwargs):
     :type path: str
     :rtype: studiolibrary.LibraryItem or None
     """
-    invalidNames = [
-        ".studiolibrary",
-        ".studioLibrary",
-    ]
-
-    for invalidName in invalidNames:
-        if invalidName in path:
-            return None
-
-    for cls in itemClasses():
-        if cls.isValidPath(path):
-            return cls(path, **kwargs)
-
-    return None
+    cls = itemClassFromPath(path)
+    if cls:
+        return cls(path, **kwargs)
+    else:
+        return None
 
 
 def itemsFromPaths(paths, **kwargs):
@@ -179,13 +205,7 @@ def itemsFromUrls(urls, **kwargs):
     :rtype: list[studiolibrary.LibraryItem]
     """
     items = []
-    for url in urls:
-        path = url.toLocalFile()
-
-        # Fixes a bug when dragging from windows explorer on windows 10
-        if isWindows():
-            if path.startswith("/"):
-                path = path[1:]
+    for path in pathsFromUrls(urls):
 
         item = itemFromPath(path, **kwargs)
 
@@ -197,6 +217,52 @@ def itemsFromUrls(urls, **kwargs):
             logger.warning(msg)
 
     return items
+
+
+def pathsFromUrls(urls):
+    """
+    Return the local file paths from the given QUrls
+
+    :type urls: list[QtGui.QUrl]
+    :rtype: collections.Iterable[str]
+    """
+    for url in urls:
+        path = url.toLocalFile()
+
+        # Fixes a bug when dragging from windows explorer on windows 10
+        if isWindows():
+            if path.startswith("/"):
+                path = path[1:]
+
+        yield path
+
+
+def isValidItemPath(path):
+    """
+    Return True if the given path is supported by a registered item.
+
+    :type path: str
+    :rtype: bool 
+    """
+    return itemClassFromPath(path) is not None
+
+
+def itemClassFromPath(path):
+    """
+    Return the registered LibraryItem class that supports the given path.
+
+    :type path: str
+    :rtype: studiolibrary.LibraryItem.__class__ or None
+    """
+    for ignore in IGNORE_PATHS:
+        if ignore in path:
+            return None
+
+    for cls in itemClasses():
+        if cls.isValidPath(path):
+            return cls
+
+    return None
 
 
 def findItems(path, direction=Direction.Down, depth=3, **kwargs):
@@ -211,7 +277,7 @@ def findItems(path, direction=Direction.Down, depth=3, **kwargs):
     """
     paths = findPaths(
         path,
-        match=itemFromPath,
+        match=isValidItemPath,
         direction=direction,
         depth=depth
     )
@@ -235,14 +301,17 @@ def findItemsInFolders(folders, depth=3, **kwargs):
 
 def user():
     """
+    Return the current user name in lowercase.
+    
     :rtype: str
     """
-    import getpass
     return getpass.getuser().lower()
 
 
 def system():
     """
+    Return the current platform in lowercase.
+    
     :rtype: str
     """
     return platform.system().lower()
@@ -250,6 +319,8 @@ def system():
 
 def isMaya():
     """
+    Return True if the current python session is in Maya.
+    
     :rtype: bool
     """
     try:
@@ -262,21 +333,28 @@ def isMaya():
 
 def isMac():
     """
+    Return True if the current OS is Mac.
+    
     :rtype: bool
     """
-    return system().startswith("mac") or system().startswith("os") \
-        or system().startswith("darwin")
+    return system().startswith("os") or \
+           system().startswith("mac") or \
+           system().startswith("darwin")
 
 
 def isWindows():
     """
+    Return True if the current OS is windows.
+    
     :rtype: bool
     """
     return system().startswith("win")
 
 
 def isLinux():
-    """
+    """    
+    Return True if the current OS is linux.
+    
     :rtype: bool
     """
     return system().startswith("lin")
@@ -284,7 +362,7 @@ def isLinux():
 
 def localPath(*args):
     """
-    Return the users local disc location.
+    Return the users preferred disc location.
 
     :rtype: str
     """
@@ -294,32 +372,34 @@ def localPath(*args):
     return path
 
 
-def formatPath(src, dst, labels=None):
+def formatPath(formatString, path="", **kwargs):
     """
-    Resolve the given destination path.
+    Resolve the given string with the given path and kwargs.
 
     Example:
-        print formatPath("C:/hello/world.json", "{dirname}/meta.json")
+        print formatPath("{dirname}/meta.json", path="C:/hello/world.json")
         # "C:/hello/meta.json"
 
-    :type src: str
-    :type dst: str
-    :type labels: dict
+    :type formatString: str
+    :type path: str
+    :type kwargs: dict
     :rtype: str
     """
-    dirname, name, extension = splitPath(src)
+    dirname, name, extension = splitPath(path)
 
-    labels_ = {
+    local = os.getenv('APPDATA') or os.getenv('HOME')
+
+    labels = {
         "name": name,
-        "path": src,
+        "path": path,
+        "local": local,
         "dirname": dirname,
         "extension": extension,
     }
 
-    if labels:
-        labels_.update(labels)
+    kwargs.update(labels)
 
-    return unicode(dst).format(**labels_)
+    return unicode(formatString).format(**kwargs)
 
 
 def copyPath(src, dst):
@@ -350,7 +430,7 @@ def movePath(src, dst):
     dirname, name, extension = splitPath(src)
 
     if not os.path.exists(src):
-        raise IOError(u'No such file or directory: {0}'.format(src))
+        raise MovePathError(u'No such file or directory: {0}'.format(src))
 
     if os.path.isdir(src):
         dst = u'{0}/{1}{2}'.format(dst, name, extension)
@@ -358,6 +438,26 @@ def movePath(src, dst):
 
     shutil.move(src, dst)
     return dst
+
+
+def movePaths(srcPaths, dst):
+    """
+    Move the given src paths to the given dst path.
+
+    :type srcPaths: list[str]
+    :type dst: str
+    """
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+
+    for src in srcPaths or []:
+        basename = os.path.basename(src)
+
+        dst_ = os.path.join(dst, basename)
+        dst_ = normPath(dst_)
+
+        logger.info(u'Moving Content: {0} => {1}'.format(src, dst_))
+        shutil.move(src, dst_)
 
 
 def removePath(path):
@@ -375,7 +475,7 @@ def removePath(path):
 
 def renamePath(src, dst, extension=None, force=False):
     """
-    Rename the given src path to given destination path.
+    Rename the given source path to the given destination path.
 
     :type src: str
     :type dst: str
@@ -398,22 +498,22 @@ def renamePath(src, dst, extension=None, force=False):
 
     if src == dst and not force:
         msg = u'The source path and destination path are the same: {0}'
-        raise PathRenameError(msg.format(src))
+        raise RenamePathError(msg.format(src))
 
     if os.path.exists(dst) and not force:
         msg = u'Cannot save over an existing path: "{0}"'
-        raise PathRenameError(msg.format(dst))
+        raise RenamePathError(msg.format(dst))
 
     if not os.path.exists(dirname):
         msg = u'The system cannot find the specified path: "{0}".'
-        raise PathRenameError(msg.format(dirname))
+        raise RenamePathError(msg.format(dirname))
 
     if not os.path.exists(os.path.dirname(dst)) and force:
         os.mkdir(os.path.dirname(dst))
 
     if not os.path.exists(src):
         msg = u'The system cannot find the specified path: "{0}"'
-        raise PathRenameError(msg.format(src))
+        raise RenamePathError(msg.format(src))
 
     os.rename(src, dst)
 
@@ -422,26 +522,9 @@ def renamePath(src, dst, extension=None, force=False):
     return dst
 
 
-def moveContents(contents, path):
-    """
-    Move the given contents to the specified path.
-
-    :type contents: list[str]
-    :type path: str
-    """
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-    for src in contents or []:
-        basename = os.path.basename(src)
-        dst = path + "/" + basename
-        logger.info(u'Moving Content: {0} => {1}'.format(src, dst))
-        shutil.move(src, dst)
-
-
 def read(path):
     """
-    Return the contents of the given path
+    Return the contents of the given file.
     
     :type path: str 
     :rtype: str 
@@ -453,29 +536,86 @@ def read(path):
         with open(path, "r") as f:
             data = f.read() or data
 
-    data = resolveRelativePath(path, data)
+    data = absPath(data, path)
 
     return data
 
 
 def write(path, data):
     """
-    Write the given data to the given path location on disc.
+    Write the given data to the given file on disc.
 
     :type path: str 
     :type data: str 
     :rtype: None 
     """
     path = normPath(path)
+    data = relPath(data, path)
+
+    tmp = path + ".tmp"
+    bak = path + ".bak"
+
+    # Create the directory if it doesn't exists
     dirname = os.path.dirname(path)
-
-    data = formatRelativePath(path, data)
-
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
-    with open(path, "w") as f:
-        f.write(data)
+    # Use the tmp file to check for concurrent writes
+    if os.path.exists(tmp):
+        msg = "The path is locked for writing and cannot be accessed {}"
+        msg = msg.format(tmp)
+        raise IOError(msg)
+
+    # Safely write the data to a tmp file and then rename to the given path
+    try:
+        # Create and write the new data
+        #  to the path.tmp file
+        with open(tmp, "w") as f:
+            f.write(data)
+            f.flush()
+
+        # Remove any existing path.bak files
+        if os.path.exists(bak):
+            os.remove(bak)
+
+        # Rename the existing path to path.bak
+        if os.path.exists(path):
+            os.rename(path, bak)
+
+        # Rename the tmp path to the given path
+        if os.path.exists(tmp):
+            os.rename(tmp, path)
+
+        # Clean up the bak file only if the given path exists
+        if os.path.exists(path) and os.path.exists(bak):
+            os.remove(bak)
+
+    except:
+        # Remove the tmp file if there are any issues
+        if os.path.exists(tmp):
+            os.remove(tmp)
+
+        # Restore the path from the current .bak file
+        if not os.path.exists(path) and os.path.exists(bak):
+            os.rename(bak, path)
+
+        raise
+
+
+def update(data, other):
+    """
+    Update the value of a nested dictionary of varying depth.
+    
+    :type data: dict
+    :type other: dict
+    :rtype: dict 
+    """
+    for key, value in other.iteritems():
+        if isinstance(value, collections.Mapping):
+            data[key] = update(data.get(key, {}), value)
+        else:
+            data[key] = value
+    return data
 
 
 def updateJson(path, data):
@@ -487,13 +627,13 @@ def updateJson(path, data):
     :rtype: None
     """
     data_ = readJson(path)
-    data_.update(data)
+    data_ = update(data_, data)
     saveJson(path, data_)
 
 
 def saveJson(path, data):
     """
-    Write a python dict to a json file.
+    Serialize the data to a JSON string and write it to the given path.
 
     :type path: str
     :type data: dict
@@ -506,90 +646,197 @@ def saveJson(path, data):
 
 def readJson(path):
     """
-    Read a json file to a python dict.
+    Read the given JSON file and deserialize to a Python object.
 
     :type path: str
     :rtype: dict
     """
-    logger.debug(u'Reading json file: {0}'.format(path))
-
     path = normPath(path)
 
+    logger.debug(u'Reading json file: {0}'.format(path))
+
     data = read(path) or "{}"
-
-    try:
-        data = json.loads(data)
-    except Exception, e:
-        logger.exception(e)
+    data = json.loads(data)
 
     return data
 
 
-def resolveRelativePath(path, data, sep="/"):
+def replaceJson(path, old, new, count=-1):
     """
-    Resolve all relative paths in the given data object.
-    
-    This function is not pretty, however, the complexity increases when 
-    making it a loop.
+    Replace the old value with the new value in the given json file.
     
     :type path: str
-    :type data: str 
-    :type sep: str 
-    :rtype: str 
+    :type old: str
+    :type new: str
+    :type count: int
+    :rtype: dict
     """
-    relPath = os.path.dirname(path)
-    relPath2 = os.path.dirname(relPath)
-    relPath3 = os.path.dirname(relPath2)
+    old = old.encode("unicode_escape")
+    new = new.encode("unicode_escape")
 
-    if relPath.endswith(sep):
-        relPath = relPath[:-1]
+    data = read(path) or "{}"
+    data = data.replace(old, new, count)
+    data = json.loads(data)
 
-    if relPath2.endswith(sep):
-        relPath2 = relPath2[:-1]
-
-    if relPath3.endswith(sep):
-        relPath3 = relPath3[:-1]
-
-    data = data.replace('\"...' + sep, '"' + relPath3 + sep)
-    data = data.replace('\"..' + sep, '"' + relPath2 + sep)
-    data = data.replace('\".' + sep, '"' + relPath + sep)
+    saveJson(path, data)
 
     return data
 
 
-def formatRelativePath(path, data, sep="/"):
+def relPath(data, start):
     """
-    Replace all paths in the data that start with the given path.
+    Return a relative version of all the paths in data from the start path.
 
-    This function is not pretty, however, the complexity increases when 
-    making it a loop.
+    :type data: str 
+    :type start: str
+    :rtype: str 
+    """
+    rpath = start
 
+    for i in range(0, 3):
+
+        rpath = os.path.dirname(rpath)
+        token = os.path.relpath(rpath, start)
+
+        rpath = normPath(rpath)
+        token = normPath(token)
+
+        if rpath.endswith("/"):
+            rpath = rpath[:-1]
+
+        data = data.replace(rpath, token)
+
+    return data
+
+
+def absPath(data, start):
+    """
+    Return an absolute version of all the paths in data using the start path.
+    
+    :type data: str 
+    :type start: str
+    :rtype: str 
+    """
+    relPath1 = normPath(os.path.dirname(start))
+    relPath2 = normPath(os.path.dirname(relPath1))
+    relPath3 = normPath(os.path.dirname(relPath2))
+
+    if not relPath1.endswith("/"):
+        relPath1 = relPath1 + "/"
+
+    if not relPath2.endswith("/"):
+        relPath2 = relPath2 + "/"
+
+    if not relPath3.endswith("/"):
+        relPath3 = relPath3 + "/"
+
+    data = data.replace('../../../', relPath3)
+    data = data.replace('../../', relPath2)
+    data = data.replace('../', relPath1)
+
+    return data
+
+
+def realPath(path):
+    """
+    Return the given path eliminating any symbolic link.
+    
+    :type path: str 
+    :rtype: str 
+    """
+    path = os.path.realpath(path)
+    path = os.path.expanduser(path)
+    return normPath(path)
+
+
+def normPath(path):
+    """
+    Return a normalized path containing only forward slashes.
+    
     :type path: str
-    :type data: str 
-    :rtype: str 
+    :rtype: str or unicode 
     """
-    relPath = os.path.dirname(path)
-    relPath2 = os.path.dirname(relPath)
-    relPath3 = os.path.dirname(relPath2)
+    return unicode(path.replace("\\", "/"))
 
-    if not relPath.endswith(sep):
-        relPath = relPath + sep
 
-    if not relPath2.endswith(sep):
-        relPath2 = relPath2 + sep
+def splitPath(path):
+    """
+    Split the given path into directory, basename and extension.
+    
+    Example:
+        print splitPath("P:/production/rigs/character/mario.ma
+        
+        # (u'P:/production/rigs/character', u'mario', u'.ma')
+    
+    :type path: str
+    :rtype: list[str]
+    """
+    path = normPath(path)
+    filename, extension = os.path.splitext(path)
+    return os.path.dirname(filename), os.path.basename(filename), extension
 
-    if not relPath3.endswith(sep):
-        relPath3 = relPath3 + sep
 
-    data = data.replace(relPath, '.' + sep)
-    data = data.replace(relPath2, '..' + sep)
-    data = data.replace(relPath3, '...' + sep)
-
+def listToString(data):
+    """
+    Return a string from the given list.
+    
+    Example:
+        print listToString(['apple', 'pear', 'cherry'])
+        
+        # apple,pear,cherry
+    
+    :type data: list
+    :rtype: str
+    """
+    # Convert all items to string and remove 'u'
+    data = [str(item) for item in data]
+    data = str(data).replace("[", "").replace("]", "")
+    data = data.replace("'", "").replace('"', "")
     return data
+
+
+def stringToList(data):
+    """
+    Return a list from the given string.
+        
+    Example:
+        print listToString('apple, pear, cherry')
+        
+        # ['apple', 'pear', 'cherry']
+    
+    :type data: str
+    :rtype: list
+    """
+    data = '["' + str(data) + '"]'
+    data = data.replace(' ', '')
+    data = data.replace(',', '","')
+    return eval(data)
+
+
+def listPaths(path):
+    """
+    Return a list of paths that are in the given directory.
+    
+    :type path: str
+    :rtype: collections.Iterable[str]
+    """
+    for name in os.listdir(path):
+        value = path + "/" + name
+        yield value
 
 
 def generateUniquePath(path, attempts=1000):
     """
+    Generate a unique path on disc.
+
+    Example:
+        # If the following files exist then the next unique path will be 3.
+        # C:/tmp/file.text
+        # C:/tmp/file (2).text
+
+        print generateUniquePath("C:/tmp/file.text")
+        # C:/tmp/file (3).text
+
     :type path:  str
     :type attempts: int
     :rtype: str
@@ -616,83 +863,27 @@ def generateUniquePath(path, attempts=1000):
     return path
 
 
-def normPath(path):
-    """
-    Return a normalized path with forward slashes
-    
-    :type path: str
-    :rtype: str 
-    """
-    return path.replace("\\", "/")
-
-
-def splitPath(path):
-    """
-    :type path: str
-    :rtype: list[str]
-    """
-    path = normPath(path)
-    filename, extension = os.path.splitext(path)
-    return os.path.dirname(filename), os.path.basename(filename), extension
-
-
-def listToString(data):
-    """
-    :type data: list
-    :rtype: str
-    """
-    # Convert all items to string and remove 'u'
-    data = [str(item) for item in data]
-    data = str(data).replace("[", "").replace("]", "")
-    data = data.replace("'", "").replace('"', "")
-    return data
-
-
-def stringToList(data):
-    """
-    :type data: str
-    :rtype: list
-    """
-    data = '["' + str(data) + '"]'
-    data = data.replace(' ', '')
-    data = data.replace(',', '","')
-    return eval(data)
-
-
-def listPaths(path):
-    """
-    :type path: str
-    :rtype: collections.Iterable[str]
-    """
-    for name in os.listdir(path):
-        value = path + "/" + name
-        yield value
-
-
 def findPaths(
         path,
         match=None,
         direction=Direction.Down,
-        depth=3
+        depth=3,
+        **kwargs
 ):
     """
     Return a list of file paths by walking the root path either up or down.
 
     Example:
-        path = r'C:\Users\Hovel\Dropbox\libraries\animation\Malcolm\anim'
+        path = r'P:\production\characters\Malcolm'
 
-        def matchSets(path):
+        def match(path):
             return path.endswith(".set")
 
-        for path in findPaths(path, match=matchSets, direction=Direction.Up, depth=5):
-            print path
-
-        for path in findPaths(path, match=lambda path: path.endswith(".anim"),
-                              direction=Direction.Down, depth=3):
+        for path in findPaths(path, match=match, depth=5):
             print path
 
     :type path: str
-    :type key: func
+    :type match: func or None
     :type depth: int
     :type direction: Direction
     :rtype: collections.Iterable[str]
@@ -704,7 +895,7 @@ def findPaths(
         paths = listPaths(path)
 
     elif direction == Direction.Down:
-        paths = walk(path, match=match, depth=depth)
+        paths = walk(path, match=match, depth=depth, **kwargs)
 
     elif direction == Direction.Up:
         paths = walkup(path, match=match, depth=depth)
@@ -746,10 +937,13 @@ def walkup(path, match=None, depth=3, sep="/"):
                         yield normPath(path)
 
 
-def walk(path, match=None, depth=3):
+def walk(path, match=None, ignore=None, depth=3, **kwargs):
     """
+    Return the files by walking down the given directory.
+    
     :type path: str
-    :type match: func
+    :type match: func or None
+    :type ignore: func or None
     :type depth: int
     :rtype: collections.Iterable[str]
     """
@@ -761,14 +955,32 @@ def walk(path, match=None, depth=3):
     assert os.path.isdir(path)
     startDepth = path.count(os.path.sep)
 
-    for root, dirs, files in os.walk(path):
+    for root, dirs, files in os.walk(path, **kwargs):
+
         files.extend(dirs)
 
         for filename in files:
+            remove = False
+
+            # Normalise the path for consistent matching
             path = os.path.join(root, filename)
             path = normPath(path)
-            if match is None or match(path):
+
+            # Stop walking the current dir if the ignore func returns True
+            if ignore and ignore(path):
+                remove = True
+
+            # Yield and stop walking the current dir if a match has been found
+            elif match and match(path):
+                remove = True
                 yield path
+
+            # Yield all paths if no match or ignore has been set
+            else:
+                yield path
+
+            if remove and filename in dirs:
+                dirs.remove(filename)
 
         currentDepth = root.count(os.path.sep)
         if (currentDepth - startDepth) >= maxDepth:
@@ -777,6 +989,12 @@ def walk(path, match=None, depth=3):
 
 def timeAgo(timeStamp):
     """
+    Return a pretty string for how long ago the given timeStamp was.
+    
+    Example:
+        print timeAgo("2015-04-27 22:29:55"
+        # 2 years ago
+    
     :type timeStamp: str
     :rtype: str
     """
@@ -830,12 +1048,12 @@ def timeAgo(timeStamp):
     return str(v) + " years ago"
 
 
-def logScreen(name, version="1.0.0", an="StudioLibrary", tid="UA-50172384-2"):
+def sendEvent(name, version="1.0.0", an="StudioLibrary", tid=None):
     """
-    Send a screen view to google analytics.
+    Send a screen view event to google analytics.
 
     Example:
-    logScreen("fudgeOpenUI")
+        sendEvent("mainWindow")
 
     :type name: str
     :type version: str
@@ -843,6 +1061,10 @@ def logScreen(name, version="1.0.0", an="StudioLibrary", tid="UA-50172384-2"):
     :type tid: str
     :rtype: None
     """
+    if not ANALYTICS_ENABLED:
+        return
+
+    tid = tid or ANALYTICS_ID
     cid = getpass.getuser() + "-" + platform.node()
 
     url = "http://www.google-analytics.com/collect?" \
@@ -871,7 +1093,7 @@ def logScreen(name, version="1.0.0", an="StudioLibrary", tid="UA-50172384-2"):
     def _send(url):
         try:
             url = url.replace(" ", "")
-            urllib2.urlopen(url, None, 1.0)
+            f = urllib2.urlopen(url, None, 1.0)
         except Exception:
             pass
 
@@ -879,9 +1101,124 @@ def logScreen(name, version="1.0.0", an="StudioLibrary", tid="UA-50172384-2"):
     t.start()
 
 
+def showInFolder(path):
+    """
+    Show the given path in the system file explorer.
+
+    :type path: unicode
+    :rtype: None
+    """
+    cmd = os.system
+    args = []
+
+    if SHOW_IN_FOLDER_CMD:
+        args = [unicode(SHOW_IN_FOLDER_CMD)]
+
+    elif isLinux():
+        args = [u'konqueror "{path}"&']
+
+    elif isWindows():
+        # os.system() and subprocess.call() can't pass command with
+        # non ascii symbols, use ShellExecuteW directly
+        args = [None, u'open', u'explorer.exe', u'/n,/select, "{path}"', None, 1]
+        cmd = ctypes.windll.shell32.ShellExecuteW
+
+    elif isMac():
+        args = [u'open -R "{path}"']
+
+    # Normalize the pathname for windows
+    path = os.path.normpath(path)
+
+    for i, a in enumerate(args):
+        if isinstance(a, basestring) and '{path}' in a:
+            args[i] = a.format(path=path)
+
+    logger.info("Call: '%s' with arguments: %s", cmd.__name__, args)
+    cmd(*args)
+
+
+def testUpdate():
+    """
+    Test the update dictionary command
+    :rtype: None 
+    """
+    testData1 = {
+        "../../images/beach.jpg": {
+            "Custom Order": "00001"
+        },
+        "../../images/sky.jpg": {
+            "Custom Order": "00019",
+            "Other": {"Paths": "../../images/bird2.mb"}
+        }
+    }
+
+    testData2 = {
+        "../../images/sky.jpg": {
+            "Labels": ["head", "face"],
+        },
+    }
+
+    expected = {
+        "../../images/beach.jpg": {
+            "Custom Order": "00001"
+        },
+        "../../images/sky.jpg": {
+            "Custom Order": "00019",
+            "Labels": ["head", "face"],
+            "Other": {"Paths": "../../images/bird2.mb"}
+        }
+    }
+
+    # Test updating/inserting a value in a dictionary.
+    result = update(testData1, testData2)
+
+    msg = "Data does not match {} {}".format(expected, result)
+    assert expected == result, msg
+
+    # Test the update command with an empty dictionary.
+    testData2 = {
+        "../../images/sky.jpg": {},
+    }
+
+    result = update(testData1, testData2)
+
+    msg = "Data does not match {} {}".format(expected, result)
+    assert expected == result, msg
+
+
+def testSplitPath():
+    """
+    Test he splitPath command.
+    
+    :rtype: None 
+    """
+    path = "P:/production/rigs/character/mario.ma"
+
+    result = splitPath(path)
+    expected = (u'P:/production/rigs/character', u'mario', u'.ma')
+
+    msg = "Data does not match {} {}".format(expected, result)
+    assert expected == result, msg
+
+
+def testFormatPath():
+    """
+    Test the formatPath command.
+
+    :rtype: None 
+    """
+    formatString = "{dirname}/vesions/{name}{extension}"
+
+    result = formatPath(formatString, path="P:/production/rigs/database.json")
+    expected = "P:/production/rigs/vesions/database.json"
+
+    msg = "Data does not match {} {}".format(expected, result)
+    assert expected == result, msg
+
+
 def testRelativePaths():
     """
-    A simple test for resolving relative paths.
+    Test absolute and relative paths.
     
     :rtype: None 
     """
@@ -895,20 +1232,35 @@ def testRelativePaths():
 
     expected = """
     { 
-    ".../path/head.anim": {},
-    "../path/face.anim": {},
-    "./path/hand.anim": {},    
+    "../../../path/head.anim": {},
+    "../../path/face.anim": {},
+    "../path/hand.anim": {},    
     }
     """
 
-    data_ = formatRelativePath("P:/test/relative/file.database", data)
+    data_ = relPath(data, "P:/test/relative/file.database")
     msg = "Data does not match {} {}".format(expected, data_)
     assert data_ == expected, msg
 
-    data_ = resolveRelativePath("P:/test/relative/file.database", data_)
+    data_ = absPath(data_, "P:/test/relative/file.database")
     msg = "Data does not match {} {}".format(data, data_)
     assert data_ == data, msg
 
+    path = "P:/path/head.anim"
+    start = "P:/test/relative/file.database"
+    expected = "../../../path/head.anim"
+
+    result = relPath(path, start)
+    msg = 'Data does not match "{}" "{}"'.format(result, expected)
+    assert result == expected, msg
+
+    result = absPath(result, start)
+    msg = 'Data does not match "{}" "{}"'.format(result, path)
+    assert result == path, msg
+
 
 if __name__ == "__main__":
+    testUpdate()
+    testSplitPath()
+    testFormatPath()
     testRelativePaths()

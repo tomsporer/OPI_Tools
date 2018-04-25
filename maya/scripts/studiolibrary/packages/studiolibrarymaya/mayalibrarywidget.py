@@ -9,19 +9,30 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+import uuid
+import logging
+
 import studiolibrary
 
 import maya.cmds
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 
 
-# @note workspace control could exists if module was reloaded
-_workspaceControl = 'studiolibraryWorkspaceControl'
-if maya.cmds.workspaceControl(_workspaceControl, exists=True):
-    maya.cmds.deleteUI(_workspaceControl)
+logger = logging.getLogger(__name__)
 
 
 class MayaLibraryWidget(MayaQWidgetDockableMixin, studiolibrary.LibraryWidget):
+
+    def setObjectName(self, name):
+        """
+        Overriding to ensure the widget has a unique name for Maya.
+        
+        :type name: str
+        :rtype: None 
+        """
+        name = '{0}_{1}'.format(name, uuid.uuid4())
+
+        studiolibrary.LibraryWidget.setObjectName(self, name)
 
     def tabWidget(self):
         """
@@ -59,7 +70,13 @@ class MayaLibraryWidget(MayaQWidgetDockableMixin, studiolibrary.LibraryWidget):
         """
         name = self.workspaceControlName()
         if name:
-            return maya.cmds.workspaceControl(name, q=True, floating=True)
+            try:
+                return maya.cmds.workspaceControl(name, q=True, floating=True)
+            except AttributeError:
+                msg = 'The "maya.cmds.workspaceControl" ' \
+                      'command is not supported!'
+
+                logger.warning(msg)
 
         return True
 
@@ -114,6 +131,3 @@ class MayaLibraryWidget(MayaQWidgetDockableMixin, studiolibrary.LibraryWidget):
         """
         if self.tabWidget():
             self.tabWidget().setStyleSheet("border:0px;")
-
-
-studiolibrary.LIBRARY_WIDGET_CLASS = MayaLibraryWidget

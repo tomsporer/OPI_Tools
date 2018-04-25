@@ -44,7 +44,6 @@ class LibraryItemSignals(QtCore.QObject):
     saved = QtCore.Signal(object)
     saving = QtCore.Signal(object)
     loaded = QtCore.Signal(object)
-    renamed = QtCore.Signal(str, str)
 
 
 class LibraryItem(studioqt.CombinedWidgetItem):
@@ -65,7 +64,6 @@ class LibraryItem(studioqt.CombinedWidgetItem):
     saved = _libraryItemSignals.saved
     saving = _libraryItemSignals.saving
     loaded = _libraryItemSignals.loaded
-    renamed = _libraryItemSignals.renamed
 
     @classmethod
     def createAction(cls, menu, libraryWidget):
@@ -111,20 +109,20 @@ class LibraryItem(studioqt.CombinedWidgetItem):
 
     def __init__(
         self,
-        path=None,
+        path="",
         database=None,
         libraryWidget=None,
     ):
         """
         The LibraryItem class provides an item for use with the LibraryWidget.
 
-        :type path: str or None
+        :type path: str
+        :type database: studiolibrary.Database or None 
         :type libraryWidget: studiolibrary.LibraryWidget or None
         """
         studioqt.CombinedWidgetItem.__init__(self)
 
         self._path = ""
-        self._error = ""
         self._library = None
         self._iconPath = None
         self._database = None
@@ -139,6 +137,58 @@ class LibraryItem(studioqt.CombinedWidgetItem):
 
         if path:
             self.setPath(path)
+
+    def id(self):
+        """
+        Return the unique id for the item.
+    
+        :rtype: str 
+        """
+        return self.path()
+
+    def showToastMessage(self, text):
+        """
+        A convenience method for showing the toast widget with the given text.
+
+        :type text: str
+        :rtype: None
+        """
+        if self.libraryWidget():
+            self.libraryWidget().showToastMessage(text)
+
+    def showErrorDialog(self, title, text):
+        """
+        Convenience method for showing an error dialog to the user.
+        
+        :type title: str
+        :type text: str
+        :rtype: QMessageBox.StandardButton
+        """
+        if self.libraryWidget():
+            self.libraryWidget().showErrorMessage(text)
+
+        return studioqt.MessageBox.critical(self.libraryWidget(), title, text)
+
+    def showExceptionDialog(self, title, error):
+        """
+        Convenience method for showing a question dialog to the user.
+
+        :type title: str
+        :type error: Exception
+        :rtype: QMessageBox.StandardButton
+        """
+        logger.exception(error)
+        return self.showErrorDialog(title, error)
+
+    def showQuestionDialog(self, title, text):
+        """
+        Convenience method for showing a question dialog to the user.
+
+        :type title: str
+        :type text: str
+        :rtype: QMessageBox.StandardButton
+        """
+        return studioqt.MessageBox.question(self.libraryWidget(), title, text)
 
     def typeIconPath(self):
         """
@@ -220,7 +270,7 @@ class LibraryItem(studioqt.CombinedWidgetItem):
     def showInFolder(self):
         """Open the file explorer at the given path location."""
         path = self.path()
-        studioqt.showInFolder(path)
+        studiolibrary.showInFolder(path)
 
     def name(self):
         """
@@ -296,10 +346,10 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         """
         Return the database for the item.
 
-        :rtype: studiolibrary.Database
+        :rtype: studiolibrary.Database or None
         """
         if not self._database and self.libraryWidget():
-            self._database = self.libraryWidget().database()
+            return self.libraryWidget().database()
 
         return self._database
 
@@ -326,23 +376,6 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         """
         return self.path()
 
-    def errorString(self):
-        """
-        Return the text string that explains why the item didn't save.
-
-        :rtype: str
-        """
-        return self._error
-
-    def setErrorString(self, error):
-        """
-        Set the error string to be raised on saving.
-
-        :type error: str
-        :rtype: None
-        """
-        self._error = error
-
     def path(self):
         """
         Return the path for the item.
@@ -361,7 +394,9 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         if not path:
             raise ItemError('Cannot set an empty item path.')
 
-        path = unicode(path).replace("\\", "/")
+        self.resetImageSequence()
+
+        path = studiolibrary.normPath(path)
 
         dirname, basename, extension = studiolibrary.splitPath(path)
 
@@ -390,30 +425,29 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         """
         Save the item to the given path.
 
-        :type path: str
-        :type contents: list[str]
+        :type path: str or None
+        :type contents: list[str] or None
         :rtype: None
         """
         path = path or self.path()
         contents = contents or []
 
         self.setPath(path)
-        self.setErrorString("")  # Clear the existing error string.
+        path = self.path()
 
         logger.debug(u'Item Saving: {0}'.format(path))
         self.saving.emit(self)
 
-        if self.errorString():
-            raise ItemSaveError(self.errorString())
+        if os.path.exists(path):
+            self.showAlreadyExistsDialog()
 
-        elif os.path.exists(self.path()):
-            raise ItemSaveError("Item already exists!")
-
-        path = self.path()
-        studiolibrary.moveContents(contents, path)
+        studiolibrary.movePaths(contents, path)
 
         if self.database():
-            self.database().insert(path, {})
+            self.database().addPath(path)
+
+        if self.libraryWidget():
+            self.libraryWidget().addItem(self, select=True)
 
         self.saved.emit(self)
         logger.debug(u'Item Saved: {0}'.format(self.path()))
@@ -429,13 +463,14 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         :rtype: None
         """
         path = self.path()
+
         studiolibrary.removePath(path)
 
         if self.database():
-            self.database().delete(path)
+            self.database().removePath(path)
 
         if self.libraryWidget():
-            self.libraryWidget().loadItems()
+            self.libraryWidget().refresh()
 
     def copy(self, dst):
         """
@@ -445,8 +480,12 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         :rtype: None
         """
         src = self.path()
+
         path = studiolibrary.copyPath(src, dst)
         self.setPath(path)
+
+        if self.database():
+            self.database().addPath(path)
 
     def move(self, dst):
         """
@@ -463,8 +502,6 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         if self.database():
             self.database().renamePath(src, dst)
 
-        self.renamed.emit(src, dst)
-
     def rename(self, dst, extension=None, force=True):
         """
         Rename the current path to given destination path.
@@ -474,8 +511,6 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         :type extension: bool or None
         :rtype: None
         """
-        self.resetImageSequence()
-
         src = self.path()
 
         extension = extension or self.extension()
@@ -488,7 +523,8 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         if self.database():
             self.database().renamePath(src, dst)
 
-        self.renamed.emit(src, dst)
+        if self.libraryWidget():
+            self.libraryWidget().refreshSelection()
 
     def showRenameDialog(self, parent=None):
         """
@@ -498,22 +534,21 @@ class LibraryItem(studioqt.CombinedWidgetItem):
         """
         parent = parent or self.libraryWidget()
 
-        name, accepted = QtWidgets.QInputDialog.getText(
+        name, button = studioqt.MessageBox.input(
             parent,
-            "Rename",
-            "New Name",
-            QtWidgets.QLineEdit.Normal,
-            self.name()
+            "Rename item",
+            "Rename the current item to:",
+            inputText=self.name()
         )
 
-        if accepted:
+        if button == QtWidgets.QDialogButtonBox.Ok:
             try:
                 self.rename(name)
             except Exception, e:
-                logger.exception(e)
-                studioqt.MessageBox.critical(parent, "Rename Error", str(e))
+                self.showExceptionDialog("Rename Error", e)
+                raise
 
-        return accepted
+        return button
 
     def showMoveDialog(self, parent=None):
         """
@@ -530,30 +565,52 @@ class LibraryItem(studioqt.CombinedWidgetItem):
             try:
                 self.move(dst)
             except Exception, e:
-                logger.exception(e)
-                studioqt.MessageBox.critical(parent, "Move Error", str(e))
+                self.showExceptionDialog("Move Error", e)
+                raise
 
-    def showDeleteDialog(self, parent=None):
+    def showDeleteDialog(self):
         """
         Show the delete item dialog.
 
-        :type parent: QtWidgets.QWidget
+        :rtype: None
         """
 
-        msgBox = QtWidgets.QMessageBox(parent)
-        msgBox.setWindowTitle("Delete")
-        msgBox.setText('Are you sure you want to delete this item?')
-        msgBox.addButton('Yes', QtWidgets.QMessageBox.AcceptRole)
-        msgBox.addButton('Cancel', QtWidgets.QMessageBox.RejectRole)
+        text = 'Are you sure you want to delete this item?'
 
-        result = msgBox.exec_()
+        button = self.showQuestionDialog("Delete Item", text)
 
-        if result == 0:
+        if button == QtWidgets.QDialogButtonBox.Yes:
             try:
                 self.delete()
             except Exception, e:
-                logger.exception(e)
-                studioqt.MessageBox.critical(parent, "Delete Error", str(e))
+                self.showExceptionDialog("Delete Error", e)
+                raise
+
+    def showAlreadyExistsDialog(self):
+        """
+        Show a warning dialog if the item already exists on save.
+        
+        :rtype: None
+        """
+        if not self.libraryWidget():
+            raise ItemSaveError("Item already exists!")
+
+        path = self.path()
+
+        title = "Item already exists"
+        text = 'Would you like to move the existing item "{}" to the trash?'
+        text = text.format(self.name())
+
+        button = self.libraryWidget().showQuestionDialog(title, text)
+
+        if button == QtWidgets.QMessageBox.Yes:
+            self.libraryWidget().moveItemsToTrash([studiolibrary.LibraryItem(path)])
+        elif button == QtWidgets.QMessageBox.Cancel:
+            raise ItemSaveError("Saving was canceled.")
+        elif button != QtWidgets.QMessageBox.Yes:
+            raise ItemSaveError("You cannot save over an existing item.")
+
+        self.setPath(path)
 
     # -----------------------------------------------------------------
     # Support for painting the type icon

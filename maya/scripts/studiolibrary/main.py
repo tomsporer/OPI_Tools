@@ -14,58 +14,33 @@
 import studiolibrary
 
 
-def main(
-        cls=None,
-        name=None,
-        path=None,
+def main(*args, **kwargs):
+    """
+    Convenience method for creating/showing a library widget instance.
+
+    return studiolibrary.LibraryWidget.instance(
+        name="",
+        path="",
         show=True,
         lock=False,
         superusers=None,
         lockRegExp=None,
-        unlockRegExp=None,
-):
-    """
-    Convenience method for creating and loading a library widget instance.
-
-    :type cls: studiolibrary.LibraryWidget.__class__
-    :type name: str or None
-    :type path: str or None
-    :type show: bool
-    :type lock: bool
-    :type superusers: list[str]
-    :type lockRegExp: str
-    :type unlockRegExp: str
+        unlockRegExp=None
+    )
 
     :rtype: studiolibrary.LibraryWidget
     """
-    cls = cls \
-        or studiolibrary.LIBRARY_WIDGET_CLASS \
-        or studiolibrary.LibraryWidget
-
-    libraryWidget = cls.instance(
-        name,
-        path,
-        show=show,
-        lock=lock,
-        superusers=superusers,
-        lockRegExp=lockRegExp,
-        unlockRegExp=unlockRegExp,
-    )
+    if studiolibrary.isMaya():
+        import studiolibrarymaya
+        libraryWidget = studiolibrarymaya.main(*args, **kwargs)
+    else:
+        libraryWidget = studiolibrary.LibraryWidget.instance(*args, **kwargs)
 
     return libraryWidget
 
 
 if __name__ == "__main__":
-    import logging
-    import studioqt
 
-    # Turn on basic logging
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(levelname)s: %(funcName)s: %(message)s',
-        filemode='w'
-    )
-
-    # Run the Studio Library in a QApplication
-    with studioqt.app():
+    # Run the Studio Library in a QApplication instance
+    with studiolibrary.app():
         studiolibrary.main()

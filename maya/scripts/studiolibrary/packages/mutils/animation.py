@@ -481,7 +481,7 @@ class Animation(mutils.Pose):
         Clean up all imported nodes, as well as the namespace.
         Should be called in a finally block.
         """
-        nodes = maya.cmds.ls(Animation.IMPORT_NAMESPACE + ":*") or []
+        nodes = maya.cmds.ls(Animation.IMPORT_NAMESPACE + ":*", r=True) or []
         if nodes:
             maya.cmds.delete(nodes)
 
@@ -521,8 +521,7 @@ class Animation(mutils.Pose):
         path,
         time=None,
         sampleBy=1,
-        fileType=None,
-        description=None,
+        fileType="",
         bakeConnected=True
     ):
         """
@@ -531,8 +530,7 @@ class Animation(mutils.Pose):
         :type path: str
         :type time: (int, int) or None
         :type sampleBy: int
-        :type fileType: str or None
-        :type description: str
+        :type fileType: str
         :type bakeConnected: bool
         
         :rtype: None
@@ -599,6 +597,10 @@ class Animation(mutils.Pose):
                         dstCurve, = maya.cmds.listConnections(fullname, destination=False) or [None]
 
                         if dstCurve:
+                            # Filter to only animCurves since you can have proxy attributes
+                            if not maya.cmds.nodeType(dstCurve).startswith("animCurve"):
+                                continue
+
                             dstCurve = maya.cmds.rename(dstCurve, "CURVE")
                             srcCurve = mutils.animCurve("%s.%s" % (name, attr))
                             if srcCurve and "animCurve" in maya.cmds.nodeType(srcCurve):
@@ -626,7 +628,7 @@ class Animation(mutils.Pose):
 
             mayaPath = os.path.join(path, fileName)
             posePath = os.path.join(path, "pose.json")
-            mutils.Pose.save(self, posePath, description=description)
+            mutils.Pose.save(self, posePath)
 
             if validAnimCurves:
                 maya.cmds.select(validAnimCurves)
@@ -695,7 +697,11 @@ class Animation(mutils.Pose):
                 break
 
         if not matches or not valid:
-            raise mutils.NoMatchFoundError("No objects match when loading data")
+
+            text = "No objects match when loading data. " \
+                   "Turn on debug mode to see more details."
+
+            raise mutils.NoMatchFoundError(text)
 
         # Load the animation data.
         srcCurves = self.open()

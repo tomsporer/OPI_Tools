@@ -253,7 +253,7 @@ class PoseItem(baseitem.BaseItem):
                 **self._options
             )
         except Exception, e:
-            studioqt.MessageBox.critical(None, "Item Error", str(e))
+            self.showErrorDialog("Item Error", str(e))
             raise
 
     def load(
@@ -289,8 +289,8 @@ class PoseItem(baseitem.BaseItem):
         # without blending.
         self.setBlendValue(blend, load=False)
 
-        if showBlendMessage and self.libraryWidget():
-            self.libraryWidget().setToast("Blend: {0}%".format(blend))
+        if showBlendMessage:
+            self.showToastMessage("Blend: {0}%".format(blend))
 
         try:
             baseitem.BaseItem.load(
@@ -316,12 +316,12 @@ class PoseItem(baseitem.BaseItem):
 
         logger.info(u'Loaded: {0}'.format(self.path()))
 
-    def save(self, objects, path=None, iconPath=None, **kwargs):
+    def save(self, objects, path="", iconPath="", **kwargs):
         """
         Save all the given object data to the given path on disc.
 
-        :type path: path
-        :type objects: list
+        :type objects: list[str]
+        :type path: str
         :type iconPath: str
         """
         if path and not path.endswith(".pose"):

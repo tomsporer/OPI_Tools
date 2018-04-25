@@ -63,7 +63,7 @@ class BaseItem(studiolibrary.LibraryItem):
             path = libraryWidget.path()
 
         widget.setFolderPath(path)
-        widget.setDatabase(libraryWidget.database())
+        widget.setLibraryWidget(libraryWidget)
 
         libraryWidget.setCreateWidget(widget)
         libraryWidget.folderSelectionChanged.connect(widget.setFolderPath)
@@ -136,8 +136,7 @@ class BaseItem(studiolibrary.LibraryItem):
         """
         if not self._transferObject:
             path = self.transferPath()
-            if os.path.exists(path):
-                self._transferObject = self.transferClass().fromPath(path)
+            self._transferObject = self.transferClass().fromPath(path)
         return self._transferObject
 
     def thumbnailPath(self):
@@ -162,12 +161,7 @@ class BaseItem(studiolibrary.LibraryItem):
 
         :rtype: str or None
         """
-        user = ""
-
-        if self.transferObject():
-            user = self.transferObject().metadata().get("user")
-
-        return user
+        return self.transferObject().metadata().get("user", "")
 
     def description(self):
         """
@@ -175,12 +169,7 @@ class BaseItem(studiolibrary.LibraryItem):
 
         :rtype: str
         """
-        description = ""
-
-        if self.transferObject():
-            description = self.transferObject().metadata().get("description")
-
-        return description
+        return self.transferObject().metadata().get("description", "")
 
     def objectCount(self):
         """
@@ -188,10 +177,7 @@ class BaseItem(studiolibrary.LibraryItem):
 
         :rtype: int
         """
-        if self.transferObject():
-            return self.transferObject().count()
-        else:
-            return 0
+        return self.transferObject().count()
 
     def contextMenu(self, menu, items=None):
         """
@@ -234,6 +220,8 @@ class BaseItem(studiolibrary.LibraryItem):
         """
         import setsmenu
 
+        parent = parent or self.libraryWidget()
+
         namespaces = self.namespaces()
 
         menu = setsmenu.SetsMenu(
@@ -242,6 +230,7 @@ class BaseItem(studiolibrary.LibraryItem):
                 namespaces=namespaces,
                 enableSelectContent=enableSelectContent,
         )
+
         return menu
 
     def selectContent(self, namespaces=None, **kwargs):
@@ -259,9 +248,8 @@ class BaseItem(studiolibrary.LibraryItem):
 
         try:
             self.transferObject().select(namespaces=namespaces, **kwargs)
-        except Exception, msg:
-            title = "Error while selecting content"
-            studioqt.MessageBox.critical(None, title, str(msg))
+        except Exception, e:
+            self.showErrorDialog("Item Error", str(e))
             raise
 
     def mirrorTable(self):
@@ -321,14 +309,14 @@ class BaseItem(studiolibrary.LibraryItem):
         namespaces = []
         namespaceOption = self.namespaceOption()
 
-        # When creating a new item we can only get the namespaces from
-        # selection because the file (transferObject) doesn't exist yet.
-        if not self.transferObject():
+        # # When creating a new item we can only get the namespaces from
+        # # selection because the file (transferObject) doesn't exist yet.
+        if not self.exists():
             namespaces = self.namespacesFromSelection()
 
         # If the file (transferObject) exists then we can use the namespace
         # option to determined which namespaces to return.
-        elif namespaceOption == NamespaceOption.FromFile:
+        if namespaceOption == NamespaceOption.FromFile:
             namespaces = self.namespacesFromFile()
 
         elif namespaceOption == NamespaceOption.FromCustom:
@@ -414,8 +402,8 @@ class BaseItem(studiolibrary.LibraryItem):
         """
         Load the data from the transfer object.
 
-        :type namespaces: list[str]
-        :type objects: list[str]
+        :type namespaces: list[str] or None
+        :type objects: list[str] or None
         :rtype: None
         """
         logger.debug(u'Loading: {0}'.format(self.transferPath()))
@@ -427,36 +415,37 @@ class BaseItem(studiolibrary.LibraryItem):
     def save(
             self,
             objects,
-            path=None,
-            iconPath=None,
+            path="",
+            iconPath="",
             contents=None,
-            description=None,
+            description="",
             **kwargs
     ):
         """
         Save the data to the transfer path on disc.
 
-        :type objects: list
-        :type path: path or None
-        :type iconPath: str or None
+        :type objects: list[str]
+        :type path: str
+        :type iconPath: str
         :type contents: list[str] or None
-        :type description: str or None
+        :type description: str
 
         :rtype: None
         """
         logger.info(u'Saving: {0}'.format(path))
 
-        contents = contents or list()
         tempDir = mutils.TempDir("Transfer", clean=True)
-        transferPath = tempDir.path() + "/" + self.transferBasename()
+        tempPath = tempDir.path() + "/" + self.transferBasename()
 
         t = self.transferClass().fromObjects(objects)
-        t.save(transferPath, **kwargs)
+        t.setMetadata("description", description)
+        t.save(tempPath, **kwargs)
 
+        contents = contents or list()
         if iconPath:
             contents.append(iconPath)
+        contents.append(tempPath)
 
-        contents.append(transferPath)
         studiolibrary.LibraryItem.save(self, path=path, contents=contents)
 
         logger.info(u'Saved: {0}'.format(path))

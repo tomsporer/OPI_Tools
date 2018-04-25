@@ -53,10 +53,12 @@ class BaseCreateWidget(QtWidgets.QWidget):
         self._iconPath = ""
         self._scriptJob = None
         self._focusWidget = None
+        self._libraryWidget = None
 
-        self.ui.thumbnailButton.setToolTip(
-            "Click to capture a thumbnail from the current model panel.\nCTRL + Click to show "
-            "the capture window for better framing.")
+        text = "Click to capture a thumbnail from the current model panel.\n" \
+               "CTRL + Click to show the capture window for better framing."
+
+        self.ui.thumbnailButton.setToolTip(text)
 
         self.ui.acceptButton.clicked.connect(self.accept)
         self.ui.thumbnailButton.clicked.connect(self.thumbnailCapture)
@@ -73,6 +75,23 @@ class BaseCreateWidget(QtWidgets.QWidget):
         self.updateContains()
         self.updateThumbnailSize()
 
+    def setLibraryWidget(self, libraryWidget):
+        """
+        Set the library widget for the item.
+        
+        :type libraryWidget: studiolibrary.LibraryWidget
+        :rtype: None
+        """
+        self.item().setLibraryWidget(libraryWidget)
+
+    def libraryWidget(self):
+        """
+        Return the library widget for the item.
+
+        :rtype: libraryWidget: studiolibrary.LibraryWidget
+        """
+        return self.item().libraryWidget()
+
     def item(self):
         """
         Return the library item to be created.
@@ -88,15 +107,6 @@ class BaseCreateWidget(QtWidgets.QWidget):
         :type item: studiolibrarymaya.BaseItem
         """
         self._item = item
-
-    def setDatabase(self, database):
-        """
-        Convenience method for setting the database for the item.
-
-        :type database: studiolibrary.Database
-        :rtype: None
-        """
-        self.item().setDatabase(database)
 
     def iconPath(self):
         """
@@ -154,9 +164,10 @@ class BaseCreateWidget(QtWidgets.QWidget):
         import setsmenu
 
         path = self.folderPath()
-        menu = setsmenu.SetsMenu.fromPath(path, parent=self)
         position = QtGui.QCursor().pos()
+        libraryWidget = self.libraryWidget()
 
+        menu = setsmenu.SetsMenu.fromPath(path, libraryWidget=libraryWidget)
         menu.exec_(position)
 
     def close(self):
@@ -319,22 +330,31 @@ class BaseCreateWidget(QtWidgets.QWidget):
         path = mutils.gui.tempThumbnailPath()
         mutils.gui.thumbnailCapture(path=path, captured=self._thumbnailCaptured)
 
-    def thumbnailCaptureQuestion(self):
+    def showThumbnailCaptureDialog(self):
         """
         Ask the user if they would like to capture a thumbnail.
 
         :rtype: int
         """
         title = "Create a thumbnail"
-        message = "Would you like to capture a thumbanil?"
-        options = \
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Ignore | QtWidgets.QMessageBox.Cancel
-        result = studioqt.MessageBox.question(None, title, str(message), options)
+        text = "Would you like to capture a thumbanil?"
 
-        if result == QtWidgets.QMessageBox.Yes:
+        buttons = QtWidgets.QMessageBox.Yes | \
+                  QtWidgets.QMessageBox.Ignore | \
+                  QtWidgets.QMessageBox.Cancel
+
+        parent = self.item().libraryWidget()
+        button = studioqt.MessageBox.question(
+            parent,
+            title,
+            text,
+            buttons=buttons
+        )
+
+        if button == QtWidgets.QMessageBox.Yes:
             self.thumbnailCapture()
 
-        return result
+        return button
 
     def accept(self):
         """Triggered when the user clicks the save button."""
@@ -354,8 +374,8 @@ class BaseCreateWidget(QtWidgets.QWidget):
                 raise Exception("No objects selected. Please select at least one object.")
 
             if not os.path.exists(self.iconPath()):
-                result = self.thumbnailCaptureQuestion()
-                if result == QtWidgets.QMessageBox.Cancel:
+                button = self.showThumbnailCaptureDialog()
+                if button == QtWidgets.QMessageBox.Cancel:
                     return
 
             path += "/" + name
@@ -368,9 +388,9 @@ class BaseCreateWidget(QtWidgets.QWidget):
                 description=description,
             )
 
-        except Exception, msg:
+        except Exception, e:
             title = "Error while saving"
-            studioqt.MessageBox.critical(self, title, str(msg))
+            studioqt.MessageBox.critical(self.libraryWidget(), title, str(e))
             raise
 
     def save(self, objects, path, iconPath, description):

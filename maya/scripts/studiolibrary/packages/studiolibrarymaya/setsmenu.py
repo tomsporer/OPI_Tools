@@ -57,14 +57,18 @@ def showSetsMenu(path, **kwargs):
 class SetsMenu(QtWidgets.QMenu):
 
     @classmethod
-    def fromPath(cls, path, **kwargs):
+    def fromPath(cls, path, parent=None, libraryWidget=None, **kwargs):
         """
+        Return a new SetMenu instance from the given path.
+        
         :type path: str
+        :type parent: QtWidgets.QMenu or None
+        :type libraryWidget: studiolibrary.LibraryWidget or None
         :type kwargs: dict
         :rtype: QtWidgets.QAction
         """
-        item = setsitem.SetsItem(path)
-        return cls(item, enableSelectContent=False, **kwargs)
+        item = setsitem.SetsItem(path, libraryWidget=libraryWidget)
+        return cls(item, parent, enableSelectContent=False, **kwargs)
 
     def __init__(
             self,
@@ -75,10 +79,11 @@ class SetsMenu(QtWidgets.QMenu):
     ):
         """
         :type item: studiolibrarymaya.BaseItem
-        :type parent: QtWidgets.QMenu
-        :type namespaces: list[str]
+        :type parent: QtWidgets.QMenu or None
+        :type namespaces: list[str] or None
         :type enableSelectContent: bool
         """
+        parent = parent or item.libraryWidget()
         QtWidgets.QMenu.__init__(self, "Selection Sets", parent)
 
         icon = studiolibrarymaya.resource().icon("selectionSet")
@@ -120,11 +125,13 @@ class SetsMenu(QtWidgets.QMenu):
             depth=10,
         )
 
-        paths = list(paths)
         items = []
+        paths = list(paths)
+        libraryWidget = self.item().libraryWidget()
 
         for path in paths:
             item = setsitem.SetsItem(path)
+            item.setLibraryWidget(libraryWidget)
             items.append(item)
 
         return items

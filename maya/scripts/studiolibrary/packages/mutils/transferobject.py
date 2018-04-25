@@ -74,6 +74,58 @@ class TransferObject(object):
             t.add(obj)
         return t
 
+    @staticmethod
+    def readJson(path):
+        """
+        Read the given json path
+
+        :type path: str
+        :rtype: dict
+        """
+        with open(path, "r") as f:
+            data = f.read() or "{}"
+
+        data = json.loads(data)
+
+        return data
+
+    @staticmethod
+    def readList(path):
+        """
+        Legacy method for reading older .list file type.
+
+        :rtype: dict 
+        """
+        with open(path, "r") as f:
+            data = f.read()
+
+        data = eval(data, {})
+        result = {}
+        for obj in data:
+            result.setdefault(obj, {})
+
+        return {"objects": result}
+
+    @staticmethod
+    def readDict(path):
+        """
+        Legacy method for reading older .dict file type.
+
+        :rtype: dict 
+        """
+        with open(path, "r") as f:
+            data = f.read()
+
+        data = eval(data, {})
+        result = {}
+        for obj in data:
+            result.setdefault(obj, {"attrs": {}})
+            for attr in data[obj]:
+                typ, val = data[obj][attr]
+                result[obj]["attrs"][attr] = {"type": typ, "value": val}
+
+        return {"objects": result}
+
     def __init__(self):
         self._path = None
         self._namespaces = None
@@ -93,16 +145,31 @@ class TransferObject(object):
 
         :type path: str
         """
+        dictPath = path.replace(".json", ".dict")
+        listPath = path.replace(".json", ".list")
+
+        if not os.path.exists(path):
+
+            if os.path.exists(dictPath):
+                path = dictPath
+
+            elif os.path.exists(listPath):
+                path = listPath
+
         self._path = path
 
     def mtime(self):
         """
+        Return the modification datetime of self.path().
+        
         :rtype: float
         """
         return os.path.getmtime(self.path())
 
     def ctime(self):
         """
+        Return the creation datetime of self.path().
+        
         :rtype: float
         """
         return os.path.getctime(self.path())
@@ -195,6 +262,8 @@ class TransferObject(object):
 
     def setMetadata(self, key, value):
         """
+        Set the given key and value in the metadata.
+        
         :type key: str
         :type value: int | str | float | dict
         """
@@ -202,79 +271,82 @@ class TransferObject(object):
 
     def updateMetadata(self, metadata):
         """
-        :type metadata: str
+        Update the given key and value in the metadata.
+        
+        :type metadata: dict
         """
         self.data()["metadata"].update(metadata)
 
     def metadata(self):
         """
-        data = {
-            "User": "",
-            "Scene": "",
-            "Reference": {"filename": "", "namespace": ""},
-            "Description": "",
-        }
+        Return the current metadata for the transfer object.
+        
+        Example: print self.metadata()
+            Result # {
+                "User": "",
+                "Scene": "",
+                "Reference": {"filename": "", "namespace": ""},
+                "Description": "",
+            }
+        
         :rtype: dict
         """
         return self.data().get("metadata", {})
 
-    def read(self, path=None):
+    def read(self, path=""):
         """
         Return the data from the path set on the Transfer object.
 
-        :rtype: dict
-        """
-        data = self.readJson(path)
-        self.setData(data)
-
-    def readJson(self, path=None):
-        """
         :type path: str
         :rtype: dict
         """
         path = path or self.path()
 
-        with open(path, "r") as f:
-            # data = json.loads(data)
-            # We don't use json.loads for performance reasons in python 2.6.
-            data = f.read()
-            data = data.replace(": false", ": False")
-            data = data.replace(": true", ": True")
-            data = eval(data, {})
+        if path.endswith(".dict"):
+            data = self.readDict(path)
 
-        return data
+        elif path.endswith(".list"):
+            data = self.readList(path)
+
+        else:
+            data = self.readJson(path)
+
+        self.setData(data)
 
     @abc.abstractmethod
     def load(self, *args, **kwargs):
         pass
 
     @mutils.showWaitCursor
-    def save(self, path, description=None):
+    def save(self, path):
         """
+        Save the current metadata and object data to the given path.
+        
         :type path: str
+        :rtype: None
         """
         logger.info("Saving pose: %s" % path)
 
+        user = getpass.getuser()
         ctime = str(time.time()).split(".")[0]
 
+        self.setMetadata("user", user)
         self.setMetadata("ctime", ctime)
         self.setMetadata("version", "1.0.0")
-        self.setMetadata("user", getpass.getuser())
         self.setMetadata("mayaVersion", maya.cmds.about(v=True))
         self.setMetadata("mayaSceneFile", maya.cmds.file(q=True, sn=True))
 
-        if description:
-            self.setMetadata("description", description)
-
+        # Move the metadata information to the top of the file
         metadata = {"metadata": self.metadata()}
         data = self.dump(metadata)[:-1] + ","
 
+        # Move the objects information to after the metadata
         objects = {"objects": self.objects()}
         data += self.dump(objects)[1:]
 
+        # Create the given directory if it doesn't exist
         dirname = os.path.dirname(path)
         if not os.path.exists(dirname):
-            logger.debug("Creating dirname: " + dirname)
             os.makedirs(dirname)
 
         with open(path, "w") as f:

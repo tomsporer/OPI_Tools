@@ -137,23 +137,6 @@ class CombinedWidget(QtWidgets.QWidget):
         """
         self.itemDoubleClicked.emit(item)
 
-    def resizeEvent(self, event):
-        """
-        Reimplemented to update the toast widget when the widget resizes.
-
-        :type event: QtCore.QEvent
-        :rtype: None
-        """
-        self.udpateToastWidget()
-
-    def udpateToastWidget(self):
-        """
-        Update the toast widget position.
-
-        :rtype: None
-        """
-        self._toastWidget.alignTo(self)
-
     def setToastEnabled(self, enabled):
         """
         :type enabled: bool
@@ -167,7 +150,7 @@ class CombinedWidget(QtWidgets.QWidget):
         """
         return self._toastEnabled
 
-    def setToast(self, text, duration=None):
+    def showToastMessage(self, text, duration=500):
         """
         Show a toast with the given text for the given duration.
 
@@ -176,8 +159,9 @@ class CombinedWidget(QtWidgets.QWidget):
         :rtype: None
         """
         if self.toastEnabled():
-            self._toastWidget.setText(text, duration)
-            self.udpateToastWidget()
+            self._toastWidget.setDuration(duration)
+            self._toastWidget.setText(text)
+            self._toastWidget.show()
 
     def sortOrder(self):
         """
@@ -195,13 +179,13 @@ class CombinedWidget(QtWidgets.QWidget):
         """
         return self.treeWidget().sortColumn()
 
-    def sortByColumn(self, *args):
+    def sortByColumn(self, *args, **kwargs):
         """
         Reimplemented for convenience.
 
         Calls self.treeWidget().sortByColumn(*args)
         """
-        self.treeWidget().sortByColumn(*args)
+        self.treeWidget().sortByColumn(*args, **kwargs)
 
     def groupOrder(self):
         """
@@ -226,6 +210,14 @@ class CombinedWidget(QtWidgets.QWidget):
         Calls self.treeWidget().groupByColumn(*args)
         """
         self.treeWidget().groupByColumn(*args)
+
+    def columnFromLabel(self, *args):
+        """
+        Reimplemented for convenience.
+        
+        :return: int 
+        """
+        return self.treeWidget().columnFromLabel(*args)
 
     def setColumnHidden(self, column, hidden):
         """
@@ -459,8 +451,8 @@ class CombinedWidget(QtWidgets.QWidget):
         settings["spacing"] = self.spacing()
         settings["zoomAmount"] = self.zoomAmount()
         settings["selectedPaths"] = self.selectedPaths()
-        settings["itemTextVisible"] = self.isItemTextVisible()
-        settings["treeWidget"] = self.treeWidget().settings()
+        settings["textVisible"] = self.isItemTextVisible()
+        settings.update(self.treeWidget().settings())
 
         return settings
 
@@ -472,10 +464,6 @@ class CombinedWidget(QtWidgets.QWidget):
         :rtype: None
         """
         self.setToastEnabled(False)
-
-        # Must set the column labels first for sorting and grouping.
-        columnLabels = settings.get("columnLabels", [])
-        self.setColumnLabels(columnLabels)
 
         padding = settings.get("padding", 5)
         self.setPadding(padding)
@@ -489,11 +477,10 @@ class CombinedWidget(QtWidgets.QWidget):
         selectedPaths = settings.get("selectedPaths", [])
         self.selectPaths(selectedPaths)
 
-        itemTextVisible = settings.get("itemTextVisible", True)
+        itemTextVisible = settings.get("textVisible", True)
         self.setItemTextVisible(itemTextVisible)
 
-        treeWidgetSettings = settings.get("treeWidget", {})
-        self.treeWidget().setSettings(treeWidgetSettings)
+        self.treeWidget().setSettings(settings)
 
         self.setToastEnabled(True)
 
@@ -651,53 +638,49 @@ class CombinedWidget(QtWidgets.QWidget):
     # Support for saving the current item order.
     # ------------------------------------------------------------------------
 
-    def itemData(self, columnLabels, indexByColumn="Path"):
+    def itemData(self, columnLabels):
         """
-        Return the column data for all the current items. 
+        Return all column data for the given column labels.
 
         :type columnLabels: list[str]
-        :type indexByColumn: str
-
         :rtype: dict
                 
         """
-        column1 = self.treeWidget().columnFromLabel(indexByColumn)
-
-        itemData = {}
+        data = {}
 
         for item in self.items():
-            key = item.data(column1, QtCore.Qt.EditRole)
+            key = item.id()
 
             for columnLabel in columnLabels:
                 column = self.treeWidget().columnFromLabel(columnLabel)
                 value = item.data(column, QtCore.Qt.EditRole)
 
-                itemData.setdefault(key, {})
-                itemData[key].setdefault(columnLabel, value)
+                data.setdefault(key, {})
+                data[key].setdefault(columnLabel, value)
 
-        return itemData
+        return data
 
-    def setItemData(self, itemData, indexByColumn="Path"):
+    def setItemData(self, data):
         """
         Set the item data for all the current items.
 
-        :type itemData: dict
-        :type indexByColumn: str
+        :type data: dict
+        :rtype: None
         """
-        column1 = self.treeWidget().columnFromLabel(indexByColumn)
-
         for item in self.items():
-            key = item.data(column1, QtCore.Qt.EditRole)
+            key = item.id()
 
-            if key in itemData:
+            if key in data:
 
-                for columnLabel in itemData[key]:
-                    value = itemData[key].get(columnLabel)
+                for column in data[key]:
+                    value = data[key].get(column)
 
                     if value is not None:
-                        item.setText(columnLabel, value)
+                        item.setText(column, value)
 
                 item.updateData()
+
+        self.refreshSortBy()
 
     def updateColumns(self):
         """
@@ -788,26 +771,30 @@ class CombinedWidget(QtWidgets.QWidget):
         seen = set()
         return [x for x in seq if x not in seen and not seen.add(x)]
 
-    def setItems(self, items, sortEnabled=True):
+    def setItems(self, items, data=None, sortEnabled=True):
         """
         Sets the items to the widget.
 
         :type items: list[CombinedWidgetItem]
+        :type data: dict
         :type sortEnabled: bool
         
         :rtype: None
         """
-        if sortEnabled:
-            sortOrder = self.sortOrder()
-            sortColumn = self.sortColumn()
 
-        self._treeWidget.clear()
-        self._treeWidget.addTopLevelItems(items)
+        if sortEnabled:
+            settings = self.treeWidget().sortBySettings()
+
+        self.treeWidget().clear()
+        self.treeWidget().addTopLevelItems(items)
 
         self.setColumnLabels(self.columnLabelsFromItems())
 
+        if data:
+            self.setItemData(data)
+
         if sortEnabled:
-            self.sortByColumn(sortColumn, sortOrder)
+            self.treeWidget().setSortBySettings(settings)
 
     def padding(self):
         """
@@ -830,7 +817,7 @@ class CombinedWidget(QtWidgets.QWidget):
             self._padding = value + 1
         self.repaint()
 
-        self.setToast("Border: " + str(value))
+        self.showToastMessage("Border: " + str(value))
 
     def spacing(self):
         """
@@ -850,7 +837,7 @@ class CombinedWidget(QtWidgets.QWidget):
         self._listView.setSpacing(spacing)
         self.scrollToSelectedItem()
 
-        self.setToast("Spacing: " + str(spacing))
+        self.showToastMessage("Spacing: " + str(spacing))
 
     def iconSize(self):
         """
@@ -1065,7 +1052,7 @@ class CombinedWidget(QtWidgets.QWidget):
         self.scrollToSelectedItem()
 
         msg = "Size: {0}%".format(value)
-        self.setToast(msg)
+        self.showToastMessage(msg)
 
     def wheelEvent(self, event):
         """

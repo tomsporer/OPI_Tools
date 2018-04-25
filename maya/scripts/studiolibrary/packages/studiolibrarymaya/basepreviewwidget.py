@@ -100,10 +100,8 @@ class BasePreviewWidget(QtWidgets.QWidget):
 
         self.ui.iconToggleBoxButton.toggled[bool].connect(self.ui.iconToggleBoxFrame.setVisible)
         self.ui.infoToggleBoxButton.toggled[bool].connect(self.ui.infoToggleBoxFrame.setVisible)
-        self.ui.optionsToggleBoxButton.toggled[bool].connect(
-            self.ui.optionsToggleBoxFrame.setVisible)
-        self.ui.namespaceToggleBoxButton.toggled[bool].connect(
-            self.ui.namespaceToggleBoxFrame.setVisible)
+        self.ui.optionsToggleBoxButton.toggled[bool].connect(self.ui.optionsToggleBoxFrame.setVisible)
+        self.ui.namespaceToggleBoxButton.toggled[bool].connect(self.ui.namespaceToggleBoxFrame.setVisible)
 
     def item(self):
         """
@@ -167,7 +165,7 @@ class BasePreviewWidget(QtWidgets.QWidget):
         :rtype: None
         """
         item = self.item()
-        item.showSelectionSetsMenu(parent=self)
+        item.showSelectionSetsMenu()
 
     def resizeEvent(self, event):
         """
@@ -396,8 +394,8 @@ class BasePreviewWidget(QtWidgets.QWidget):
         if namespaces:
             self.ui.namespaceComboBox.setToolTip("")
         else:
-            self.ui.namespaceComboBox.setToolTip(
-                "No namespaces found in scene.")
+            toolTip = "No namespaces found in scene."
+            self.ui.namespaceComboBox.setToolTip(toolTip)
 
         self.ui.namespaceComboBox.clear()
         self.ui.namespaceComboBox.addItems(namespaces)
@@ -435,7 +433,7 @@ class BasePreviewWidget(QtWidgets.QWidget):
         """
         try:
             self.item().load()
-        except Exception, msg:
+        except Exception, e:
             title = "Error while loading"
-            studioqt.MessageBox.critical(self, title, str(msg))
+            self.item().showErrorDialog(title, str(e))
             raise
