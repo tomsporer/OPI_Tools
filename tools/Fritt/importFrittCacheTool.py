@@ -5,6 +5,7 @@
 
 import os
 import json
+import time
 
 from opi.tools.databasetool import DataBaseTool
 from opi.common.opiexception import OPIException
@@ -122,6 +123,8 @@ class importFrittCacheTool(DataBaseTool):
 
     self.__fCacheDict = fCacheDict
 
+    self.fillVersionList()
+
 
   def fillVersionList(self):
     db = self.host.apis['db']
@@ -158,18 +161,44 @@ class importFrittCacheTool(DataBaseTool):
         # raise OPIException("Oops, there's no cache file that matches your arguments")
       else:
         v = "001"
-        versionDict[v] = abcPath
+        tSec = os.path.getmtime(abcPath)
+        tLocal = time.localtime(tSec)
+        tDate = time.strftime("%b %d. - %H:%M", tLocal)
+        versionDict[v + "  \\  " + tDate] = abcPath
         incrPath = increment(abcPath)
+        abcPath = incrPath
         while os.path.exists(incrPath):
           v = str(int(v) + 1).rjust(3, "0")
+          tSec = os.path.getmtime(incrPath)
+          tLocal = time.localtime(tSec)
+          tDate = time.strftime("%b %d. - %H:%M", tLocal)
           abcPath = incrPath
-          versionDict[v] = abcPath
+          versionDict[v + "  \\  " + tDate] = abcPath
           incrPath = increment(abcPath)
 
       self.__versionDict = versionDict
 
       versionList = list(reversed(sorted(versionDict.keys())))
       self.args.get("version")._setCombo(versionList, versionList[0])
+    else:
+      self.args.get("version")._setCombo([""], "")
+
+
+  def fillFlavList(self):
+    db = self.host.apis['db']
+
+    fCacheDict = self.__fCacheDict
+    name = self.args.getValue("name")
+    self.args.setValue("charFlav", "- Please select -")
+    if not name == "- Please select -":
+      fCache = fCacheDict[name]
+      fCachePath = db.getPath(fCache.location)
+      jsonPath = os.path.splitext(fCachePath)[0] + ".json"
+      if os.path.exists(jsonPath):
+        with open(jsonPath, 'r') as j:
+          charInfo = json.load(j)
+        if "flavor" in charInfo:
+          self.args.setValue("charFlav", charInfo["flavor"])
 
 
   def onValueChanged(self, arg):
@@ -185,22 +214,12 @@ class importFrittCacheTool(DataBaseTool):
       shot = arg.value
       film = self.args.getValue("film")
       self.fillNameList(film, shot)
+      self.fillFlavList()
     elif arg.name == "name":
       self.fillVersionList()
       # read info json file
-      fCacheDict = self.__fCacheDict
-      name = self.args.getValue("name")
-      fCache = fCacheDict[name]
-      fCachePath = db.getPath(fCache.location)
-      jsonPath = os.path.splitext(fCachePath)[0] + ".json"
-      if os.path.exists(jsonPath):
-        with open(jsonPath, 'r') as j:
-          charInfo = json.load(j)
-        try:
-          flav = charInfo["flavor"]
-          self.args.setValue("charFlav", flav)
-        except:
-          pass
+      self.fillFlavList()
+
 
 
   def executeMaya(self):
