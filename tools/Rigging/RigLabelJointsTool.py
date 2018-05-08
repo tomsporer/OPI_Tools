@@ -36,15 +36,20 @@ class RigLabelJointsTool(Tool):
       if cmds.objectType(jnt) != "joint":
         continue
       if setSide == "Get from jnt name":
-        s = jnt.split("_")[0]
-        try:
-          side = sConvert[s]
-        except:
-          print "# WARNING: could not get side from jnt name for \"%s\"" %(jnt)
+        s = jnt.split("_")
+        for ssplit in s:
+          if ssplit in sConvert:
+            side = sConvert[ssplit]
+            s.remove(ssplit)
+            sName = "_".join(s)
+            break
+        else:
+          print "# INFO: could not get side from jnt name for \"%s\"" %(jnt)
           side = 3
+          sName = jnt
       else:
         side = sConvert[setSide]
             
       cmds.setAttr(jnt + ".side", side)
       cmds.setAttr(jnt + ".type", 18) # 18 = Other
-      cmds.setAttr(jnt + ".otherType", jnt, type="string")
+      cmds.setAttr(jnt + ".otherType", sName, type="string")
