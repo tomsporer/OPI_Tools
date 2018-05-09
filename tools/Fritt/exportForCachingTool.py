@@ -29,7 +29,7 @@ class exportForCachingTool(DataBaseTool):
   def initialize(self, **args):
 
     self.__flavsOne = ["Strawberry"]
-    self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry"]
+    self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default"]
     self.__flavsThree = ["Wildberry"]
     self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango"]
 
