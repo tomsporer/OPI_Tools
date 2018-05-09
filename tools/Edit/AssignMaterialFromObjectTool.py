@@ -27,8 +27,6 @@ class AssignMaterialFromObjectTool(Tool):
     maya = self.host.apis['maya']
     cmds = maya.cmds
 
-    print "oh, hi"
-
 
     def getSGFromObject(obj):
       shape = cmds.listRelatives(obj, children=True, shapes=True, path=True)[0]
