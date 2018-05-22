@@ -33,7 +33,7 @@ class importFrittCacheTool(DataBaseTool):
 
 
     self.__flavsOne = ["Strawberry"]
-    self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default"]
+    self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default", "Default_Lederjacke", "Default_Kopfband", "Default_YellowShirt", "Default_TurquoiseShirt", "Default_Rothaar", "Default_PolkaDots"]
     self.__flavsThree = ["Wildberry"]
     self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango"]
 
@@ -244,7 +244,11 @@ class importFrittCacheTool(DataBaseTool):
     elif charFlav in self.__flavsMinis:
       charRefDir = os.path.join(self.__frittRoot, "3D", "REFERENCE", "MINIS")
 
-    charRefName = charFlav + "_Clean"
+    if charFlav.startswith("Default_"):
+      charFlav, texture = charFlav.split("_")
+      charRefName = charFlav + "_Clean_" + texture
+    else:
+      charRefName = charFlav + "_Clean"
     charRefPath = charRefName + ".mb"
     charRefPath = os.path.join(charRefDir, charRefPath)
 
