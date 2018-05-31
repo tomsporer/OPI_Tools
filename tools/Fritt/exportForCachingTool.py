@@ -91,6 +91,8 @@ class exportForCachingTool(DataBaseTool):
             break
       else:
         self.__flavor = None
+      # get namespace from selection
+      self.__ns = cmds.ls(sel, sns=True)[1]
       # check if selection is a child reference of another reference
       if cmds.referenceQuery(sel, isNodeReferenced=True):
         refNode = cmds.referenceQuery(sel, referenceNode=True)
@@ -275,8 +277,10 @@ class exportForCachingTool(DataBaseTool):
     # --------------------
     jsonFile = os.path.join(exportDir, exportFileName + ".json")
     flavor = self.__flavor
+    ns = self.__ns
     charInfo = {}
     charInfo["flavor"] = flavor
+    charInfo["namespace"] = ns
     with open(jsonFile, "w") as t:
       json.dump(charInfo, t, indent=4)
 
