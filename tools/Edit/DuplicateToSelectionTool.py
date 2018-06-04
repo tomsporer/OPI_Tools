@@ -124,6 +124,7 @@ class DuplicateToSelectionTool(Tool):
   def executeMaya(self):
     maya = self.host.apis['maya']
     cmds = maya.cmds
+    mel = maya.mel
 
     matchT = self.args.getValue("matchT")
     matchR = self.args.getValue("matchR")
@@ -154,12 +155,18 @@ class DuplicateToSelectionTool(Tool):
       targets = sel[:-1]
       hero = sel[-1]
 
+    heroIsRef = cmds.referenceQuery(hero, isNodeReferenced=True)
 
     for target in targets:
       if instance:
         duplHero = cmds.instance(hero)
       else:
-        duplHero = cmds.duplicate(hero, upstreamNodes=duplInputGraph, inputConnections=duplInputConns)[0]
+        if heroIsRef:
+          cmds.select(hero)
+          mel.eval("duplicateReference 0 \" \";")
+          duplHero = cmds.ls(selection=True)[0]
+        else:
+          duplHero = cmds.duplicate(hero, upstreamNodes=duplInputGraph, inputConnections=duplInputConns)[0]
 
       if matchT or matchR or matchS:
         cmds.matchTransform(duplHero, target, pos=matchT, rot=matchR, scl=matchS)
@@ -199,4 +206,8 @@ class DuplicateToSelectionTool(Tool):
           cmds.delete(target)
 
     if delOriginal:
-      cmds.delete(hero)
+      if heroIsRef:
+        refNode = cmds.referenceQuery(hero, referenceNode=True)
+        cmds.file(removeReference=True, mergeNamespaceWithRoot=True, referenceNode=refNode)
+      else:
+        cmds.delete(hero)
