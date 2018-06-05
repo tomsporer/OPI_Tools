@@ -36,8 +36,9 @@ class importFrittCacheTool(DataBaseTool):
     self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default", "Default_Lederjacke", "Default_Kopfband", "Default_YellowShirt", "Default_TurquoiseShirt", "Default_Rothaar", "Default_PolkaDots"]
     self.__flavsThree = ["Wildberry"]
     self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango"]
+    self.__flavsStripper = ["Stripper"]
 
-    flavsList = ["- Please select -"] + sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis)
+    flavsList = ["- Please select -"] + sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis + self.__flavsStripper)
 
     self.args.addStaticText("\tImport Cache \t \t \t")
     self.args.addSpacer(13)
@@ -243,6 +244,8 @@ class importFrittCacheTool(DataBaseTool):
       charRefDir = os.path.join(self.__frittRoot, "3D", "REFERENCE", "THREE")
     elif charFlav in self.__flavsMinis:
       charRefDir = os.path.join(self.__frittRoot, "3D", "REFERENCE", "MINIS")
+    elif charFlav in self.__flavsStripper:
+      charRefDir = os.path.join(self.__frittRoot, "3D", "REFERENCE", "STRIPPER")
 
     if charFlav.startswith("Default_"):
       charFlav, texture = charFlav.split("_")

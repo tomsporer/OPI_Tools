@@ -32,8 +32,9 @@ class exportForCachingTool(DataBaseTool):
     self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default"]
     self.__flavsThree = ["Wildberry"]
     self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango"]
+    self.__flavsStripper = ["Stripper"]
 
-    self.__flavsList = sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis)
+    self.__flavsList = sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis + self.__flavsStripper)
 
     db = self.host.apis['db']
     self.__dbRoot = db.root
