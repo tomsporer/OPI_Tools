@@ -38,7 +38,8 @@ class ExtractPolygonsDeleteTool(Tool):
       for c in polysToExtract:
         invSel += [str(c).replace(sourceObj, extractedObj)]
       cmds.select(invSel)
-      cmds.InvertSelection()
+      # cmds.InvertSelection()
+      cmds.select(extractedObj + ".f[*]", toggle=True) # invert selection
       cmds.delete()
       cmds.select(extractedObj)
       exShape = cmds.listRelatives(extractedObj, children=True, shapes=True, path=True)[0]

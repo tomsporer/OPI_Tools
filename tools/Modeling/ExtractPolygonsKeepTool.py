@@ -34,11 +34,12 @@ class ExtractPolygonsKeepTool(Tool):
     if polysToExtract:
       extractedObj = cmds.duplicate(sourceObj, name="extracted_Mesh")[0]
       # cmds.delete(polysToExtract)
-      invSel = []
-      for c in polysToExtract:
-        invSel += [str(c).replace(sourceObj, extractedObj)]
-      cmds.select(invSel)
-      cmds.InvertSelection()
+      extractedSel = []
+      for polys in polysToExtract:
+        extractedSel += [str(polys).replace(sourceObj, extractedObj)]
+      cmds.select(extractedSel)
+      # cmds.InvertSelection()
+      cmds.select(extractedObj + ".f[*]", toggle=True) # invert selection
       cmds.delete()
       cmds.select(extractedObj)
       exShape = cmds.listRelatives(extractedObj, children=True, shapes=True, path=True)[0]
