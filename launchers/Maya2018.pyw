@@ -86,9 +86,9 @@ for subfolder in subfolders:
 #   folderNames += ['']
 
 folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2'] # 'PAY_Payback_Amex'
-for folderName in allFolderNames:
-  if folderName.startswith("FRI_Fritt"):
-    folderNames += [folderName]
+# for folderName in allFolderNames:
+#   if folderName.startswith("FRI_Fritt"):
+#     folderNames += [folderName]
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
