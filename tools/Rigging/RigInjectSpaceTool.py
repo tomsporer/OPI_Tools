@@ -42,7 +42,7 @@ class RigInjectSpaceTool(Tool):
 
     radToDeg = 57.29577951308232
 
-    expr = re.compile('^([a-zA-Z0-9]+)_([a-zA-Z0-9_]+)_([a-zA-Z0-9]+)$')
+    expr = re.compile('^([a-zA-Z0-9_]+)_([a-zA-Z0-9]+)$')
 
     objects = self.args.getValue('objects')
     if not objects:
@@ -71,14 +71,13 @@ class RigInjectSpaceTool(Tool):
         print 'Warning: Object %s does not follow the naming convention - skipping.' % o
         continue
 
-      side = m.group(1)
-      name = m.group(2)
-      role = m.group(3)
+      name = m.group(1)
+      role = m.group(2)
 
       if parent and updateExisting:
 
         # check if we already have a spacer here... if so let's update it
-        if parent.rpartition('|')[2] == '%s_%s_SPACE' % (side, name):
+        if parent.rpartition('|')[2] == '%s_SPACE' % (name):
           groupTransformObj = parentDagPath.transform()
           groupTransform = om.MFnTransform(groupTransformObj)
 
@@ -96,9 +95,9 @@ class RigInjectSpaceTool(Tool):
 
       # the code below creates a new group
       if role == 'SPACE':
-        newName = '%s_%sSpace_SPACE' % (side, name)
+        newName = '%sSpace_SPACE' % (name)
       else:
-        newName = '%s_%s_SPACE' % (side, name)
+        newName = '%s_SPACE' % (name)
 
       groupArgs = {'empty': True, 'name': newName}
       if parent:
