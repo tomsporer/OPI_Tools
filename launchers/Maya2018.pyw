@@ -82,22 +82,21 @@ allFolderNames = []
 for subfolder in subfolders:
   allFolderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
 
-# if len(folderNames) == 0:
-#   folderNames += ['']
-
-folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2'] # 'PAY_Payback_Amex'
+folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2']
 # for folderName in allFolderNames:
 #   if folderName.startswith("FRI_Fritt"):
 #     folderNames += [folderName]
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
-# fileText = {"ROT_Rotkaeppchen_2":["3D", "Render"]}
-# fileText = fileText.replace('${projectName}', projName)
-# fileText = fileText.replace('\n', '')
-# fileText = fileText.replace(' ', '')
-# os.environ['OPI_DATABASE_EXLUDESUBFOLDERSSUBFOLDERS'] = fileText
-# os.environ['OPI_DATABASE_EXLUDESUBFOLDERSSUBFOLDERS'] = ""
+# exclude folders
+excludeRootSubFoldersSubFolders = {}
+for folderName in folderNames:
+  excludeRootSubFoldersSubFolders[folderName] = ["Client_From", "Client_To", "Composite", "Images", "Models", "Render"]
+# include folders
+# excludeRootSubFoldersSubFolders["BEI_Spiel"].remove("Models") # example
+# set env variable
+os.environ['OPI_DATABASE_EXLUDESUBFOLDERSSUBFOLDERS'] = json.dumps(excludeRootSubFoldersSubFolders) 
 
 # import the opi launcher modules
 from opi.launchers.environment import Environment

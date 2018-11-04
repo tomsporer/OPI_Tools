@@ -9,8 +9,6 @@ from opi.tools.databasetool import DataBaseTool
 from opi.common.opiexception import OPIException
 from opi.client.database import DataBase as OpiDB
 
-import glob
-
 
 class RefreshOpiDbTool(DataBaseTool):
 
@@ -30,18 +28,15 @@ class RefreshOpiDbTool(DataBaseTool):
 
   def execute(self):
 
-
     db = self.host.apis['db']
+
     opiDbRoot = os.environ['OPI_DATABASE_DIR']
     opiTemplateRoot = os.environ['OPI_TEMPLATE_DIR']
-    opiProjects = db.query("project", sql="SELECT * FROM project")
+    rootSubFolders = os.environ.get('OPI_DATABASE_SUBFOLDERS', '')
+    rootSubFolders = rootSubFolders.split(os.pathsep)
+    excludeRootSubFoldersSubFolders = os.environ.get('OPI_DATABASE_EXLUDESUBFOLDERSSUBFOLDERS', None)
 
-    opiProjectLocations = []
-    for p in opiProjects:
-      opiProjectLocations.append(str(p.location))
-    # print opiProjectLocations
-    self.host.apis['db'] = OpiDB(opiDbRoot, templateRoot=opiTemplateRoot, rootSubFolders=opiProjectLocations)
+    self.host.apis['db'] = OpiDB(opiDbRoot, templateRoot=opiTemplateRoot, rootSubFolders=rootSubFolders, excludeRootSubFoldersSubFolders=excludeRootSubFoldersSubFolders)
 
 
     print "Refresh Database - Completed!"
-
