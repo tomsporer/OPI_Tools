@@ -1,0 +1,32 @@
+[
+  {
+    "collection": {
+      "children": [
+        {
+          "absOverride": {
+            "attrValue": {
+              "connectable": true, 
+              "type": "Bool", 
+              "value": false
+            }, 
+            "attribute": "enabled", 
+            "localRender": false, 
+            "name": "enabled", 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "isolateSelected": false, 
+      "name": "Disable_rsAOVs", 
+      "selector": {
+        "simpleSelector": {
+          "customFilterValue": "RedshiftAOV", 
+          "pattern": "*", 
+          "staticSelection": "", 
+          "typeFilter": 8
+        }
+      }, 
+      "selfEnabled": true
+    }
+  }
+]

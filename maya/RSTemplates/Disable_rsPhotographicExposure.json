@@ -1,0 +1,32 @@
+[
+  {
+    "collection": {
+      "children": [
+        {
+          "absOverride": {
+            "attrValue": {
+              "connectable": true, 
+              "type": "Bool", 
+              "value": false
+            }, 
+            "attribute": "enable", 
+            "localRender": false, 
+            "name": "enable", 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "isolateSelected": false, 
+      "name": "Disable_rsPhotographicExposure", 
+      "selector": {
+        "simpleSelector": {
+          "customFilterValue": "RedshiftPhotographicExposure", 
+          "pattern": "*", 
+          "staticSelection": "", 
+          "typeFilter": 8
+        }
+      }, 
+      "selfEnabled": true
+    }
+  }
+]
