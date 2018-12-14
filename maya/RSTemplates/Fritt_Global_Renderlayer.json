@@ -1,0 +1,532 @@
+[
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [], 
+            "isolateSelected": false, 
+            "name": "All", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "enabled", 
+                  "localRender": false, 
+                  "name": "enabled", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "rsAOV", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "RedshiftAOV", 
+                "pattern": "*", 
+                "staticSelection": "", 
+                "typeFilter": 8
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Beauty", 
+      "renderable": true
+    }
+  }, 
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "renderSettingsCollection": {
+            "children": [
+              {
+                "absUniqueOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "max": 4.0, 
+                    "min": 0.0, 
+                    "type": "Int", 
+                    "value": 0
+                  }, 
+                  "attribute": "primaryGIEngine", 
+                  "localRender": false, 
+                  "name": "primaryGIEngine", 
+                  "selfEnabled": true, 
+                  "targetNodeName": "redshiftOptions"
+                }
+              }, 
+              {
+                "absUniqueOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "max": 4.0, 
+                    "min": 0.0, 
+                    "type": "Int", 
+                    "value": 0
+                  }, 
+                  "attribute": "secondaryGIEngine", 
+                  "localRender": false, 
+                  "name": "secondaryGIEngine", 
+                  "selfEnabled": true, 
+                  "targetNodeName": "redshiftOptions"
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "RenderSettingsCollection", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "", 
+                "staticSelection": "redshiftOptions\ndefaultRenderGlobals\ndefaultResolution\ndefaultRenderQuality", 
+                "typeFilter": 0
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "shaderOverride": {
+                        "attribute": "", 
+                        "connectionStr": "const_green.outColor", 
+                        "localRender": false, 
+                        "name": "shaderOverride5", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "name": "cBg_shadingEngines", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "*", 
+                      "staticSelection": "", 
+                      "typeFilter": 11
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cBg", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:Set", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "materialOverride": {
+                  "attribute": "", 
+                  "connectionStr": "rsMaterial3SG.message", 
+                  "localRender": false, 
+                  "name": "materialOverride1", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cChars", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:*gGeo", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "materialOverride": {
+                  "attribute": "", 
+                  "connectionStr": "rsMaterial4SG.message", 
+                  "localRender": false, 
+                  "name": "materialOverride2", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cPackStanze", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:*PackEnds_HighRes", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "shaderOverride": {
+                        "attribute": "", 
+                        "connectionStr": "const_red.outColor", 
+                        "localRender": false, 
+                        "name": "shaderOverride6", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "name": "Legs_shadingEngines", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "*", 
+                      "staticSelection": "", 
+                      "typeFilter": 11
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "Legs", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "::*Legs*", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "type": "Bool", 
+                    "value": false
+                  }, 
+                  "attribute": "enable", 
+                  "localRender": false, 
+                  "name": "enable", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "Disable_rsPhotographicExposure", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "RedshiftPhotographicExposure", 
+                "pattern": "*", 
+                "staticSelection": "", 
+                "typeFilter": 8
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Multimatte", 
+      "renderable": true
+    }
+  }, 
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "collection": {
+            "children": [
+              {
+                "collection": {
+                  "children": [
+                    {
+                      "absOverride": {
+                        "attrValue": {
+                          "connectable": true, 
+                          "type": "Bool", 
+                          "value": false
+                        }, 
+                        "attribute": "primaryVisibility", 
+                        "localRender": false, 
+                        "name": "primaryVisibility", 
+                        "selfEnabled": true
+                      }
+                    }
+                  ], 
+                  "isolateSelected": false, 
+                  "name": "cMatte_shapes", 
+                  "selector": {
+                    "simpleSelector": {
+                      "customFilterValue": "", 
+                      "pattern": "*", 
+                      "staticSelection": "", 
+                      "typeFilter": 2
+                    }
+                  }, 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "cPrimRaysOff", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:*Arms*, *:*Legs*, *:*Set*", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "keyable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "visibility", 
+                  "localRender": false, 
+                  "name": "visibility13", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "Pack_HighRes", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:*Pack_HighRes", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Label", 
+      "renderable": true
+    }
+  }, 
+  {
+    "renderSetupLayer": {
+      "collections": [
+        {
+          "renderSettingsCollection": {
+            "children": [
+              {
+                "absUniqueOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "max": 4.0, 
+                    "min": 0.0, 
+                    "type": "Int", 
+                    "value": 0
+                  }, 
+                  "attribute": "primaryGIEngine", 
+                  "localRender": false, 
+                  "name": "primaryGIEngine1", 
+                  "selfEnabled": true, 
+                  "targetNodeName": "redshiftOptions"
+                }
+              }, 
+              {
+                "absUniqueOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "max": 4.0, 
+                    "min": 0.0, 
+                    "type": "Int", 
+                    "value": 0
+                  }, 
+                  "attribute": "secondaryGIEngine", 
+                  "localRender": false, 
+                  "name": "secondaryGIEngine1", 
+                  "selfEnabled": true, 
+                  "targetNodeName": "redshiftOptions"
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "RenderSettingsCollection1", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "", 
+                "staticSelection": "redshiftOptions\ndefaultRenderGlobals\ndefaultResolution\ndefaultRenderQuality", 
+                "typeFilter": 0
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [], 
+            "isolateSelected": false, 
+            "name": "Arms_Legs", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:*Arms,*:Legs*", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "keyable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "visibility", 
+                  "localRender": false, 
+                  "name": "visibility8", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "Pack_Mask", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:*Pack_Mask", 
+                "staticSelection": "", 
+                "typeFilter": 1
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "keyable": true, 
+                    "type": "Bool", 
+                    "value": true
+                  }, 
+                  "attribute": "matteEnable", 
+                  "localRender": false, 
+                  "name": "matteEnable", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "enable_rsMatteLabelMask", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "", 
+                "pattern": "*:rsMatteLabelMask", 
+                "staticSelection": "Orange_Clean:rsMatteLabelMask", 
+                "typeFilter": 5
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }, 
+        {
+          "collection": {
+            "children": [
+              {
+                "absOverride": {
+                  "attrValue": {
+                    "connectable": true, 
+                    "type": "Bool", 
+                    "value": false
+                  }, 
+                  "attribute": "enable", 
+                  "localRender": false, 
+                  "name": "enable1", 
+                  "selfEnabled": true
+                }
+              }
+            ], 
+            "isolateSelected": false, 
+            "name": "Disable_rsPhotographicExposure1", 
+            "selector": {
+              "simpleSelector": {
+                "customFilterValue": "RedshiftPhotographicExposure", 
+                "pattern": "*", 
+                "staticSelection": "", 
+                "typeFilter": 8
+              }
+            }, 
+            "selfEnabled": true
+          }
+        }
+      ], 
+      "name": "Label_Mask", 
+      "renderable": true
+    }
+  }
+]
