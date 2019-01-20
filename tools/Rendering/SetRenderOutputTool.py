@@ -139,6 +139,7 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.setValue("resX", resolutionX)
     self.args.setValue("resY", resolutionY)
     renderEngine = cmds.getAttr('defaultRenderGlobals.ren')
+    self.__versionFromPrefix = "01"
     # ----
 
 
