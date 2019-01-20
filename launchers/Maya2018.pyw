@@ -90,11 +90,25 @@ for folderName in allFolderNames:
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
 # exclude folders
+# folders with an 'opiExcludeSubFolder.opiex' file inside will be excluded
+# folders with an 'opiIncludeSubFolder.opiex' file inside will be included
 excludeRootSubFoldersSubFolders = {}
 for folderName in folderNames:
-  excludeRootSubFoldersSubFolders[folderName] = ["Client_From", "Client_To", "Composite", "Images", "Models", "Render"]
+  excludeRootSubFoldersSubFolders[folderName] = ["3D", "Client_From", "Client_To", "Composite", "Images", "Models", "Render", "Output"]
+  excludeFolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], folderName, '*', 'opiExcludeSubFolder.opiex'))
+  includeFolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], folderName, '*', 'opiIncludeSubFolder.opiex'))
+  for excludeFolder in excludeFolders:
+    excludeRootSubFoldersSubFolders[folderName] += [os.path.split(os.path.split(excludeFolder)[0])[1]]
+  for includeFolder in includeFolders:
+    includeFolderName = os.path.split(os.path.split(includeFolder)[0])[1]
+    if includeFolderName in excludeRootSubFoldersSubFolders[folderName]:
+      excludeRootSubFoldersSubFolders[folderName].remove(includeFolderName)
+
+# exclude folders
+# excludeRootSubFoldersSubFolders["FRI_Fritt_TV"] += ["3D"] # example
 # include folders
 # excludeRootSubFoldersSubFolders["BEI_Spiel"].remove("Models") # example
+
 # set env variable
 os.environ['OPI_DATABASE_EXLUDESUBFOLDERSSUBFOLDERS'] = json.dumps(excludeRootSubFoldersSubFolders) 
 

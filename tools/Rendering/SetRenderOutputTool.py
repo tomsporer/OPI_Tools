@@ -196,9 +196,10 @@ class SetRenderOutputTool(DataBaseTool):
     renderPrefix = str(cmds.getAttr("defaultRenderGlobals.imageFilePrefix"))
     renderPrefix = renderPrefix.replace("/", "\\")
     projectPath = cmds.workspace( q=True, rootDirectory=True )
-    if len(renderPrefix) == 0:
+    if len(renderPrefix) == 0 or len(renderPrefix) == None:
       renderpath = os.path.join(projectPath, "Render")
       renderfolder = ""
+      self.__versionFromPrefix = "01" # default
     else:
       renderpath = os.path.split(renderPrefix)[0] # rip off filename
       # check if folder at end is a version or camera folder
