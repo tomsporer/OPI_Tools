@@ -9,9 +9,9 @@
               "type": "Bool", 
               "value": false
             }, 
-            "attribute": "enable", 
+            "attribute": "tonemapEnable", 
             "localRender": false, 
-            "name": "enable", 
+            "name": "tonemapEnable", 
             "selfEnabled": true
           }
         }
@@ -20,7 +20,7 @@
       "name": "Disable_rsPhotographicExposure", 
       "selector": {
         "simpleSelector": {
-          "customFilterValue": "RedshiftPhotographicExposure", 
+          "customFilterValue": "RedshiftPostEffects", 
           "pattern": "*", 
           "staticSelection": "", 
           "typeFilter": 8
