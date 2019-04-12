@@ -15,8 +15,10 @@ if launchersPath.lower().startswith('e:'):
 
 # construct the cfg path
 cfgPath = os.path.join(launchersPath, 'configs', 'houdini.cfg')
+cfgJson = json.load(open(cfgPath))
+houdiniVersion = cfgJson["environment"]["HOUDINI_VERSION"][0]
 
-houdiniVersion = "17.0.416"
+# houdiniVersion = "17.0.416"
 
 # find the maya executable
 # first connect to the registry and get a specific key
@@ -31,7 +33,7 @@ os.environ['OPI_LAUNCHER_EXECUTABLE'] = str(houdiniExe)
 
 os.environ['OPI_LAUNCHER_DIR'] = launchersPath
 os.environ['HOUDINI_LOCATION'] = str(value)
-os.environ['HOUDINI_VERSION'] = houdiniVersion
+# os.environ['HOUDINI_VERSION'] = houdiniVersion
 
 # import the opi launcher modules
 from opi.launchers.environment import Environment
