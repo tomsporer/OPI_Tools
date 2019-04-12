@@ -6,7 +6,7 @@
   <addScriptItem id="h.deadline">
 	<parent>render_menu</parent>
 	<label>Submit To Deadline</label>
-	<scriptPath>DeadlineHoudiniClient.py</scriptPath>
+	<scriptPath>E:/PIPELINE/OPI_Tools/houdini/houdini_path/DeadlineHoudiniClient.py</scriptPath>
 	<scriptArgs></scriptArgs>
 	<insertAfter/>
   </addScriptItem>
