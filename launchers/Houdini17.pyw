@@ -10,6 +10,14 @@ path = os.path.split(path)[0]
 # remember this launchers path
 launchersPath = path
 
+# add the opi folders
+path = os.path.split(path)[0]
+path = os.path.split(path)[0]
+path = os.path.join(path, 'opi', 'python')
+
+# add opi to the system path
+sys.path.append(path)
+
 if launchersPath.lower().startswith('e:'):
   launchersPath = r'\\domain\\tomsporer' + launchersPath[2:]
 
