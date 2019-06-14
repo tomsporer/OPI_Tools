@@ -23,8 +23,8 @@ class CreateProjectTool(DataBaseTool):
 
   def initialize(self, **args):
 
-    self.args.add(name='shorthand', type='str', label="shorthand", optional=True, expression="[A-Z][A-Z][A-Z]")
-    self.args.add(name='name', type='str', expression="[A-Z]+[a-zA-Z0-9_]*")
+    self.args.add(name='shorthand', type='str', label="shorthand", optional=True, expression="[A-Z0-9][A-Z0-9][A-Z0-9]")
+    self.args.add(name='name', type='str', expression="[A-Z0-9]+[a-zA-Z0-9_]*")
     self.args.add(name="active", type="bool", label="Set Active Project", value=args.get("active", True), enabled=args.get("active", True))
 
 
