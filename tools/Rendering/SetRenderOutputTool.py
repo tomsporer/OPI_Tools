@@ -107,7 +107,7 @@ class SetRenderOutputTool(DataBaseTool):
         if renderpath == renderfolder:
           renderfolder = ""
         self.args.setValue("renderfolder", renderfolder)
-        self.__readJson()
+        # self.__readJson()
         self.__prevRenderpath = arg.value
 
   def preexecute(self, **args):
@@ -179,7 +179,7 @@ class SetRenderOutputTool(DataBaseTool):
 
     def checkVersionFolder(path):
       pathHead, pathTail = os.path.split(path)
-      if re.match("[vV]+[0-9][0-9]", pathTail):
+      if re.match("[vV][0-9]+", pathTail):
         self.__versionFromPrefix = pathTail[1:]
         return True
       else:
@@ -196,14 +196,38 @@ class SetRenderOutputTool(DataBaseTool):
     renderPrefix = str(cmds.getAttr("defaultRenderGlobals.imageFilePrefix"))
     renderPrefix = renderPrefix.replace("/", "\\")
     projectPath = cmds.workspace( q=True, rootDirectory=True )
-    if len(renderPrefix) == 0 or len(renderPrefix) == None:
+
+    scenename = self.__scenename
+    if scenename:
+      while scenename[-1].isdigit() or scenename[-1] == "_":
+        scenename = scenename[:-1]
+      if scenename[-2:] == "_v" or scenename[-2:] == "_V":
+        scenename = scenename[:-2]
+    self.__scenename = scenename  
+
+    if len(renderPrefix) == 0 or renderPrefix == "None":
       renderpath = os.path.join(projectPath, "Render")
       renderfolder = ""
       self.__versionFromPrefix = "01" # default
-    else:
-      renderpath = os.path.split(renderPrefix)[0] # rip off filename
-      # check if folder at end is a version or camera folder
+      self.args.setValue("rendername", scenename)
 
+    else:
+      renderpath, rendername = os.path.split(renderPrefix) # rip off filename
+
+      rendernameparts = rendername.split("_")
+      if "<RenderLayer>" in rendernameparts:
+        rendernameparts.remove("<RenderLayer>")
+      for rendernamepart in rendernameparts:
+        if re.match("[vV][0-9]+", rendernamepart):
+          rendernameparts.remove(rendernamepart)
+      rendername = "_".join(rendernameparts)
+      if rendername:
+        self.args.setValue("rendername", rendername)
+      else:
+        self.args.setValue("rendername", scenename)
+
+
+      # check if folder at end is a version or camera folder
       if checkVersionFolder(renderpath):
         renderpath = os.path.split(renderpath)[0]
         if checkCameraFolder(renderpath):
@@ -214,25 +238,7 @@ class SetRenderOutputTool(DataBaseTool):
         self.args.setValue("camsubfolderAfter", True)
         if checkVersionFolder(renderpath):
           renderpath = os.path.split(renderpath)[0]
-        else:
-          self.__versionFromPrefix = "01" # default
-      else:
-        self.__versionFromPrefix = "01" # default
-                
-          
-      # renderpathTail = os.path.split(renderpath)[1]
-      # if re.match("[vV]+[0-9][0-9]", renderpathTail):
-      #   self.__versionFromPrefix = renderpathTail[1:]
-      #   renderpath = os.path.split(renderpath)[0] # rip off versioning folder
-      #   if os.path.split(renderpath)[1] == "<Camera>":
-      #     self.args.setValue("camsubfolderBefore", True)
-      # elif renderpathTail == "<Camera>":
 
-      # else:
-      #   self.__versionFromPrefix = "01" # default
-      # if os.path.split(renderpath)[1] == "<Camera>":
-      #   renderpath = os.path.split(renderpath)[0] # rip off camera folder
-      #   self.args.setValue("camsubfolder", True)
 
       if renderPrefix[1] == ":":
         renderfolder = renderpath.split("Render\\")[-1]
@@ -245,11 +251,12 @@ class SetRenderOutputTool(DataBaseTool):
         else:
           renderpath = os.path.join(projectPath, "Render", renderpath)
 
+    self.args.setValue('version', self.__versionFromPrefix)
     self.args.setValue("renderpath", renderpath)
     self.__prevRenderpath = renderpath
     self.args.setValue("renderfolder", renderfolder)
 
-    self.__readJson()
+    # self.__readJson()
     # ----
 
 
@@ -302,19 +309,13 @@ class SetRenderOutputTool(DataBaseTool):
   def __readJson(self):
     filename = self.__filename
     scenename = self.__scenename
-    # scenename = scenename.rsplit("_v", 1)[0]
-    # scenename = scenename.rsplit("_V", 1)[0]
-    while scenename[-1].isdigit() or scenename[-1] == "_":
-      scenename = scenename[:-1]
-    if scenename[-2:] == "_v" or scenename[-2:] == "_V":
-      scenename = scenename[:-2]
     defaultVersion = self.__versionFromPrefix
     jsonPath = self.__getJsonPath()
     readJson = JsonObject(jsonPath)
     version = readJson.get("version", defaultVersion)
     rendername = readJson.get("rendername", scenename)
-    self.args.setValue('version', version)
-    self.args.setValue("rendername", rendername)
+    # self.args.setValue('version', version)
+    # self.args.setValue("rendername", rendername)
 
   def execute(self):
     print "heeeeellooooooo"
@@ -421,12 +422,12 @@ class SetRenderOutputTool(DataBaseTool):
     # ----
 
 
-    # save render output info to json
-    jsonPath = self.__getJsonPath()
-    saveJson = JsonObject(jsonPath)
-    saveJson.version = version
-    saveJson.rendername = rendername
-    saveJson.write()
+    # # save render output info to json
+    # jsonPath = self.__getJsonPath()
+    # saveJson = JsonObject(jsonPath)
+    # saveJson.version = version
+    # saveJson.rendername = rendername
+    # saveJson.write()
 
 
 
