@@ -26,7 +26,7 @@ cfgPath = os.path.join(launchersPath, 'configs', 'houdini.cfg')
 # cfgJson = json.load(open(cfgPath))
 # houdiniVersion = cfgJson["environment"]["HOUDINI_VERSION"][0]
 
-houdiniVersion = "17.0.416"
+houdiniVersion = "17.5.293"
 
 # find the maya executable
 # first connect to the registry and get a specific key
