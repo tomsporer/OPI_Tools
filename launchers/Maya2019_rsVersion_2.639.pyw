@@ -7,33 +7,35 @@ import optparse
 path = os.path.abspath(__file__)
 
 # cut off the file path
-path = os.path.split(path)[0]
+path, filename = os.path.split(path)
 
 # remember this launchers path
 launchersPath = path
-
 if launchersPath.lower().startswith('e:'):
   launchersPath = r'\\domain\\tomsporer' + launchersPath[2:]
-
-# go two levels up
-path = os.path.split(path)[0]
-path = os.path.split(path)[0]
-
+  
 # add the opi folders
+path = os.path.split(path)[0]
+path = os.path.split(path)[0]
 path = os.path.join(path, 'opi', 'python')
 
 # add opi to the system path
 sys.path.append(path)
 
 # construct the cfg path
-cfgPath = os.path.join(launchersPath, 'configs', 'maya_RS_3_0.cfg')
+if "rsVersion" in filename:
+  cfgPath = os.path.join(launchersPath, 'configs', 'maya_rsVersion.cfg')
+  rsVersion = os.path.splitext(filename)[0][-5:]
+  os.environ["RS_VERSION"] = rsVersion
+else:
+  cfgPath = os.path.join(launchersPath, 'configs', 'maya.cfg')
 
 # find the maya executable
 # first connect to the registry and get a specific key
 import _winreg
 from _winreg import ConnectRegistry, OpenKey, EnumKey, QueryValueEx, HKEY_LOCAL_MACHINE
 registry = ConnectRegistry(None, HKEY_LOCAL_MACHINE)
-key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2018\\Setup\\InstallPath", 0, (_winreg.KEY_WOW64_64KEY + _winreg.KEY_READ))
+key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2019\\Setup\\InstallPath", 0, (_winreg.KEY_WOW64_64KEY + _winreg.KEY_READ))
 value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 
 # setup options for running maya in batch mode
@@ -62,7 +64,8 @@ else:
 
 os.environ['OPI_LAUNCHER_DIR'] = launchersPath
 os.environ['MAYA_LOCATION'] = str(value)
-os.environ['MAYA_VERSION'] = "2018"
+os.environ['MAYA_VERSION'] = "2019"
+
 
 # figure out which projects are opi projects
 # switch this to a relative path based on the launchersPath
@@ -76,16 +79,7 @@ else:
   # os.environ['OPI_DATABASE_DIR'] = "\\\\192.168.1.10\\tomsporer\\PROJECTS"
   os.environ['OPI_DATABASE_DIR'] = "E:\\PROJECTS"
 
-# find all subfolders with an opicfg file
-subfolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], '*', '.opicfg'))
-allFolderNames = []
-for subfolder in subfolders:
-  allFolderNames += [os.path.split(os.path.split(subfolder)[0])[1]]
-
-folderNames = ['BEI_Spiel', 'ROT_Rotkaeppchen', 'ROT_Rotkaeppchen_2']
-for folderName in allFolderNames:
-  if folderName.startswith("FRI_Fritt"):
-    folderNames += [folderName]
+folderNames = ['']
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
@@ -94,6 +88,8 @@ os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 # folders with an 'opiIncludeSubFolder.opiex' file inside will be included
 excludeRootSubFoldersSubFolders = {}
 for folderName in folderNames:
+  if folderName == "":
+    continue
   excludeRootSubFoldersSubFolders[folderName] = ["3D", "Client_From", "Client_To", "Composite", "Images", "Models", "Render", "Output"]
   excludeFolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], folderName, '*', 'opiExcludeSubFolder.opiex'))
   includeFolders = glob.glob(os.path.join(os.environ['OPI_DATABASE_DIR'], folderName, '*', 'opiIncludeSubFolder.opiex'))
