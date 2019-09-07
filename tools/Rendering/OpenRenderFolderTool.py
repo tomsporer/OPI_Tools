@@ -33,7 +33,9 @@ class OpenRenderFolderTool(Tool):
     renderPrefix = renderPrefix.replace("/", "\\")
     projectPath = cmds.workspace( q=True, rootDirectory=True )
 
-    if renderPrefix[1] != ":":
+    if renderPrefix == "":
+      renderFolder = os.path.join(projectPath, "Render", "")
+    elif renderPrefix[1] != ":":
       renderFolder = os.path.join(projectPath, renderPrefix)
     else:
       renderFolder = renderPrefix
