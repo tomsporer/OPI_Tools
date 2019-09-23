@@ -1,6 +1,14 @@
 import os
 import tkFileDialog
 
+# -------------------------------------------
+# This Script will add a new menu item in the Yeti menu, which will run the
+# command to return the currently used license.
+# 
+# 1. Run the script (double click)
+# 2. Select the Yeti plugin folder (ex. E:/PIPELINE/ThirdParty/Yeti/Yeti-v3.5.2_Maya2019-windows)
+# 
+# -------------------------------------------
 
 fileLocation = os.path.dirname(__file__)
 pipelineDir = os.path.split(os.path.split(fileLocation)[0])[0]
