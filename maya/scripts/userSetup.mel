@@ -1,1 +1,8 @@
-if( startsWith( `whatIs DeadlineMayaClient`, "Mel procedure found in" ) ){ DeadlineMayaClient(); }else{ warning( "DeadlineMayaClient either has errors or has not been installed." ); }
+if( startsWith( `whatIs DeadlineMayaClient`, "Mel procedure found in" ) ){ 
+    DeadlineMayaClient();
+} else {
+    warning( "DeadlineMayaClient either has errors or has not been installed." );
+}
+
+loadPlugin -qt "tom_sporer_commands.py";
+loadPlugin -qt "tom_sporer_events.py";
