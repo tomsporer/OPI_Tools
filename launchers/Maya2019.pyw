@@ -80,6 +80,7 @@ else:
   os.environ['OPI_DATABASE_DIR'] = "E:\\PROJECTS"
 
 folderNames = ['']
+# folderNames = ['FRI_Fritt_POSGluecksrad', 'FRI_Fritt_TV']
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
