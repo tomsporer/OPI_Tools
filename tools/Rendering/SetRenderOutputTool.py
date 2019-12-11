@@ -33,6 +33,7 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.add(name='projectname', label='project', type='str', enabled=False)
     self.args.add(name="renderpath", type="folder", label="render path", value="", enabled=True, expression="[a-zA-Z0-9_/]*")
     self.args.add(name="renderfolder", type="str", label="renderfolder(hidden)", value="", hidden=True)
+    self.args.add(name="renderlayerSubfolder", label="Render Layer Subfolder", type="bool", value=False)
     self.args.beginRow("render name")
     self.args.add(name="rendername", type="str", label="", value="")
     self.args.addButton("takeSceneName", "<<")
@@ -192,6 +193,13 @@ class SetRenderOutputTool(DataBaseTool):
       else:
         return False
 
+    def checkRenderLayerFolder(path):
+      pathHead, pathTail = os.path.split(path)
+      if pathTail.lower() == "<renderlayer>":
+        return True
+      else:
+        return False
+
 
     renderPrefix = str(cmds.getAttr("defaultRenderGlobals.imageFilePrefix"))
     renderPrefix = renderPrefix.replace("/", "\\")
@@ -226,6 +234,10 @@ class SetRenderOutputTool(DataBaseTool):
       else:
         self.args.setValue("rendername", scenename)
 
+      # check for renderlayer subfolder
+      if checkRenderLayerFolder(renderpath):
+        renderpath = os.path.split(renderpath)[0]
+        self.args.setValue("renderlayerSubfolder", True)
 
       # check if folder at end is a version or camera folder
       if checkVersionFolder(renderpath):
@@ -335,6 +347,7 @@ class SetRenderOutputTool(DataBaseTool):
     rendername = self.args.getValue('rendername')
     version = self.args.getValue('version')
     version = version.rjust(2, '0')
+    renderlayerSubfolder = self.args.getValue("renderlayerSubfolder")
     # camsubfolder = self.args.getValue("camsubfolder")
     camsubfolderBefore = self.args.getValue("camsubfolderBefore")
     camsubfolderAfter = self.args.getValue("camsubfolderAfter")
@@ -365,6 +378,8 @@ class SetRenderOutputTool(DataBaseTool):
     renderpath = os.path.join(renderpath, "V" + version)
     if camsubfolderAfter:
       renderpath = os.path.join(renderpath, "<Camera>")
+    if renderlayerSubfolder:
+      renderpath = os.path.join(renderpath, "<RenderLayer>")
     renderPrefix = os.path.join(renderpath, renderfile)
     cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
     cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
