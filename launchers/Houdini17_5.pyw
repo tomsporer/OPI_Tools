@@ -24,13 +24,13 @@ if launchersPath.lower().startswith('e:'):
 # construct the cfg path
 cfgPath = os.path.join(launchersPath, 'configs', 'houdini.cfg')
 cfgJson = json.load(open(cfgPath))
-houdiniVersions = cfgJson["environment"]["HOUDINI_VERSION"]
+houdiniVersion = cfgJson["environment"]["HOUDINI_VERSION"][0]
 
-houdiniMajorVersion = "17.5"
+# houdiniMajorVersion = "17.5"
 
-for houdiniVersion in houdiniVersions:
-    if houdiniVersion.startswith(houdiniMajorVersion):
-        break
+# for houdiniVersion in houdiniVersions:
+#     if houdiniVersion.startswith(houdiniMajorVersion):
+#         break
 
 # find the maya executable
 # first connect to the registry and get a specific key
