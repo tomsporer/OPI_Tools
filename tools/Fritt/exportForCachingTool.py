@@ -324,12 +324,13 @@ Name=" + sceneName + " [Script Job]"
     # --------------------
     # write Deadline Plugin File
     # --------------------
+    mayaVersion = cmds.about(version=True)
     wContent = "ScriptJob=True\n\
-Version=2018\n\
+Version=%s\n\
 Build=64bit\n\
 ProjectPath=E:/PROJECTS/FRI_Fritt_TV\n\
 ScriptFilename=autoExportCache.py\n\
-SceneFile=%s" %(os.path.normpath(exportFile).replace("\\", "/"))
+SceneFile=%s" %(mayaVersion, os.path.normpath(exportFile).replace("\\", "/"))
 
     wPath = os.path.join(localAppData, "Thinkbox", "Deadline10", "temp", "maya_deadline_job.job")
     with open(wPath, "w") as pluginFile:
