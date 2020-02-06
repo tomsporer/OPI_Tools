@@ -24,7 +24,29 @@ sys.path.append(path)
 
 # construct the cfg path
 if "rsVersion" in filename:
-  cfgPath = os.path.join(launchersPath, 'configs', 'maya_rsVersion.cfg')
+  cfgPath = os.path.join(launchersPath, 'configs', 'maya.cfg')
+  cfgPathRsVersion = os.path.join(launchersPath, 'configs', 'maya_rsVersion.cfg')
+
+  # safety: override maya_rsVersion.cfg file to match maya.cfg, if it doesn't
+  with open(cfgPath, 'r') as cfgFile:
+    cfgFile = cfgFile.read()
+    lines = cfgFile.split("\n")
+    for line in lines:
+      if "\"RS_VERSION\":" in line:
+        lines.remove(line)
+    cfgFileWithoutRS = "\n".join(lines)
+
+  with open(cfgPathRsVersion, 'r') as cfgFileRsVersion:
+    cfgFileRsVersion = cfgFileRsVersion.read()
+      
+  if cfgFileWithoutRS == cfgFileRsVersion:
+    pass
+  else:
+    with open(cfgPathRsVersion, 'w') as cfgFileRsVersion:
+      cfgFileRsVersion.write(cfgFileWithoutRS)
+
+
+  cfgPath = cfgPathRsVersion
   rsVersion = os.path.splitext(filename)[0][-5:]
   os.environ["RS_VERSION"] = rsVersion
 else:
