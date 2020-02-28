@@ -113,9 +113,11 @@ class ExportToAfterEffectsTool(Tool):
     def getOrientation(obj):
       roo = cmds.xform(obj, q=True, rotateOrder=True)
       ra = cmds.xform(obj, q=True, rotateAxis=True)
-      cmds.xform(obj, preserve=True, roo="zyx", ra=[0,0,0]) # We need to convert Maya's rotation order to After Effects' rotation order
-      rotation = cmds.xform(obj, q=True, rotation=True, worldSpace=True)
-      cmds.xform(obj, preserve=True, roo=roo, ra=ra)
+      cmds.xform(tempLoc, roo=roo, ra=ra)
+      cmds.matchTransform(tempLoc, obj)
+      cmds.xform(tempLoc, preserve=True, roo="zyx", ra=[0,0,0]) # We need to convert Maya's rotation order to After Effects' rotation order
+      rotation = cmds.xform(tempLoc, q=True, rotation=True, worldSpace=True)
+      #cmds.xform(obj, preserve=True, roo=roo, ra=ra)
       return rotation
 
     def getFocalLength(camShape):
@@ -145,6 +147,8 @@ class ExportToAfterEffectsTool(Tool):
     camsToAE = MayaToAE["cameras"] = {}
 
     sel = cmds.ls(selection=True)
+    tempLoc = cmds.spaceLocator()
+    tempLoc = cmds.rename(tempLoc, "tempAEexportLoc")
     nullsToExport = []
     camsToExport = []
 
@@ -223,6 +227,8 @@ class ExportToAfterEffectsTool(Tool):
     with open(output, "w") as o:
       json.dump(MayaToAE, o, indent = 4)
 
+
     print "# INFO: successfully exported json file to " + str(output)
 
+    cmds.delete(tempLoc)
     cmds.currentTime(currentTime)
