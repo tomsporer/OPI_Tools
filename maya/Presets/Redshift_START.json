@@ -397,7 +397,7 @@
       "redshiftOptions.unifiedFilterSize": 2.0, 
       "redshiftOptions.unifiedFilterType": 2, 
       "redshiftOptions.unifiedMaxOverbright": 4.0, 
-      "redshiftOptions.unifiedMaxSamples": 256, 
+      "redshiftOptions.unifiedMaxSamples": 128, 
       "redshiftOptions.unifiedMinSamples": 8, 
       "redshiftOptions.unifiedRandomizePattern": true, 
       "redshiftOptions.verboseLogFile": false, 
