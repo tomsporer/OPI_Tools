@@ -31,6 +31,17 @@ class OpenRenderFolderTool(Tool):
 
     renderPrefix = str(cmds.getAttr("defaultRenderGlobals.imageFilePrefix"))
     renderPrefix = renderPrefix.replace("/", "\\")
+    if "<RenderLayer>" in renderPrefix:
+      curRenderLayer = cmds.editRenderLayerGlobals( query=True, currentRenderLayer=True )
+      if curRenderLayer.startswith("rs_"):
+        curRenderLayer = curRenderLayer[3:]
+      elif curRenderLayer == "defaultRenderLayer":
+        renderPrefix = renderPrefix.replace("\\<RenderLayer>\\", "\\")
+      renderPrefix = renderPrefix.replace("<RenderLayer>", curRenderLayer)
+    if "<Scene>" in renderPrefix:
+      sceneFile = cmds.file(q=True, sceneName=True, shn=True)
+      sceneName = os.path.splitext(sceneFile)[0]
+      renderPrefix = renderPrefix.replace("<Scene>", sceneName)
     projectPath = cmds.workspace( q=True, rootDirectory=True )
 
     if renderPrefix == "":
@@ -48,5 +59,5 @@ class OpenRenderFolderTool(Tool):
     if openFolder:
       subprocess.Popen('explorer /e,"' + str(renderFolder.replace("/", "\\")) + '"')
     else:
-      print "# INFO: Render ouput folder doesn't exist."
+      print "# INFO: The Render ouput folder \"%s\" does not exist." %(renderFolder)
 
