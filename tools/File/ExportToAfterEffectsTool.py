@@ -177,8 +177,7 @@ class ExportToAfterEffectsTool(Tool):
       nullData["position"] = getPosition(null)
       nullData["rotation"] = getOrientation(null)
       nullData["scale"] = getScale(null)
-      if locsAnimated:
-        nullData["animation"] = {}
+      nullData["animation"] = {}
       nullsToAE[null] = nullData
 
     for cam in camsToExport:
@@ -189,8 +188,7 @@ class ExportToAfterEffectsTool(Tool):
       camData["scale"] = getScale(cam)
       camData["focalLength"] = getFocalLength(camShape)
       camData["horizontalFilmPlane"] = getHorizontalFilmAperture(camShape)
-      if camsAnimated:
-        camData["animation"] = {}
+      camData["animation"] = {}
       camsToAE[cam] = camData
 
 
@@ -222,6 +220,28 @@ class ExportToAfterEffectsTool(Tool):
 
         mel.eval("playButtonStepForward;")
 
+
+    if not locsAnimated:
+      for null in nullsToExport:
+
+        nullAnim = nullsToAE[null]["animation"]
+        nullAnim["0"] = {
+          "position": getPosition(null),
+          "rotation": getOrientation(null),
+          "scale": getScale(null)
+        }
+
+    if not camsAnimated:
+      for cam in camsToExport:
+
+        camShape = cmds.listRelatives(cam, shapes=True, path=True)[0]
+        camAnim = camsToAE[cam]["animation"]
+        camAnim["0"] = {
+          "position": getPosition(cam),
+          "rotation": getOrientation(cam),
+          "focalLength": getFocalLength(camShape),
+          "horizontalFilmPlane": getHorizontalFilmAperture(camShape)
+        }
 
 
     with open(output, "w") as o:
