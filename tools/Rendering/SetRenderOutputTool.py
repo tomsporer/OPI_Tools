@@ -34,6 +34,8 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.add(name="renderpath", type="folder", label="render path", value="", enabled=True, expression="[a-zA-Z0-9_/]*")
     self.args.add(name="renderfolder", type="str", label="renderfolder(hidden)", value="", hidden=True)
     self.args.add(name="renderlayerSubfolder", label="Render Layer Subfolder", type="bool", value=False)
+    self.args.addSpacer(5,1)
+    self.args.add(name="usescenetoken", label="Use <Scene> as Version", type="bool", value=False)
     self.args.beginRow("render name")
     self.args.add(name="rendername", type="str", label="", value="")
     self.args.addButton("takeSceneName", "<<")
@@ -42,6 +44,7 @@ class SetRenderOutputTool(DataBaseTool):
     self.args.add(name="version", label="", type="str", expression='[0-9]+[0-9]*')
     self.args.addButton("plusOne", "+1")
     self.args.endRow()
+    self.args.addSpacer(5,1)
     self.args.beginRow("Camera subfolder")
     self.args.add(name="camsubfolderBefore", label="Before version", type="bool", value=False)
     self.args.add(name="camsubfolderAfter", label="After version", type="bool", value=False)
@@ -71,11 +74,15 @@ class SetRenderOutputTool(DataBaseTool):
   def onButtonPressed(self, button):
 
     if button == "plusOne":
-      version = self.args.getValue("version")
-      versionPlus = str(int(version) + 1).rjust(2,"0")
-      self.args.setValue("version", versionPlus)
+      usescenetoken = self.args.getValue("usescenetoken")
+      if usescenetoken == False:
+        version = self.args.getValue("version")
+        versionPlus = str(int(version) + 1).rjust(2,"0")
+        self.args.setValue("version", versionPlus)
     elif button == "takeSceneName":
-      self.args.setValue("rendername", self.__scenename)
+      usescenetoken = self.args.getValue("usescenetoken")
+      if usescenetoken == False:
+        self.args.setValue("rendername", self.__scenename)
 
 
   def onValueChanged(self, arg):
@@ -110,6 +117,9 @@ class SetRenderOutputTool(DataBaseTool):
         self.args.setValue("renderfolder", renderfolder)
         # self.__readJson()
         self.__prevRenderpath = arg.value
+    elif arg.name == "usescenetoken":
+      self.args.get("rendername").enabled = not arg.value
+      self.args.get("version").enabled = not arg.value
 
   def preexecute(self, **args):
 
@@ -183,6 +193,11 @@ class SetRenderOutputTool(DataBaseTool):
       if re.match("[vV][0-9]+", pathTail):
         self.__versionFromPrefix = pathTail[1:]
         return True
+      elif pathTail.lower() == "<scene>":
+        self.args.setValue("usescenetoken", True)
+        self.args.get("rendername").enabled = False
+        self.args.get("version").enabled = False
+        return True
       else:
         return False
 
@@ -196,6 +211,13 @@ class SetRenderOutputTool(DataBaseTool):
     def checkRenderLayerFolder(path):
       pathHead, pathTail = os.path.split(path)
       if pathTail.lower() == "<renderlayer>":
+        return True
+      else:
+        return False
+
+    def checkSceneFolder(path):
+      pathHead, pathTail = os.path.split(path)
+      if pathTail.lower() == "<scene>":
         return True
       else:
         return False
@@ -344,6 +366,7 @@ class SetRenderOutputTool(DataBaseTool):
     projectname = self.args.getValue('projectname')
     renderpath = self.args.getValue('renderpath')
     renderfolder = self.args.getValue('renderfolder')
+    usescenetoken = self.args.getValue('usescenetoken')
     rendername = self.args.getValue('rendername')
     version = self.args.getValue('version')
     version = version.rjust(2, '0')
@@ -371,16 +394,23 @@ class SetRenderOutputTool(DataBaseTool):
     # ----
     if not self.__isRedshift:
       cmds.setAttr('defaultRenderGlobals.ren', 'redshift', type='string')
-        
-    renderfile = rendername + "_<RenderLayer>_V" + str(version)
+
+    if usescenetoken:
+      renderfile = "<Scene>_<RenderLayer>"
+    else:
+      renderfile = rendername + "_<RenderLayer>_V" + str(version)
     if camsubfolderBefore:
       renderpath = os.path.join(renderpath, "<Camera>")
-    renderpath = os.path.join(renderpath, "V" + version)
+    if usescenetoken:
+      renderpath = os.path.join(renderpath, "<Scene>")
+    else:
+      renderpath = os.path.join(renderpath, "V" + version)
     if camsubfolderAfter:
       renderpath = os.path.join(renderpath, "<Camera>")
     if renderlayerSubfolder:
       renderpath = os.path.join(renderpath, "<RenderLayer>")
     renderPrefix = os.path.join(renderpath, renderfile)
+
     cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
     cmds.setAttr("defaultRenderGlobals.outFormatControl", 0)
     cmds.setAttr("redshiftOptions.imageFormat", 1) # 1 = exr
