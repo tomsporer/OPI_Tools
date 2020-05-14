@@ -107,16 +107,25 @@ class RigCreateControlTool(Tool):
       closed = False
 
     elif controlType == 'sphere':
-      if resolution < 5:
-        resolution = 5
+      if resolution < 8:
+        resolution = 8
       for i in range(resolution):
         q = om.MQuaternion(pi * float(i * 2) / float(resolution), om.MVector(0, 1, 0))
         v = om.MVector(1, 0, 0).rotateBy(q)
         points.append([v.x, v.y, v.z])
-      for i in range(resolution):
+      for i in range(resolution+1):
         q = om.MQuaternion(pi * float(i * 2) / float(resolution), om.MVector(0, 0, 1))
         v = om.MVector(1, 0, 0).rotateBy(q)
         points.append([v.x, v.y, v.z])
+      for i in range(int(resolution/4)):
+        q = om.MQuaternion(pi * float(i * 2) / float(resolution), om.MVector(0, 0, 1))
+        v = om.MVector(1, 0, 0).rotateBy(q)
+        points.append([v.x, v.y, v.z])
+      for i in range(resolution+1):
+        q = om.MQuaternion(pi * float(i * 2) / float(resolution), om.MVector(1, 0, 0))
+        v = om.MVector(0, 1, 0).rotateBy(q)
+        points.append([v.x, v.y, v.z])
+      closed = False
 
     elif controlType == 'diamond':
       points.append([1, 0, -1])
