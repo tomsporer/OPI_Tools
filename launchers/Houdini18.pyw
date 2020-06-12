@@ -5,7 +5,7 @@ import json
 path = os.path.abspath(__file__)
 
 # cut off the file path
-path = os.path.split(path)[0]
+path, filename = os.path.split(path)
 
 # remember this launchers path
 launchersPath = path
@@ -22,17 +22,13 @@ if launchersPath.lower().startswith('e:'):
   launchersPath = r'\\domain\\tomsporer' + launchersPath[2:]
 
 # construct the cfg path
-cfgPath = os.path.join(launchersPath, 'configs', 'houdini17_5.cfg')
+houdiniMajorVersion = filename[7:-4]
+cfgPath = os.path.join(launchersPath, 'configs', 'houdini%s.cfg' %(houdiniMajorVersion))
 cfgJson = json.load(open(cfgPath))
 houdiniVersion = cfgJson["environment"]["HOUDINI_VERSION"][0]
 
-# houdiniMajorVersion = "17.5"
 
-# for houdiniVersion in houdiniVersions:
-#     if houdiniVersion.startswith(houdiniMajorVersion):
-#         break
-
-# find the maya executable
+# find the houdini executable
 # first connect to the registry and get a specific key
 import _winreg
 from _winreg import ConnectRegistry, OpenKey, EnumKey, QueryValueEx, HKEY_LOCAL_MACHINE
