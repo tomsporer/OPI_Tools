@@ -240,6 +240,11 @@ class SetRenderOutputTool(DataBaseTool):
       renderfolder = ""
       self.__versionFromPrefix = "01" # default
       self.args.setValue("rendername", scenename)
+      self.args.setValue("renderlayerSubfolder", True)
+      self.args.setValue("usescenetoken", True)
+      self.args.setValue("rendername", "<Scene>")
+      self.args.get("rendername").enabled = False
+      self.args.get("version").enabled = False
 
     else:
       renderpath, rendername = os.path.split(renderPrefix) # rip off filename
