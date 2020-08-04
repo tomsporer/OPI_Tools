@@ -235,60 +235,59 @@ class SetRenderOutputTool(DataBaseTool):
         scenename = scenename[:-2]
     self.__scenename = scenename  
 
+    # if len(renderPrefix) == 0 or renderPrefix == "None":
+    #   renderpath = os.path.join(projectPath, "Render")
+    #   renderfolder = ""
+    #   self.__versionFromPrefix = "01" # default
+    #   self.args.setValue("rendername", scenename)
+
     if len(renderPrefix) == 0 or renderPrefix == "None":
-      renderpath = os.path.join(projectPath, "Render")
-      renderfolder = ""
-      self.__versionFromPrefix = "01" # default
-      self.args.setValue("rendername", scenename)
-      self.args.setValue("renderlayerSubfolder", True)
-      self.args.setValue("usescenetoken", True)
-      self.args.setValue("rendername", "<Scene>")
-      self.args.get("rendername").enabled = False
-      self.args.get("version").enabled = False
+      renderPrefix = os.path.join(projectPath, "Render", "<Scene>", "<RenderLayer>", "<Scene>_<RenderLayer>")
+      cmds.setAttr("defaultRenderGlobals.imageFilePrefix", renderPrefix, type="string")
 
+    # else:
+    renderpath, rendername = os.path.split(renderPrefix) # rip off filename
+
+    rendernameparts = rendername.split("_")
+    if "<RenderLayer>" in rendernameparts:
+      rendernameparts.remove("<RenderLayer>")
+    for rendernamepart in rendernameparts:
+      if re.match("[vV][0-9]+", rendernamepart):
+        rendernameparts.remove(rendernamepart)
+    rendername = "_".join(rendernameparts)
+    if rendername:
+      self.args.setValue("rendername", rendername)
     else:
-      renderpath, rendername = os.path.split(renderPrefix) # rip off filename
+      self.args.setValue("rendername", scenename)
 
-      rendernameparts = rendername.split("_")
-      if "<RenderLayer>" in rendernameparts:
-        rendernameparts.remove("<RenderLayer>")
-      for rendernamepart in rendernameparts:
-        if re.match("[vV][0-9]+", rendernamepart):
-          rendernameparts.remove(rendernamepart)
-      rendername = "_".join(rendernameparts)
-      if rendername:
-        self.args.setValue("rendername", rendername)
-      else:
-        self.args.setValue("rendername", scenename)
+    # check for renderlayer subfolder
+    if checkRenderLayerFolder(renderpath):
+      renderpath = os.path.split(renderpath)[0]
+      self.args.setValue("renderlayerSubfolder", True)
 
-      # check for renderlayer subfolder
-      if checkRenderLayerFolder(renderpath):
+    # check if folder at end is a version or camera folder
+    if checkVersionFolder(renderpath):
+      renderpath = os.path.split(renderpath)[0]
+      if checkCameraFolder(renderpath):
         renderpath = os.path.split(renderpath)[0]
-        self.args.setValue("renderlayerSubfolder", True)
-
-      # check if folder at end is a version or camera folder
+        self.args.setValue("camsubfolderBefore", True)
+    elif checkCameraFolder(renderpath):
+      renderpath = os.path.split(renderpath)[0]
+      self.args.setValue("camsubfolderAfter", True)
       if checkVersionFolder(renderpath):
         renderpath = os.path.split(renderpath)[0]
-        if checkCameraFolder(renderpath):
-          renderpath = os.path.split(renderpath)[0]
-          self.args.setValue("camsubfolderBefore", True)
-      elif checkCameraFolder(renderpath):
-        renderpath = os.path.split(renderpath)[0]
-        self.args.setValue("camsubfolderAfter", True)
-        if checkVersionFolder(renderpath):
-          renderpath = os.path.split(renderpath)[0]
 
 
-      if renderPrefix[1] == ":":
-        renderfolder = renderpath.split("Render\\")[-1]
-        if renderpath == renderfolder:
-          renderfolder = ""
+    if renderPrefix[1] == ":":
+      renderfolder = renderpath.split("Render\\")[-1]
+      if renderpath == renderfolder:
+        renderfolder = ""
+    else:
+      renderfolder = renderpath
+      if len(renderpath) == 0:
+        renderpath = os.path.join(projectPath, "Render")
       else:
-        renderfolder = renderpath
-        if len(renderpath) == 0:
-          renderpath = os.path.join(projectPath, "Render")
-        else:
-          renderpath = os.path.join(projectPath, "Render", renderpath)
+        renderpath = os.path.join(projectPath, "Render", renderpath)
 
     self.args.setValue('version', self.__versionFromPrefix)
     self.args.setValue("renderpath", renderpath)
