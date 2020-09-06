@@ -1,0 +1,14 @@
+{
+  "AminoConfigurations": [
+    {
+      "libraryName": "Opi_Compounds",
+      "libraryVersion": "1.0.0",
+      "jsonLibs": [
+        {
+          "path": "compounds",
+          "files": [ ]
+        }
+      ]
+    }
+  ]
+}
