@@ -33,7 +33,7 @@ class importFrittCacheTool(DataBaseTool):
 
 
     self.__flavsOne = ["Strawberry"]
-    self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default", "Default_Lederjacke", "Default_Kopfband", "Default_YellowShirt", "Default_TurquoiseShirt", "Default_Rothaar", "Default_PolkaDots", "Default_BlueDots", "Default_Elvis", "Default_Flowerhair", "Default_Flowershirt", "Default_Jeansjacke", "Cola", "ColaOrange", "LimOrange", "ApfelJohannis", "ErdbeerHimbeer", "KokosMaracuja"]
+    self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default", "Default_Lederjacke", "Default_Kopfband", "Default_YellowShirt", "Default_TurquoiseShirt", "Default_Rothaar", "Default_PolkaDots", "Default_BlueDots", "Default_Elvis", "Default_Flowerhair", "Default_Flowershirt", "Default_Jeansjacke", "Cola", "ColaOrange", "LimOrange", "ApfelJohannis", "ErdbeerHimbeer", "KokosMaracuja", "Grapefruit"]
     self.__flavsThree = ["Wildberry"]
     self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango", "MiniCranberry"]
     self.__flavsStripper = ["Stripper"]
