@@ -31,7 +31,7 @@ class exportForCachingTool(DataBaseTool):
     self.__flavsOne = ["Strawberry"]
     self.__flavsTwo = ["Barkeeper", "Cherry", "Lemon", "Orange", "Raspberry", "Default", "Cola", "ColaOrange", "LimOrange", "ApfelJohannis", "ErdbeerHimbeer", "KokosMaracuja"]
     self.__flavsThree = ["Wildberry"]
-    self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango"]
+    self.__flavsMinis = ["MiniGranat", "MiniLitschi", "MiniMango", "MiniCranberry"]
     self.__flavsStripper = ["Stripper"]
 
     self.__flavsList = sorted(self.__flavsOne + self.__flavsTwo + self.__flavsThree + self.__flavsMinis + self.__flavsStripper)
