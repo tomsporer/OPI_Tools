@@ -49,8 +49,6 @@ if "rsVersion" in filename:
   cfgPath = cfgPathRsVersion
   rsVersion = os.path.splitext(filename)[0][-5:]
   os.environ["RS_VERSION"] = rsVersion
-elif "vray" in filename:
-  cfgPath = os.path.join(launchersPath, 'configs', 'maya_vray.cfg')
 else:
   cfgPath = os.path.join(launchersPath, 'configs', 'maya.cfg')
 
@@ -59,7 +57,7 @@ else:
 import _winreg
 from _winreg import ConnectRegistry, OpenKey, EnumKey, QueryValueEx, HKEY_LOCAL_MACHINE
 registry = ConnectRegistry(None, HKEY_LOCAL_MACHINE)
-key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2020\\Setup\\InstallPath", 0, (_winreg.KEY_WOW64_64KEY + _winreg.KEY_READ))
+key = OpenKey(registry, "SOFTWARE\\Autodesk\\Maya\\2019\\Setup\\InstallPath", 0, (_winreg.KEY_WOW64_64KEY + _winreg.KEY_READ))
 value = QueryValueEx(key, "MAYA_INSTALL_LOCATION")[0]
 
 # setup options for running maya in batch mode
@@ -88,7 +86,7 @@ else:
 
 os.environ['OPI_LAUNCHER_DIR'] = launchersPath
 os.environ['MAYA_LOCATION'] = str(value)
-os.environ['MAYA_VERSION'] = "2020"
+os.environ['MAYA_VERSION'] = "2019"
 
 
 # figure out which projects are opi projects
@@ -103,8 +101,7 @@ else:
   # os.environ['OPI_DATABASE_DIR'] = "\\\\192.168.1.10\\tomsporer\\PROJECTS"
   os.environ['OPI_DATABASE_DIR'] = "E:\\PROJECTS"
 
-# folderNames = ['']
-folderNames = ['FRI_Fritt_TV', 'FRI_Fritt_BumperAdShyCherry']
+folderNames = ['']
 
 os.environ['OPI_DATABASE_SUBFOLDERS'] = os.pathsep.join(folderNames)
 
