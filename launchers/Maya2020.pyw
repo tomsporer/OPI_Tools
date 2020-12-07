@@ -51,6 +51,8 @@ if "rsVersion" in filename:
   os.environ["RS_VERSION"] = rsVersion
 elif "vray" in filename:
   cfgPath = os.path.join(launchersPath, 'configs', 'maya_vray.cfg')
+elif "minimalOpi" in filename:
+  cfgPath = os.path.join(launchersPath, 'configs', 'maya_minimalOpi.cfg')
 else:
   cfgPath = os.path.join(launchersPath, 'configs', 'maya.cfg')
 
