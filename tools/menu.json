@@ -12,8 +12,6 @@
     { "type": "menu", "folder": "Lighting" },
     { "type": "separator" },
     { "type": "menu", "folder": "Fritt"},
-    { "type": "menu", "folder": "PaybackAmex"},
-    { "type": "menu", "folder": "Sekt" },
     { "type": "separator"},
   	{ "type": "tool", "module": "RefreshOpiDbTool.py"}
   ]

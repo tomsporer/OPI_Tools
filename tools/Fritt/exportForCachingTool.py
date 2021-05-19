@@ -309,6 +309,7 @@ class exportForCachingTool(DataBaseTool):
     wContent = "Plugin=MayaBatch\n\
 Comment=" + exportName + "\n\
 Priority=90\n\
+Group=toms_farm\n\
 Department=FRI_Fritt_TV\n\
 Frames=1\n\
 BatchName=Fritt_Cache_Export\n\
